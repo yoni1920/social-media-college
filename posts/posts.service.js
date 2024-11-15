@@ -5,7 +5,13 @@ const getAllPosts = async () => {
   return await postsRepository.getAllPosts();
 };
 
-const getPostByID = (postID) => postsRepository.getPostByID(postID);
+/**
+ *
+ * @param {string} postID
+ */
+const getPostByID = async (postID) => {
+  return await postsRepository.getPostByID(postID);
+};
 
 const updatePost = (postID, post) => postsRepository.updatePost(postID, post);
 

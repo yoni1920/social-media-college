@@ -6,7 +6,13 @@ const getAllPosts = async () => {
   return await Post.find({});
 };
 
-const getPostByID = (postID) => ({});
+/**
+ *
+ * @param {string} postID
+ */
+const getPostByID = async (postID) => {
+  return await Post.findById(postID);
+};
 
 const updatePost = (postID, post) => ({});
 

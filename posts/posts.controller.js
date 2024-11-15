@@ -35,9 +35,21 @@ router.get(
 );
 
 // Get post by id
-router.get("/:postID", (req, res) => {
-  res.send({});
-});
+router.get(
+  "/:postID",
+  runAsync(async (req, res) => {
+    const postID = req.params.postID;
+    const post = await postsService.getPostByID(postID);
+
+    if (!post) {
+      res.status(400).send({
+        message: "Post does not exist",
+      });
+    } else {
+      res.send(post);
+    }
+  })
+);
 
 // Get post by sender
 // query param, merge with posts
