@@ -11,20 +11,24 @@ router.post(
   "/",
   validateBody(createPostSchema),
   runAsync(async (req, res) => {
-    const postId = await postsService.createPost(req.body);
+    const { id, createdAt } = await postsService.createPost(req.body);
 
     res.send({
       message: "created new post",
-      postId,
-      date: new Date(),
+      postId: id,
+      date: createdAt,
     });
   })
 );
 
 router.get(
   "/",
-  runAsync(async (_req, res) => {
-    const posts = await postsService.getAllPosts();
+  runAsync(async (req, res) => {
+    const sender = req.query.sender;
+
+    const posts = sender
+      ? await postsService.getPostsBySender(sender)
+      : await postsService.getAllPosts();
 
     res.send(posts);
   })
