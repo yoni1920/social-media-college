@@ -1,5 +1,6 @@
 import postsRepository from "./posts.repository.js";
 import { createPostSchema } from "./dto-schema/create-post.dto.js";
+import { updatePostSchema } from "./dto-schema/update-post.dto.js";
 
 const getAllPosts = async () => {
   return await postsRepository.getAllPosts();
@@ -13,7 +14,15 @@ const getPostByID = async (postID) => {
   return await postsRepository.getPostByID(postID);
 };
 
-const updatePost = (postID, post) => postsRepository.updatePost(postID, post);
+/**
+ *
+ * @param {string} postID
+ * @param {z.infer<typeof updatePostSchema>} post
+ * @returns {Promise<{ updatedExisting: boolean | undefined, updatedAt: Date | undefined }>}
+ */
+const updatePost = async (postID, post) => {
+  return await postsRepository.updatePost(postID, post);
+};
 
 /**
  *
