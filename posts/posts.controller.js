@@ -21,10 +21,14 @@ router.post(
   })
 );
 
-// Get all posts
-router.get("/", (req, res) => {
-  res.send([]);
-});
+router.get(
+  "/",
+  runAsync(async (_req, res) => {
+    const posts = await postsService.getAllPosts();
+
+    res.send(posts);
+  })
+);
 
 // Get post by id
 router.get("/:postID", (req, res) => {
