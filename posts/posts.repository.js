@@ -10,25 +10,28 @@ const getPostByID = (postID) => ({});
 
 const updatePost = (postID, post) => ({});
 
-const getPostBySender = (senderID) => ({});
+/**
+ *
+ * @param {string} sender
+ */
+const getPostsBySender = async (sender) => {
+  return await Post.find({ sender });
+};
 
 /**
  *
  * @param {z.infer<typeof createPostSchema>} postDTO
- * @returns {Promise<string>} post id
  */
 const createPost = async (postDTO) => {
   const post = new Post(postDTO);
 
-  const { id } = await post.save();
-
-  return id;
+  return await post.save();
 };
 
 export default {
   getAllPosts,
   getPostByID,
   updatePost,
-  getPostBySender,
+  getPostsBySender,
   createPost,
 };
