@@ -1,3 +1,3 @@
-export const serverConfig = {
-  port: parseInt(process.env.PORT ?? 3000),
+export default {
+  port: parseInt(process.env.SERVER_PORT ?? 3000),
 };
