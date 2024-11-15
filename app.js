@@ -1,19 +1,39 @@
 import express from "express";
-import { serverConfig } from "./config/server-config.js";
-import postsController from "./controllers/posts-controller.js";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import serverConfig from "./config/server-config.js";
+import dbConfig from "./config/db-config.js";
+import postsController from "./posts/posts.controller.js";
+import { handleGeneralError } from "./middleware/general-error-handler.js";
+import { noRouteFoundHandler } from "./middleware/no-route-handler.js";
 
-const port = serverConfig.port;
+const main = async () => {
+  const port = serverConfig.port;
 
-const app = express();
+  const app = express();
+  app.use(bodyParser.urlencoded({ extended: true, limit: "1mb" }));
+  app.use(bodyParser.json());
 
-app.use("/posts", postsController);
+  app.use("/posts", postsController);
+  app.use(noRouteFoundHandler);
+  app.use(handleGeneralError);
 
-app.use("/", (_request, response) => {
-  response.send({
-    message: "your mom",
-  });
-});
+  try {
+    mongoose.connection.on("open", () => console.log("Connected to mongo"));
+    mongoose.connection.on("error", (error) => console.error(error));
+    await mongoose.connect(dbConfig.connectionUrl);
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
+    app.listen(port, () => {
+      console.log(`Listening on port ${port}`);
+    });
+  } catch (error) {
+    const errorLog = {
+      message: error.message,
+      stack: error.stack,
+    };
+
+    console.error(errorLog);
+  }
+};
+
+main();
