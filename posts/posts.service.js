@@ -1,7 +1,10 @@
 import postsRepository from "./posts.repository.js";
 import { createPostSchema } from "./dto-schema/create-post.dto.js";
+import { Post } from "./post.model.js";
 
-const getAllPosts = () => postsRepository.getAllPosts();
+const getAllPosts = async () => {
+  return await postsRepository.getAllPosts();
+};
 
 const getPostByID = (postID) => postsRepository.getPostByID(postID);
 
