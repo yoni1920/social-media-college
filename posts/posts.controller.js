@@ -15,7 +15,7 @@ router.post(
 
     res.send({
       message: "created new post",
-      postId: id,
+      postID: id,
       date: createdAt,
     });
   })
@@ -34,7 +34,6 @@ router.get(
   })
 );
 
-// Get post by id
 router.get(
   "/:postID",
   runAsync(async (req, res) => {
@@ -44,6 +43,7 @@ router.get(
     if (!post) {
       res.status(400).send({
         message: "Post does not exist",
+        postID,
       });
     } else {
       res.send(post);
@@ -51,15 +51,31 @@ router.get(
   })
 );
 
-// Get post by sender
-// query param, merge with posts
-router.get("/:postID", (req, res) => {
-  res.send({});
-});
+router.put(
+  "/:postID",
+  validateBody(updatePostSchema),
+  runAsync(async (req, res) => {
+    const postID = req.params.postID;
+    const postDTO = req.body;
 
-// update post
-router.put("/:postID", validateBody(updatePostSchema), (req, res) => {
-  res.send({});
-});
+    const { updatedExisting, updatedAt } = await postsService.updatePost(
+      postID,
+      postDTO
+    );
+
+    if (!updatedExisting) {
+      res.status(400).send({
+        message: "Post to update does not exist",
+        postID,
+      });
+    } else {
+      res.send({
+        message: "Post updated",
+        postID,
+        date: updatedAt,
+      });
+    }
+  })
+);
 
 export default router;

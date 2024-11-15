@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Post } from "./post.model.js";
 import { createPostSchema } from "./dto-schema/create-post.dto.js";
+import { updatePostSchema } from "./dto-schema/update-post.dto.js";
 
 const getAllPosts = async () => {
   return await Post.find({});
@@ -14,7 +15,27 @@ const getPostByID = async (postID) => {
   return await Post.findById(postID);
 };
 
-const updatePost = (postID, post) => ({});
+/**
+ *
+ * @param {string} postID
+ * @param {z.infer<typeof updatePostSchema>} post
+ * @returns {Promise<{ updatedExisting: boolean | undefined, updatedAt: Date | undefined }>}
+ */
+const updatePost = async (postID, post) => {
+  const { lastErrorObject, value: updatedPost } = await Post.findByIdAndUpdate(
+    postID,
+    post,
+    {
+      includeResultMetadata: true,
+      new: true,
+    }
+  );
+
+  return {
+    updatedExisting: lastErrorObject?.updatedExisting,
+    updatedAt: updatedPost?.updatedAt,
+  };
+};
 
 /**
  *
