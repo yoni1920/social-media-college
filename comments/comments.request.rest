@@ -1,0 +1,28 @@
+GET http://localhost:8000/comments
+
+GET http://localhost:8000/comments/1234
+
+GET http://localhost:8000/comments?postID=1234
+
+POST http://localhost:8000/comments
+Content-Type: application/json
+
+{
+    "message": "123444",
+    "sender": "1234",
+    "postID": "1234"
+}
+
+PUT http://localhost:8000/comments
+Content-Type: application/json
+
+{
+    "message": "1234", 
+}
+
+DELETE http://localhost:8000/comments
+Content-Type: application/json
+
+{
+    "id": "1234"
+}

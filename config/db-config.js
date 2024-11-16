@@ -6,6 +6,11 @@ const config = {
   dbPassword: process.env.DB_PASSWORD ?? "",
 };
 
+const isLocal = !(config.dbUsername && config.dbPassword);
+
+const localConnectionUrl = `mongodb://${config.dbHost}:${config.dbPort}/${config.dbName}`;
+const remoteConnectionUrl = `mongodb://${config.dbUsername}:${config.dbPassword}@${config.dbHost}:${config.dbPort}/${config.dbName}?authSource=admin`;
+
 export default {
-  connectionUrl: `mongodb://${config.dbUsername}:${config.dbPassword}@${config.dbHost}:${config.dbPort}/${config.dbName}?authSource=admin`,
+  connectionUrl: isLocal ? localConnectionUrl : remoteConnectionUrl,
 };
