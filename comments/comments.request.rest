@@ -8,21 +8,17 @@ POST http://localhost:8000/comments
 Content-Type: application/json
 
 {
-    "message": "123444",
-    "sender": "1234",
-    "postID": "1234"
+    "message": "Hello World",
+    "sender": "Ido",
+    "postID": "02291abb-8cff-491a-a3ae-3a8860a2a3a8"
 }
 
-PUT http://localhost:8000/comments
+PUT http://localhost:8000/comments/1234
 Content-Type: application/json
 
 {
-    "message": "1234", 
+    "message": "1234"
 }
 
-DELETE http://localhost:8000/comments
+DELETE http://localhost:8000/comments/1234
 Content-Type: application/json
-
-{
-    "id": "1234"
-}

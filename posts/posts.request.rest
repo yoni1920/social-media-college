@@ -2,19 +2,19 @@ GET http://localhost:8000/posts
 
 GET http://localhost:8000/posts/1234
 
-GET http://localhost:8000/posts?sender=1234
+GET http://localhost:8000/posts?sender=Yoni
 
 POST http://localhost:8000/posts
 Content-Type: application/json
 
 {
-    "message": "123444",
-    "sender": "1234"
+    "message": "Hello World",
+    "sender": "Yoni"
 }
 
-PUT http://localhost:8000/posts
+PUT http://localhost:8000/posts/1234
 Content-Type: application/json
 
 {
-    "sender": "1234",
+    "message": "Good Afternoon"
 }
