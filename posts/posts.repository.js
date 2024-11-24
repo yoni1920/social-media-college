@@ -3,8 +3,15 @@ import { Post } from "./post.model.js";
 import { createPostSchema } from "./dto-schema/create-post.dto.js";
 import { updatePostSchema } from "./dto-schema/update-post.dto.js";
 
+const USER_INJECT_FIELDS = {
+  field: "sender",
+  subFields: ["username"],
+};
+
 const getAllPosts = async () => {
-  return await Post.find({});
+  return await Post.find({})
+    .populate(USER_INJECT_FIELDS.field, USER_INJECT_FIELDS.subFields)
+    .exec();
 };
 
 /**
@@ -12,7 +19,9 @@ const getAllPosts = async () => {
  * @param {string} postID
  */
 const getPostByID = async (postID) => {
-  return await Post.findById(postID);
+  return await Post.findById(postID)
+    .populate(USER_INJECT_FIELDS.field, USER_INJECT_FIELDS.subFields)
+    .exec();
 };
 
 /**
@@ -39,10 +48,12 @@ const updatePost = async (postID, post) => {
 
 /**
  *
- * @param {string} sender
+ * @param {string} senderID
  */
-const getPostsBySender = async (sender) => {
-  return await Post.find({ sender });
+const getPostsBySenderID = async (senderID) => {
+  return await Post.find({ sender: senderID })
+    .populate(USER_INJECT_FIELDS.field, USER_INJECT_FIELDS.subFields)
+    .exec();
 };
 
 /**
@@ -55,10 +66,20 @@ const createPost = async (postDTO) => {
   return await post.save();
 };
 
+/**
+ *
+ * @param {string} postID
+ */
+// TODO: delete all post comments
+const deletePostByID = async (postID) => {
+  return (await Post.deleteOne({ _id: postID })).deletedCount > 0;
+};
+
 export default {
   getAllPosts,
   getPostByID,
   updatePost,
-  getPostsBySender,
+  getPostsBySenderID,
   createPost,
+  deletePostByID,
 };

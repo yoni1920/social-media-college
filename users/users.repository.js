@@ -52,9 +52,13 @@ const createUser = async (userDTO) => {
  *
  * @param {string} userID
  */
-// TODO
+// TODO deletes all posts, comments in transaction
 const deleteUserById = async (userID) => {
   return (await User.deleteOne({ _id: userID })).deletedCount > 0;
+};
+
+const doesUserExist = async (userID) => {
+  return await User.exists({ _id: userID });
 };
 
 export default {
@@ -63,4 +67,5 @@ export default {
   updateUser,
   createUser,
   deleteUserById,
+  doesUserExist,
 };

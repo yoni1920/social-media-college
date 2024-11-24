@@ -1,6 +1,10 @@
 import postsRepository from "./posts.repository.js";
+import usersRepository from "../users/users.repository.js";
 import { createPostSchema } from "./dto-schema/create-post.dto.js";
 import { updatePostSchema } from "./dto-schema/update-post.dto.js";
+import { BadRequestException } from "../exceptions/bad-request-exception.js";
+import { Document } from "mongoose";
+import { Post } from "./post.model.js";
 
 const getAllPosts = async () => {
   return await postsRepository.getAllPosts();
@@ -41,10 +45,25 @@ const updatePost = async (postID, post) => {
 
 /**
  *
- * @param {string} sender
+ * @param {string} senderID
  */
-const getPostsBySender = async (sender) => {
-  return await postsRepository.getPostsBySender(sender);
+const getPostsBySenderID = async (senderID) => {
+  const senderResult = doesPostSenderExist(senderID);
+
+  if (!senderResult) {
+    return [];
+  }
+
+  return await postsRepository.getPostsBySenderID(senderID);
+};
+
+/**
+ *
+ * @param {string} senderID
+ * @returns {Promise<boolean>} If post sender exists
+ */
+const doesPostSenderExist = async (senderID) => {
+  return Boolean(await usersRepository.doesUserExist(senderID));
 };
 
 /**
@@ -60,10 +79,34 @@ const createPost = async (post) => {
   };
 };
 
+/**
+ *
+ * @param {Document<Post>} post
+ */
+export const verifyCreatePostSender = async ({ sender }) => {
+  console.log(sender);
+  const senderResult = await doesPostSenderExist(sender);
+
+  if (!senderResult) {
+    throw new BadRequestException("Sender does not exist", {
+      sender,
+    });
+  }
+};
+
+/**
+ *
+ * @param {string} postID
+ */
+const deletePost = async (postID) => {
+  return await postsRepository.deletePostByID(postID);
+};
+
 export default {
   getAllPosts,
   getPostByID,
   updatePost,
-  getPostsBySender,
+  getPostsBySenderID,
   createPost,
+  deletePost,
 };

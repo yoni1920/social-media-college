@@ -17,10 +17,10 @@ router.post("/", validateBody(createPostSchema), async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const sender = req.query.sender;
+  const senderID = req.query.senderID;
 
-  const posts = sender
-    ? await postsService.getPostsBySender(sender)
+  const posts = senderID
+    ? await postsService.getPostsBySenderID(senderID)
     : await postsService.getAllPosts();
 
   res.send(posts);
@@ -43,6 +43,17 @@ router.put("/:postID", validateBody(updatePostSchema), async (req, res) => {
     message: "Post updated",
     postID,
     date: updatedAt,
+  });
+});
+
+router.delete("/:postID", async (req, res) => {
+  const postID = req.params.postID;
+
+  const isDeleted = await postsService.deletePost(postID);
+
+  res.send({
+    message: isDeleted ? "Post deleted" : "Post did not exist",
+    postID,
   });
 });
 

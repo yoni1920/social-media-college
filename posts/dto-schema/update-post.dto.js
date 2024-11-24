@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-export const updatePostSchema = z.object({
-  sender: z.string().optional(),
+export const updatePostSchema = z.strictObject({
   message: z.string().optional(),
 });

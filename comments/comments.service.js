@@ -67,7 +67,7 @@ const createComment = async (comment) => {
  * @param {string} commentID
  */
 const deleteComment = async (commentID) => {
-  return commentsRepository.deleteCommentById(commentID);
+  return await commentsRepository.deleteCommentById(commentID);
 };
 
 export default {
