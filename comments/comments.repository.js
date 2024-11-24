@@ -46,10 +46,10 @@ const updateComment = async (commentID, comment) => {
  *
  * @param {z.infer<typeof createCommentSchema>} commentDTO
  */
-const createComment = (commentDTO) => {
+const createComment = async (commentDTO) => {
   const comment = new Comment(commentDTO);
 
-  return comment.save();
+  return await comment.save();
 };
 
 /**

@@ -5,6 +5,7 @@ import serverConfig from "./config/server-config.js";
 import dbConfig from "./config/db-config.js";
 import postsController from "./posts/posts.controller.js";
 import commentsController from "./comments/comments.controller.js";
+import usersController from "./users/users.controller.js";
 import { handleGeneralError } from "./middleware/general-error-handler.js";
 import { noRouteFoundHandler } from "./middleware/no-route-handler.js";
 
@@ -17,6 +18,8 @@ const main = async () => {
 
   app.use("/posts", postsController);
   app.use("/comments", commentsController);
+  app.use("/users", usersController);
+
   app.use(noRouteFoundHandler);
   app.use(handleGeneralError);
 

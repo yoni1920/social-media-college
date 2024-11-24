@@ -11,17 +11,34 @@ const getAllComments = async () => {
  * @param {string} commentID
  */
 const getCommentByID = async (commentID) => {
-  return await commentsRepository.getCommentByID(commentID);
+  const comment = await commentsRepository.getCommentByID(commentID);
+
+  if (!comment) {
+    throw new BadRequestException("Comment does not exist", { comment });
+  }
+
+  return comment;
 };
 
 /**
  *
  * @param {string} commentID
  * @param {z.infer<typeof updateCommentSchema>} comment
- * @returns {Promise<{ updatedExisting: boolean | undefined, updatedAt: Date | undefined }>}
+ * @returns {Promise<Date | undefined>}
  */
-const updateComment = async (postID, comment) => {
-  return await commentsRepository.updateComment(postID, comment);
+const updateComment = async (commentID, comment) => {
+  const { updatedExisting, updatedAt } = await commentsRepository.updateComment(
+    commentID,
+    comment
+  );
+
+  if (!updatedExisting) {
+    throw new BadRequestException("Comment to update does not exist", {
+      commentID,
+    });
+  }
+
+  return updatedAt;
 };
 
 /**

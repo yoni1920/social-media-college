@@ -11,17 +11,32 @@ const getAllPosts = async () => {
  * @param {string} postID
  */
 const getPostByID = async (postID) => {
-  return await postsRepository.getPostByID(postID);
+  const post = await postsRepository.getPostByID(postID);
+
+  if (!post) {
+    throw new BadRequestException("Post does not exist", { postID });
+  }
+
+  return post;
 };
 
 /**
  *
  * @param {string} postID
  * @param {z.infer<typeof updatePostSchema>} post
- * @returns {Promise<{ updatedExisting: boolean | undefined, updatedAt: Date | undefined }>}
+ * @returns {Promise<Date | undefined>}
  */
 const updatePost = async (postID, post) => {
-  return await postsRepository.updatePost(postID, post);
+  const { updatedExisting, updatedAt } = await postsRepository.updatePost(
+    postID,
+    post
+  );
+
+  if (!updatedExisting) {
+    throw new BadRequestException("Post to update does not exist", { postID });
+  }
+
+  return updatedAt;
 };
 
 /**
