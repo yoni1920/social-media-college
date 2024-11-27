@@ -8,6 +8,7 @@ import commentsController from "./comments/comments.controller.js";
 import usersController from "./users/users.controller.js";
 import { handleGeneralError } from "./middleware/general-error-handler.js";
 import { noRouteFoundHandler } from "./middleware/no-route-handler.js";
+import { setupSwagger } from "./swagger/setupSwagger.js";
 
 const initApp = async () => {
   const port = serverConfig.port;
@@ -19,6 +20,8 @@ const initApp = async () => {
   app.use("/posts", postsController);
   app.use("/comments", commentsController);
   app.use("/users", usersController);
+
+  setupSwagger(app);
 
   app.use(noRouteFoundHandler);
   app.use(handleGeneralError);
