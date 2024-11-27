@@ -23,6 +23,8 @@ router.get("/", async (req, res) => {
     ? await commentsService.getCommentsByPostID(postID)
     : await commentsService.getAllComments();
 
+  console.log(comments);
+
   res.send(comments);
 });
 
@@ -58,8 +60,14 @@ router.delete("/:commentID", async (req, res) => {
 
   const isDeleted = await commentsService.deleteComment(commentID);
 
+  if (!isDeleted) {
+    return res.status(404).send({
+      message: "Comment did not exist",
+    });
+  }
+
   res.send({
-    message: isDeleted ? "Comment deleted" : "Comment did not exist",
+    message: "Comment deleted",
     commentID,
   });
 });

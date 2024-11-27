@@ -20,4 +20,10 @@ const postSchema = new Schema(
   { timestamps: true }
 );
 
+export const POST_POPULATE_ID = {
+  path: "postID",
+  select: "_id",
+  transform: (doc, _id) => _id,
+};
+
 export const Post = model("Post", postSchema);

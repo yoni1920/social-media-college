@@ -1,0 +1,4 @@
+{
+  "testTimeout": 5000,
+  "testMatch": ["**/*.spec.js"]
+}

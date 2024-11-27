@@ -51,8 +51,14 @@ router.delete("/:postID", async (req, res) => {
 
   const isDeleted = await postsService.deletePost(postID);
 
-  res.send({
-    message: isDeleted ? "Post deleted" : "Post did not exist",
+  if (!isDeleted) {
+    return res.status(404).send({
+      message: "Post did not exist",
+    });
+  }
+
+  return res.send({
+    message: "Post deleted",
     postID,
   });
 });

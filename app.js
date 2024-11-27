@@ -9,7 +9,7 @@ import usersController from "./users/users.controller.js";
 import { handleGeneralError } from "./middleware/general-error-handler.js";
 import { noRouteFoundHandler } from "./middleware/no-route-handler.js";
 
-const main = async () => {
+const initApp = async () => {
   const port = serverConfig.port;
 
   const app = express();
@@ -39,6 +39,7 @@ const main = async () => {
 
     console.error(errorLog);
   }
-};
 
-main();
+  return app;
+};
+export default initApp;
