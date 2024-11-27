@@ -2,15 +2,11 @@ import { z } from "zod";
 import { Post } from "./post.model.js";
 import { createPostSchema } from "./dto-schema/create-post.dto.js";
 import { updatePostSchema } from "./dto-schema/update-post.dto.js";
-
-const USER_INJECT_FIELDS = {
-  field: "sender",
-  subFields: ["username"],
-};
+import { USER_POPULATE_FIELDS } from "../users/user.model.js";
 
 const getAllPosts = async () => {
   return await Post.find({})
-    .populate(USER_INJECT_FIELDS.field, USER_INJECT_FIELDS.subFields)
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
     .exec();
 };
 
@@ -20,7 +16,7 @@ const getAllPosts = async () => {
  */
 const getPostByID = async (postID) => {
   return await Post.findById(postID)
-    .populate(USER_INJECT_FIELDS.field, USER_INJECT_FIELDS.subFields)
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
     .exec();
 };
 
@@ -52,8 +48,19 @@ const updatePost = async (postID, post) => {
  */
 const getPostsBySenderID = async (senderID) => {
   return await Post.find({ sender: senderID })
-    .populate(USER_INJECT_FIELDS.field, USER_INJECT_FIELDS.subFields)
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
     .exec();
+};
+
+/**
+ *
+ * @param {string} senderID
+ * @returns {Promise<string[]>} postIDs
+ */
+const getPostIDsBySenderID = async (senderID) => {
+  const idsResult = await Post.find({ sender: senderID }).select({ postID: 1 });
+
+  return idsResult.map(({ _id: postID }) => postID);
 };
 
 /**
@@ -68,11 +75,22 @@ const createPost = async (postDTO) => {
 
 /**
  *
- * @param {string} postID
+ * @param {string} postIDs
  */
-// TODO: delete all post comments
-const deletePostByID = async (postID) => {
-  return (await Post.deleteOne({ _id: postID })).deletedCount > 0;
+const deletePostsByIDs = async (postIDs) => {
+  return (await Post.deleteMany({ _id: { $in: postIDs } })).deletedCount > 0;
+};
+
+const doesPostExist = async (postID) => {
+  return await Post.exists({ _id: postID });
+};
+
+/**
+ *
+ * @param {string} sender
+ */
+const deletePostsBySender = async (sender) => {
+  await Post.deleteMany({ sender });
 };
 
 export default {
@@ -81,5 +99,8 @@ export default {
   updatePost,
   getPostsBySenderID,
   createPost,
-  deletePostByID,
+  deletePostsByIDs,
+  doesPostExist,
+  deletePostsBySender,
+  getPostIDsBySenderID,
 };

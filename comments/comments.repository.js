@@ -2,9 +2,12 @@ import { z } from "zod";
 import { Comment } from "./comment.model.js";
 import { createCommentSchema } from "./dto-schema/create-comment.dto.js";
 import { updateCommentSchema } from "./dto-schema/update-comment.dto.js";
+import { USER_POPULATE_FIELDS } from "../users/user.model.js";
 
 const getAllComments = async () => {
-  return await Comment.find({});
+  return await Comment.find({})
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
+    .exec();
 };
 
 /**
@@ -12,15 +15,20 @@ const getAllComments = async () => {
  * @param {string} commentID
  */
 const getCommentByID = async (commentID) => {
-  return await Comment.findById(commentID);
+  return await Comment.findById(commentID)
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
+    .exec();
 };
 
 /**
  *
  * @param {string} postID
  */
-const getCommentByPostID = async (postID) => {
-  return await Comment.find({ postID });
+const getCommentsByPostID = async (postID) => {
+  return await Comment.find({ postID })
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
+    .select("-postID")
+    .exec();
 };
 
 /**
@@ -46,10 +54,10 @@ const updateComment = async (commentID, comment) => {
  *
  * @param {z.infer<typeof createCommentSchema>} commentDTO
  */
-const createComment = async (commentDTO) => {
+const createComment = async (commentDTO, session) => {
   const comment = new Comment(commentDTO);
 
-  return await comment.save();
+  return await comment.save({ session });
 };
 
 /**
@@ -60,11 +68,29 @@ const deleteCommentById = async (commentID) => {
   return (await Comment.deleteOne({ _id: commentID })).deletedCount > 0;
 };
 
+/**
+ *
+ * @param {string[]} postIDs
+ */
+const deleteCommentsByPostIDs = async (postIDs) => {
+  await Comment.deleteMany({ postID: { $in: postIDs } });
+};
+
+/**
+ *
+ * @param {string} sender
+ */
+const deleteCommentsBySender = async (sender) => {
+  await Comment.deleteMany({ sender });
+};
+
 export default {
   getAllComments,
   getCommentByID,
   updateComment,
-  getCommentByPostID,
+  getCommentsByPostID,
   createComment,
   deleteCommentById,
+  deleteCommentsByPostIDs,
+  deleteCommentsBySender,
 };

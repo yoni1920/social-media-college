@@ -1,10 +1,9 @@
 import postsRepository from "./posts.repository.js";
-import usersRepository from "../users/users.repository.js";
 import { createPostSchema } from "./dto-schema/create-post.dto.js";
 import { updatePostSchema } from "./dto-schema/update-post.dto.js";
 import { BadRequestException } from "../exceptions/bad-request-exception.js";
-import { Document } from "mongoose";
-import { Post } from "./post.model.js";
+import usersService from "../users/users.service.js";
+import commentsService from "../comments/comments.service.js";
 
 const getAllPosts = async () => {
   return await postsRepository.getAllPosts();
@@ -48,7 +47,7 @@ const updatePost = async (postID, post) => {
  * @param {string} senderID
  */
 const getPostsBySenderID = async (senderID) => {
-  const senderResult = doesPostSenderExist(senderID);
+  const senderResult = await usersService.doesUserExist(senderID);
 
   if (!senderResult) {
     return [];
@@ -60,10 +59,9 @@ const getPostsBySenderID = async (senderID) => {
 /**
  *
  * @param {string} senderID
- * @returns {Promise<boolean>} If post sender exists
  */
-const doesPostSenderExist = async (senderID) => {
-  return Boolean(await usersRepository.doesUserExist(senderID));
+const getPostIDsBySenderID = async (senderID) => {
+  return await postsRepository.getPostIDsBySenderID(senderID);
 };
 
 /**
@@ -71,6 +69,8 @@ const doesPostSenderExist = async (senderID) => {
  * @param {z.infer<typeof createPostSchema>} post
  */
 const createPost = async (post) => {
+  await usersService.verifySenderUserExists(post.sender);
+
   const { id, createdAt } = await postsRepository.createPost(post);
 
   return {
@@ -81,25 +81,34 @@ const createPost = async (post) => {
 
 /**
  *
- * @param {Document<Post>} post
+ * @param {string[]} postIDs
  */
-export const verifyCreatePostSender = async ({ sender }) => {
-  console.log(sender);
-  const senderResult = await doesPostSenderExist(sender);
+const deletePost = async (...postIDs) => {
+  await commentsService.deleteCommentsByPostIDs(...postIDs);
 
-  if (!senderResult) {
-    throw new BadRequestException("Sender does not exist", {
-      sender,
-    });
-  }
+  return await postsRepository.deletePostsByIDs(...postIDs);
 };
 
 /**
  *
  * @param {string} postID
  */
-const deletePost = async (postID) => {
-  return await postsRepository.deletePostByID(postID);
+const verifyPostExists = async (postID) => {
+  const postResult = await postsRepository.doesPostExist(postID);
+
+  if (!postResult) {
+    throw new BadRequestException("Post does not exist", {
+      postID,
+    });
+  }
+};
+
+/**
+ *
+ * @param {string} sender
+ */
+const deletePostsBySender = async (sender) => {
+  await postsRepository.deletePostsBySender(sender);
 };
 
 export default {
@@ -109,4 +118,7 @@ export default {
   getPostsBySenderID,
   createPost,
   deletePost,
+  verifyPostExists,
+  deletePostsBySender,
+  getPostIDsBySenderID,
 };

@@ -2,6 +2,8 @@ import usersRepository from "./users.repository.js";
 import { createUserSchema } from "./dto-schema/create-user.dto.js";
 import { updateUserSchema } from "./dto-schema/update-user.dto.js";
 import { BadRequestException } from "../exceptions/bad-request-exception.js";
+import postsService from "../posts/posts.service.js";
+import commentsService from "../comments/comments.service.js";
 
 const getAllUsers = async () => {
   return await usersRepository.getAllUsers();
@@ -58,7 +60,43 @@ const createUser = async (user) => {
  * @param {string} userID
  */
 const deleteUser = async (userID) => {
-  return usersRepository.deleteUserById(userID);
+  const userExists = await usersRepository.doesUserExist(userID);
+
+  if (!userExists) {
+    return false;
+  }
+
+  const postsToDelete = await postsService.getPostIDsBySenderID(userID);
+
+  await Promise.all([
+    commentsService.deleteCommentsBySender(userID),
+    postsService.deletePost(...postsToDelete),
+    usersRepository.deleteUserById(userID),
+  ]);
+
+  return true;
+};
+
+/**
+ *
+ * @param {string} userID
+ */
+const doesUserExist = async (userID) => {
+  return await usersRepository.doesUserExist(userID);
+};
+
+/**
+ *
+ * @param {string} sender
+ */
+const verifySenderUserExists = async (sender) => {
+  const userResult = await doesUserExist(sender);
+
+  if (!userResult) {
+    throw new BadRequestException("Sender does not exist", {
+      sender,
+    });
+  }
 };
 
 export default {
@@ -67,4 +105,6 @@ export default {
   updateUser,
   createUser,
   deleteUser,
+  doesUserExist,
+  verifySenderUserExists,
 };

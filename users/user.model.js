@@ -30,4 +30,9 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
+export const USER_POPULATE_FIELDS = {
+  field: "sender",
+  subFields: ["username"],
+};
+
 export const User = model("User", userSchema);

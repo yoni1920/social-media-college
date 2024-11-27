@@ -9,14 +9,16 @@ const commentSchema = new Schema(
     },
     message: {
       type: String,
-      required: true,
+      default: "",
     },
     sender: {
       type: String,
+      ref: "User",
       required: true,
     },
     postID: {
       type: String,
+      ref: "Post",
       required: true,
     },
   },

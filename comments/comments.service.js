@@ -1,6 +1,8 @@
 import commentsRepository from "./comments.repository.js";
 import { createCommentSchema } from "./dto-schema/create-comment.dto.js";
 import { updateCommentSchema } from "./dto-schema/update-comment.dto.js";
+import usersService from "../users/users.service.js";
+import postsService from "../posts/posts.service.js";
 
 const getAllComments = async () => {
   return await commentsRepository.getAllComments();
@@ -46,14 +48,19 @@ const updateComment = async (commentID, comment) => {
  * @param {string} postID
  */
 const getCommentsByPostID = async (postID) => {
-  return await commentsRepository.getCommentByPostID(postID);
+  return await commentsRepository.getCommentsByPostID(postID);
 };
 
 /**
  *
- * @param {z.infer<typeof createCommentSchema>} comment
+ * @param {z.infer<typeof createCommentSchema>} commentDTO
  */
 const createComment = async (comment) => {
+  await Promise.all([
+    usersService.verifySenderUserExists(comment.sender),
+    postsService.verifyPostExists(comment.postID),
+  ]);
+
   const { id, createdAt } = await commentsRepository.createComment(comment);
 
   return {
@@ -70,6 +77,22 @@ const deleteComment = async (commentID) => {
   return await commentsRepository.deleteCommentById(commentID);
 };
 
+/**
+ *
+ * @param {string[]} postIDs
+ */
+const deleteCommentsByPostIDs = async (...postIDs) => {
+  await commentsRepository.deleteCommentsByPostIDs(postIDs);
+};
+
+/**
+ *
+ * @param {string} sender
+ */
+const deleteCommentsBySender = async (sender) => {
+  await commentsRepository.deleteCommentsBySender(sender);
+};
+
 export default {
   getAllComments,
   getCommentByID,
@@ -77,4 +100,6 @@ export default {
   getCommentsByPostID,
   createComment,
   deleteComment,
+  deleteCommentsByPostIDs,
+  deleteCommentsBySender,
 };

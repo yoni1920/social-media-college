@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { verifyCreatePostSender } from "./posts.service.js";
 
 const postSchema = new Schema(
   {
@@ -20,12 +19,5 @@ const postSchema = new Schema(
   },
   { timestamps: true }
 );
-
-postSchema.pre("save", async function (next) {
-  const post = this;
-  await verifyCreatePostSender(post);
-
-  next();
-});
 
 export const Post = model("Post", postSchema);
