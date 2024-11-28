@@ -2,12 +2,9 @@ import { z } from "zod";
 import { Comment } from "./comment.model.js";
 import { createCommentSchema } from "./dto-schema/create-comment.dto.js";
 import { updateCommentSchema } from "./dto-schema/update-comment.dto.js";
-import { USER_POPULATE_FIELDS } from "../users/user.model.js";
 
 const getAllComments = async () => {
-  return await Comment.find({})
-    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
-    .exec();
+  return await Comment.find({});
 };
 
 /**
@@ -15,9 +12,7 @@ const getAllComments = async () => {
  * @param {string} commentID
  */
 const getCommentByID = async (commentID) => {
-  return await Comment.findById(commentID)
-    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
-    .exec();
+  return await Comment.findById(commentID);
 };
 
 /**
@@ -25,10 +20,7 @@ const getCommentByID = async (commentID) => {
  * @param {string} postID
  */
 const getCommentsByPostID = async (postID) => {
-  return await Comment.find({ postID })
-    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
-    .select("-postID")
-    .exec();
+  return await Comment.find({ postID });
 };
 
 /**

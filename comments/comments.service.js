@@ -3,6 +3,7 @@ import { createCommentSchema } from "./dto-schema/create-comment.dto.js";
 import { updateCommentSchema } from "./dto-schema/update-comment.dto.js";
 import usersService from "../users/users.service.js";
 import postsService from "../posts/posts.service.js";
+import { BadRequestException } from "../exceptions/bad-request-exception.js";
 
 const getAllComments = async () => {
   return await commentsRepository.getAllComments();
