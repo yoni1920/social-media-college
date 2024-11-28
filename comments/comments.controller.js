@@ -77,8 +77,6 @@ router.get("/", async (req, res) => {
     ? await commentsService.getCommentsByPostID(postID)
     : await commentsService.getAllComments();
 
-  console.log(comments);
-
   res.send(comments);
 });
 

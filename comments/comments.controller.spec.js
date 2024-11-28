@@ -58,7 +58,6 @@ test("Get comments by post id - pass", async () => {
   );
 
   expect(response.statusCode).toBe(200);
-  console.log(response.body);
   expect(response.body[0].postID).toBe(examplePost._id);
 });
 
