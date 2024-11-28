@@ -10,9 +10,8 @@ const apiSpec = swaggerJSDoc({
     },
   },
   apis: [
-    "./*.jsposts/posts.controller.js",
-    "./comments/comments.controller.js",
-    "./users/users.controller.js",
+    "**/*.controller.js",
+    "**/*.dto.js",
   ],
 });
 export const setupSwagger = (app) => {

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * @openapi
+ * @swagger
  * components:
  *   schemas:
  *     CreatePostDTO:
