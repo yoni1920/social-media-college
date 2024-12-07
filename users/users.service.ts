@@ -1,10 +1,10 @@
-import usersRepository from "./users.repository";
+import { hash } from "bcrypt";
+import commentsService from "../comments/comments.service";
 import { BadRequestException } from "../exceptions";
 import postsService from "../posts/posts.service";
-import commentsService from "../comments/comments.service";
-import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
-import { hash } from "bcrypt";
 import { USER_PASSWORD_SALT_ROUNDS } from "./constants";
+import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
+import usersRepository from "./users.repository";
 
 const getAllUsers = async () => {
   return await usersRepository.getAllUsers();
@@ -46,12 +46,7 @@ const createUser = async (userDTO: CreateUserDTO) => {
     password,
   };
 
-  const { _id: id, createdAt } = await usersRepository.createUser(user);
-
-  return {
-    id,
-    createdAt,
-  };
+  return await usersRepository.createUser(user);
 };
 
 const deleteUser = async (userID: string) => {

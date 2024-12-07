@@ -2,17 +2,16 @@ import { NextFunction, Request, Response } from "express";
 import { serverConfig } from "../../config";
 import { UnauthorizedException } from "../../exceptions";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { User } from "../../users/user.model";
 
 const authorizationPrefix = "Bearer";
 
 declare module "express" {
   interface Request {
-    user?: Omit<User, "password">;
+    userID?: string;
   }
 }
 
-export const validateAccessToken = (
+export const validateAccessToken = async (
   req: Request,
   _res: Response,
   next: NextFunction
@@ -34,12 +33,12 @@ export const validateAccessToken = (
   }
 
   try {
-    const { user } = jwt.verify(
+    const { userID } = jwt.verify(
       accessToken,
       serverConfig.accessTokenSecret
     ) as JwtPayload;
 
-    req.user = user;
+    req.userID = userID;
 
     next();
   } catch (error) {

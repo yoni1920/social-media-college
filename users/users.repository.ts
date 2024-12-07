@@ -42,7 +42,9 @@ const updateUser = async (
 const createUser = async (userDTO: CreateUserDTO): Promise<User> => {
   const user = new UserModel(userDTO);
 
-  return await user.save().catch((err) => handleDuplicateKeyException(err));
+  return (
+    await user.save().catch((err) => handleDuplicateKeyException(err))
+  ).toObject();
 };
 
 const deleteUserById = async (userID: string): Promise<boolean> => {
