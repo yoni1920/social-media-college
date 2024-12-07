@@ -27,10 +27,6 @@ const updateUser = async (
   };
 };
 
-/**
- *
- * @param {z.infer<typeof createUserSchema>} userDTO
- */
 const createUser = async (userDTO: CreateUserDTO) => {
   const user = new UserModel(userDTO);
 
