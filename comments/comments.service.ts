@@ -43,7 +43,9 @@ const createComment = async (comment: CreateCommentDTO) => {
     postsService.verifyPostExists(comment.postID),
   ]);
 
-  const { id, createdAt } = await commentsRepository.createComment(comment);
+  const { _id: id, createdAt } = await commentsRepository.createComment(
+    comment
+  );
 
   return {
     id,

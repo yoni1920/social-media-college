@@ -1,9 +1,10 @@
 import { Schema, model } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { BaseResource } from "../types/base-resource";
+import { BaseResource } from "../types/resources";
 
 export interface User extends BaseResource {
   username: string;
+  password: string;
   email: string;
   bio?: string;
   birthDate: Date;
@@ -19,6 +20,10 @@ const userSchema = new Schema<User>(
       type: String,
       required: true,
       unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -41,5 +46,7 @@ export const USER_POPULATE_FIELDS = {
   field: "sender",
   subFields: ["username"],
 } as const;
+
+export const USER_FIELDS_EXCEPT_PASSWORD = ["-password"];
 
 export const UserModel = model<User>("User", userSchema);

@@ -45,7 +45,7 @@ const router = express.Router();
  *         description: Bad request
  */
 router.post("/", validateBody(createUserSchema), async (req, res) => {
-  const { id, createdAt } = await usersService.createUser(req.body);
+  const { _id: id, createdAt } = await usersService.createUser(req.body);
 
   res.send({
     message: "created new user",
@@ -156,6 +156,7 @@ router.put("/:userID", validateBody(updateUserSchema), async (req, res) => {
     date: updatedAt,
   });
 });
+
 /**
  * @openapi
  * /users/{userID}:

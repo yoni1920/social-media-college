@@ -88,6 +88,7 @@ test("Update User by id - fail", async () => {
 test("Create user - pass", async () => {
   const response = await request(app).post("/users").send({
     username: "New User",
+    password: "1234",
     email: "newuser@example.com",
     birthDate: "1990-01-01",
   });

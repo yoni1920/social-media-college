@@ -52,7 +52,7 @@ const getPostIDsBySenderID = async (senderID: string): Promise<string[]> => {
 const createPost = async (post: CreatePostDTO) => {
   await usersService.verifySenderUserExists(post.sender);
 
-  const { id, createdAt } = await postsRepository.createPost(post);
+  const { _id: id, createdAt } = await postsRepository.createPost(post);
 
   return {
     id,

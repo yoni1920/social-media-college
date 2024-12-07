@@ -7,6 +7,7 @@ export const examplePost = {
 export const exampleUser = {
   _id: "Avni",
   username: "idoavni",
+  password: "1234",
   email: "3C5oB@example.com",
   bio: "King",
   birthDate: "2000-01-01",
