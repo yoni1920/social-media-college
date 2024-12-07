@@ -5,7 +5,7 @@ import { HttpException } from "./http-exception";
  * @extends Error
  */
 export class UnauthorizedException extends HttpException {
-  constructor(readonly details: string | object) {
-    super("User is unauthorized", details, 401, "UnauthorizedException");
+  constructor(readonly details: string | object, cause?: Error["stack"]) {
+    super("User is unauthorized", details, 401, "UnauthorizedException", cause);
   }
 }

@@ -8,16 +8,20 @@ const getAllUsers = async (): Promise<User[]> => {
   return await UserModel.find({}).select(USER_FIELDS_EXCEPT_PASSWORD);
 };
 
-const getUserByID = async (userID: string): Promise<User | null> => {
-  return await UserModel.findById(userID).select(USER_FIELDS_EXCEPT_PASSWORD);
+const getUserByID = async (userID: string): Promise<User | undefined> => {
+  return (
+    await UserModel.findById(userID).select(USER_FIELDS_EXCEPT_PASSWORD)
+  )?.toObject();
 };
 
-const getUserByUsername = async (username: string): Promise<User | null> => {
-  return await UserModel.findOne({ username });
+const getUserByUsername = async (
+  username: string
+): Promise<User | undefined> => {
+  return (await UserModel.findOne({ username }))?.toObject();
 };
 
-const getUserByEmail = async (email: string): Promise<User | null> => {
-  return await UserModel.findOne({ email });
+const getUserByEmail = async (email: string): Promise<User | undefined> => {
+  return (await UserModel.findOne({ email }))?.toObject();
 };
 
 const updateUser = async (

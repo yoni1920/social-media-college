@@ -1,8 +1,8 @@
-import express, { Response } from "express";
+import express from "express";
 import { validateBody } from "../middleware/body-validator";
-import { loginSchema } from "./dto-schema/login.dto";
 import authService from "./auth.service";
 import { REFRESH_TOKEN_COOKIE_KEY } from "./constants";
+import { loginSchema } from "./dto-schema/login.dto";
 
 const router = express.Router();
 
@@ -22,21 +22,32 @@ const router = express.Router();
 //   }
 // );
 
-// TODO: login
-
 router.post("/login", validateBody(loginSchema), async (req, res) => {
   const { accessToken, refreshToken } = await authService.loginUser(req.body);
 
+  // TODO: set to secure true
   res
     .cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
       httpOnly: true,
       sameSite: "none",
-      secure: true,
+      secure: false,
       maxAge: refreshToken.cookieExpiry * 1_000,
     })
     .send({ accessToken });
 });
 
 // TODO: logoff
+// router.post("/logoff", async (req, res) => {
+
+// })
+
+router.post("/refresh", async (req, res) => {
+  const refreshToken: string | undefined =
+    req.cookies?.[REFRESH_TOKEN_COOKIE_KEY];
+
+  const accessToken = await authService.refreshAccessToken(refreshToken);
+
+  res.send({ accessToken });
+});
 
 export default router;
