@@ -86,9 +86,19 @@ const verifySenderUserExists = async (sender: string) => {
   }
 };
 
+const getUserByUsername = async (username: string) => {
+  return await usersRepository.getUserByUsername(username);
+};
+
+const getUserByEmail = async (email: string) => {
+  return await usersRepository.getUserByEmail(email);
+};
+
 export default {
   getAllUsers,
   getUserByID,
+  getUserByUsername,
+  getUserByEmail,
   updateUser,
   createUser,
   deleteUser,

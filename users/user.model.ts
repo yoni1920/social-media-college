@@ -47,4 +47,6 @@ export const USER_POPULATE_FIELDS = {
   subFields: ["username"],
 } as const;
 
+export const USER_FIELDS_EXCEPT_PASSWORD = ["-password"];
+
 export const UserModel = model<User>("User", userSchema);

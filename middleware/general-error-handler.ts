@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { BadRequestException } from "../exceptions";
+import { BadRequestException, HttpException } from "../exceptions";
 
 export const handleGeneralError = (
   error: Error,
@@ -12,10 +12,10 @@ export const handleGeneralError = (
     stack: error.stack,
   });
 
-  if (error instanceof BadRequestException) {
+  if (error instanceof HttpException) {
     const { message, details } = error;
 
-    res.status(400).send({
+    res.status(error.status).send({
       message,
       details,
     });

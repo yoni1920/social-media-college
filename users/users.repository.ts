@@ -1,15 +1,23 @@
-import { User, UserModel } from "./user.model";
+import { User, USER_FIELDS_EXCEPT_PASSWORD, UserModel } from "./user.model";
 import { handleDuplicateKeyException } from "../utils/mongodb-exceptions";
 import { UpdateResourceResult } from "../types/update-resource-result.js";
 import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
 import { ResourceExistsResult } from "../types/resource-exists-result";
 
 const getAllUsers = async (): Promise<User[]> => {
-  return await UserModel.find({});
+  return await UserModel.find({}).select(USER_FIELDS_EXCEPT_PASSWORD);
 };
 
 const getUserByID = async (userID: string): Promise<User | null> => {
-  return await UserModel.findById(userID);
+  return await UserModel.findById(userID).select(USER_FIELDS_EXCEPT_PASSWORD);
+};
+
+const getUserByUsername = async (username: string): Promise<User | null> => {
+  return await UserModel.findOne({ username });
+};
+
+const getUserByEmail = async (email: string): Promise<User | null> => {
+  return await UserModel.findOne({ email });
 };
 
 const updateUser = async (
@@ -45,6 +53,8 @@ const doesUserExist = async (userID: string): Promise<ResourceExistsResult> => {
 export default {
   getAllUsers,
   getUserByID,
+  getUserByUsername,
+  getUserByEmail,
   updateUser,
   createUser,
   deleteUserById,
