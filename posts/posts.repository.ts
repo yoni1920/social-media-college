@@ -1,4 +1,5 @@
-import { UpdateResourceReturn } from "../types/update-resource-return";
+import { ResourceExistsResult } from "../types/resource-exists-result";
+import { UpdateResourceResult } from "../types/update-resource-result";
 import { USER_POPULATE_FIELDS } from "../users/user.model";
 import { CreatePostDTO, UpdatePostDTO } from "./dto-schema";
 import { Post, PostModel } from "./post.model";
@@ -18,7 +19,7 @@ const getPostByID = async (postID: string): Promise<Post | null> => {
 const updatePost = async (
   postID: string,
   post: UpdatePostDTO
-): Promise<UpdateResourceReturn> => {
+): Promise<UpdateResourceResult> => {
   const { lastErrorObject, value: updatedPost } =
     await PostModel.findByIdAndUpdate(postID, post, {
       includeResultMetadata: true,
@@ -45,23 +46,23 @@ const getPostIDsBySenderID = async (senderID: string): Promise<string[]> => {
   return idsResult.map(({ _id: postID }) => postID);
 };
 
-const createPost = async (postDTO: CreatePostDTO) => {
+const createPost = async (postDTO: CreatePostDTO): Promise<Post> => {
   const post = new PostModel(postDTO);
 
   return await post.save();
 };
 
-const deletePostsByIDs = async (postIDs: string[]) => {
+const deletePostsByIDs = async (postIDs: string[]): Promise<boolean> => {
   return (
     (await PostModel.deleteMany({ _id: { $in: postIDs } })).deletedCount > 0
   );
 };
 
-const doesPostExist = async (postID: string) => {
+const doesPostExist = async (postID: string): Promise<ResourceExistsResult> => {
   return await PostModel.exists({ _id: postID });
 };
 
-const deletePostsBySender = async (senderID: string) => {
+const deletePostsBySender = async (senderID: string): Promise<void> => {
   await PostModel.deleteMany({ sender: senderID });
 };
 

@@ -1,4 +1,4 @@
-export type UpdateResourceReturn = {
+export type UpdateResourceResult = {
   updatedExisting?: boolean;
   updatedAt?: Date;
 };

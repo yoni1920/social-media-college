@@ -1,7 +1,8 @@
 import { User, UserModel } from "./user.model";
 import { handleDuplicateKeyException } from "../utils/mongodb-exceptions";
-import { UpdateResourceReturn } from "../types/update-resource-return.js";
+import { UpdateResourceResult } from "../types/update-resource-result.js";
 import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
+import { ResourceExistsResult } from "../types/resource-exists-result";
 
 const getAllUsers = async (): Promise<User[]> => {
   return await UserModel.find({});
@@ -14,7 +15,7 @@ const getUserByID = async (userID: string): Promise<User | null> => {
 const updateUser = async (
   userID: string,
   user: UpdateUserDTO
-): Promise<UpdateResourceReturn> => {
+): Promise<UpdateResourceResult> => {
   const { lastErrorObject, value: updatedPost } =
     await UserModel.findByIdAndUpdate(userID, user, {
       includeResultMetadata: true,
@@ -27,17 +28,17 @@ const updateUser = async (
   };
 };
 
-const createUser = async (userDTO: CreateUserDTO) => {
+const createUser = async (userDTO: CreateUserDTO): Promise<User> => {
   const user = new UserModel(userDTO);
 
   return await user.save().catch((err) => handleDuplicateKeyException(err));
 };
 
-const deleteUserById = async (userID: string) => {
+const deleteUserById = async (userID: string): Promise<boolean> => {
   return (await UserModel.deleteOne({ _id: userID })).deletedCount > 0;
 };
 
-const doesUserExist = async (userID: string) => {
+const doesUserExist = async (userID: string): Promise<ResourceExistsResult> => {
   return await UserModel.exists({ _id: userID });
 };
 
