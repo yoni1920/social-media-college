@@ -3,6 +3,8 @@ import { BadRequestException } from "../exceptions";
 import postsService from "../posts/posts.service";
 import commentsService from "../comments/comments.service";
 import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
+import { hash } from "bcrypt";
+import { USER_PASSWORD_SALT_ROUNDS } from "./constants";
 
 const getAllUsers = async () => {
   return await usersRepository.getAllUsers();
@@ -34,8 +36,17 @@ const updateUser = async (
   return updatedAt;
 };
 
-const createUser = async (user: CreateUserDTO) => {
-  const { id, createdAt } = await usersRepository.createUser(user);
+const createUser = async (userDTO: CreateUserDTO) => {
+  const { password: userPassword, ...otherUserData } = userDTO;
+
+  const password = await hash(userPassword, USER_PASSWORD_SALT_ROUNDS);
+
+  const user: CreateUserDTO = {
+    ...otherUserData,
+    password,
+  };
+
+  const { _id: id, createdAt } = await usersRepository.createUser(user);
 
   return {
     id,

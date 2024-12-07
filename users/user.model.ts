@@ -4,6 +4,7 @@ import { BaseResource } from "../types/base-resource";
 
 export interface User extends BaseResource {
   username: string;
+  password: string;
   email: string;
   bio?: string;
   birthDate: Date;
@@ -19,6 +20,10 @@ const userSchema = new Schema<User>(
       type: String,
       required: true,
       unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     email: {
       type: String,
