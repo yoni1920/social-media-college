@@ -54,9 +54,7 @@ const refreshAccessToken = async (
 
     const user = await usersService.getUserByID(userID);
 
-    const accessToken = jwt.sign(user, serverConfig.accessTokenSecret, {
-      expiresIn: ExpirySecs.TEN_MINUTES,
-    });
+    const accessToken = signAccessToken(user);
 
     return accessToken;
   } catch (error) {
@@ -77,9 +75,7 @@ const getUserByCredentials = async ({
 };
 
 const buildLoginTokens = (user: Omit<User, "password">): LoginTokens => {
-  const accessToken = jwt.sign(user, serverConfig.accessTokenSecret, {
-    expiresIn: ExpirySecs.TEN_MINUTES,
-  });
+  const accessToken = signAccessToken(user);
 
   const refreshToken = jwt.sign(
     { userID: user._id },
@@ -96,6 +92,12 @@ const buildLoginTokens = (user: Omit<User, "password">): LoginTokens => {
       cookieExpiry: ExpirySecs.ONE_DAY,
     },
   };
+};
+
+const signAccessToken = (user: Omit<User, "password">): string => {
+  return jwt.sign({ user }, serverConfig.accessTokenSecret, {
+    expiresIn: ExpirySecs.TEN_MINUTES,
+  });
 };
 
 export default {

@@ -1,4 +1,4 @@
-import { UpdateResourceResult } from "../types/update-resource-result";
+import { UpdateResourceResult } from "../types/resources";
 import { Comment, CommentModel } from "./comment.model";
 import { CreateCommentDTO, UpdateCommentDTO } from "./dto-schema";
 

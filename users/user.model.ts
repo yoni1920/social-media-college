@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { BaseResource } from "../types/base-resource";
+import { BaseResource } from "../types/resources";
 
 export interface User extends BaseResource {
   username: string;

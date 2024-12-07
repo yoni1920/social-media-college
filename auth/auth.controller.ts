@@ -1,10 +1,11 @@
-import express from "express";
+import { Router, Request, Response } from "express";
 import { validateBody } from "../middleware/body-validator";
 import authService from "./auth.service";
 import { REFRESH_TOKEN_COOKIE_KEY } from "./constants";
-import { loginSchema } from "./dto-schema/login.dto";
+import { loginSchema } from "./dto-schema";
+import { validateAccessToken } from "./middleware";
 
-const router = express.Router();
+const router = Router();
 
 // TODO: registration
 
@@ -36,10 +37,18 @@ router.post("/login", validateBody(loginSchema), async (req, res) => {
     .send({ accessToken });
 });
 
-// TODO: logoff
-// router.post("/logoff", async (req, res) => {
+router.post(
+  "/logout",
+  validateAccessToken,
+  async (req: Request, res: Response) => {
+    const userID = req.user?._id;
 
-// })
+    res.clearCookie(REFRESH_TOKEN_COOKIE_KEY).send({
+      message: "User logged off",
+      userID,
+    });
+  }
+);
 
 router.post("/refresh", async (req, res) => {
   const refreshToken: string | undefined =

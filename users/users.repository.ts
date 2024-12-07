@@ -1,8 +1,7 @@
 import { User, USER_FIELDS_EXCEPT_PASSWORD, UserModel } from "./user.model";
 import { handleDuplicateKeyException } from "../utils/mongodb-exceptions";
-import { UpdateResourceResult } from "../types/update-resource-result.js";
 import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
-import { ResourceExistsResult } from "../types/resource-exists-result";
+import { ResourceExistsResult, UpdateResourceResult } from "../types/resources";
 
 const getAllUsers = async (): Promise<User[]> => {
   return await UserModel.find({}).select(USER_FIELDS_EXCEPT_PASSWORD);
