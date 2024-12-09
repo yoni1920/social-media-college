@@ -5,5 +5,5 @@ export const noRouteFoundHandler = (
   res: Response,
   _next: NextFunction
 ) => {
-  res.status(404).send("Sorry can't find that!");
+  res.status(404).send({ message: "Sorry can't find that!" });
 };

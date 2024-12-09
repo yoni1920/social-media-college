@@ -118,3 +118,41 @@ test("Create user - pass", async () => {
   expect(response.statusCode).toBe(200);
   expect(response.body.message).toBe("created new user");
 });
+
+test("Create duplicate username - fail", async () => {
+  const { username: _, email: __, ...otherData } = exampleNewUser;
+
+  const newUser = {
+    ...otherData,
+    email: "12345@gmail.com",
+    username: adminUser.username,
+  };
+
+  console.log(newUser);
+
+  const response = await request(app)
+    .post("/users")
+    .set(baseHeaders)
+    .send(newUser);
+
+  expect(response.statusCode).toBe(400);
+  expect(response.body.message).toBe("username already exists");
+});
+
+test("Create duplicate email - fail", async () => {
+  const { email: _, username: __, ...otherData } = exampleNewUser;
+
+  const newUser = {
+    ...otherData,
+    username: "12331231234",
+    email: adminUser.email,
+  };
+
+  const response = await request(app)
+    .post("/users")
+    .set(baseHeaders)
+    .send(newUser);
+
+  expect(response.statusCode).toBe(400);
+  expect(response.body.message).toBe("email already exists");
+});

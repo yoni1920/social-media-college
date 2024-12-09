@@ -10,6 +10,8 @@ const router = express.Router();
  * /posts/:
  *   post:
  *     description: Create new post
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -60,6 +62,8 @@ router.post("/", validateBody(createPostSchema), async (req, res) => {
  * /posts/:
  *   get:
  *     description: Get all posts
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: senderID
  *         in: query
@@ -88,6 +92,8 @@ router.get("/", async (req, res) => {
  * /posts/{postID}:
  *   get:
  *     description: Get post by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: postID
  *         in: path
@@ -112,6 +118,8 @@ router.get("/:postID", async (req, res) => {
  * /posts/{postID}:
  *   put:
  *     description: Update post by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: postID
  *         in: path
@@ -154,6 +162,8 @@ router.put("/:postID", validateBody(updatePostSchema), async (req, res) => {
  * /posts/{postID}:
  *   delete:
  *     description: Delete post by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: postID
  *         in: path

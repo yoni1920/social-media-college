@@ -9,6 +9,20 @@ const apiSpec = swaggerJSDoc({
       title: "Social Media College API",
       version: "1.0.0",
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
   apis: ["**/*.controller.ts", "**/*.dto.ts"],
 });

@@ -10,6 +10,8 @@ const router = express.Router();
  * /comments/:
  *   post:
  *     description: Create new comment
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -54,6 +56,8 @@ router.post("/", validateBody(createCommentSchema), async (req, res) => {
  * /comments/:
  *   get:
  *     description: Get all comments
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: postID
  *         in: query
@@ -84,6 +88,8 @@ router.get("/", async (req, res) => {
  * /comments/{commentID}:
  *   get:
  *     description: Get comment by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: commentID
  *         in: path
@@ -110,6 +116,8 @@ router.get("/:commentID", async (req, res) => {
  * /comments/{commentID}:
  *   put:
  *     description: Update comment by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: commentID
  *         in: path
@@ -161,6 +169,8 @@ router.put(
  * /comments/{commentID}:
  *   delete:
  *     description: Delete comment by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: commentID
  *         in: path

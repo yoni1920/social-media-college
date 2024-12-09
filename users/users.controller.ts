@@ -10,6 +10,8 @@ const router = express.Router();
  * /users/:
  *   post:
  *     description: Create new user
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -18,6 +20,7 @@ const router = express.Router();
  *            type: object
  *            required:
  *              - username
+ *              - password
  *              - email
  *              - birthDate
  *              - bio
@@ -59,11 +62,15 @@ router.post("/", validateBody(createUserSchema), async (req, res) => {
  * /users/:
  *   get:
  *     description: Get all users
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Returns an array of users
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized user
  */
 router.get("/", async (_req, res) => {
   const users = await usersService.getAllUsers();
@@ -76,6 +83,8 @@ router.get("/", async (_req, res) => {
  * /users/{userID}:
  *   get:
  *     description: Get user by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: userID
  *         in: path
@@ -87,6 +96,8 @@ router.get("/", async (_req, res) => {
  *         description: Returns an array of users
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized user
  */
 router.get("/:userID", async (req, res) => {
   const userID = req.params.userID;
@@ -100,6 +111,8 @@ router.get("/:userID", async (req, res) => {
  * /users/{userID}:
  *   put:
  *     description: Update user by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: userID
  *         in: path
@@ -143,6 +156,8 @@ router.get("/:userID", async (req, res) => {
  *                type: string
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized user
  */
 router.put("/:userID", validateBody(updateUserSchema), async (req, res) => {
   const userID = req.params.userID;
@@ -162,6 +177,8 @@ router.put("/:userID", validateBody(updateUserSchema), async (req, res) => {
  * /users/{userID}:
  *   delete:
  *     description: Delete user by id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: userID
  *         in: path
@@ -173,6 +190,8 @@ router.put("/:userID", validateBody(updateUserSchema), async (req, res) => {
  *         description: User successfully deleted
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized user
  */
 router.delete("/:userID", async (req, res) => {
   const userID = req.params.userID;

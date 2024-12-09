@@ -76,10 +76,6 @@ const verifyPostExists = async (postID: string) => {
   }
 };
 
-const deletePostsBySender = async (senderID: string) => {
-  await postsRepository.deletePostsBySender(senderID);
-};
-
 export default {
   getAllPosts,
   getPostByID,
@@ -88,6 +84,5 @@ export default {
   createPost,
   deletePost,
   verifyPostExists,
-  deletePostsBySender,
   getPostIDsBySenderID,
 };
