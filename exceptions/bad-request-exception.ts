@@ -1,15 +1,15 @@
+import { HttpException } from "./http-exception";
+
 /**
  * Class representing BadRequest http exception.
  * @extends Error
  */
-export class BadRequestException extends Error {
+export class BadRequestException extends HttpException {
   constructor(
     message: string,
-    readonly details: string | object,
+    details: string | object,
     cause?: Error["stack"]
   ) {
-    super(message, { cause });
-
-    this.name = "BadRequestException";
+    super(message, details, 400, "BadRequestException", cause);
   }
 }

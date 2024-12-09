@@ -1,5 +1,4 @@
-import { ResourceExistsResult } from "../types/resource-exists-result";
-import { UpdateResourceResult } from "../types/update-resource-result";
+import { UpdateResourceResult, ResourceExistsResult } from "../types/resources";
 import { USER_POPULATE_FIELDS } from "../users/user.model";
 import { CreatePostDTO, UpdatePostDTO } from "./dto-schema";
 import { Post, PostModel } from "./post.model";
@@ -43,7 +42,7 @@ const getPostIDsBySenderID = async (senderID: string): Promise<string[]> => {
     postID: 1,
   });
 
-  return idsResult.map(({ _id: postID }) => postID);
+  return idsResult.map(({ _id: postID }) => postID) as string[];
 };
 
 const createPost = async (postDTO: CreatePostDTO): Promise<Post> => {

@@ -1,0 +1,1 @@
+export const INVALID_LOGIN_DELAY_MS = 750;
