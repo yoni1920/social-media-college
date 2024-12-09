@@ -163,8 +163,6 @@ test("refresh invalid user on refresh token - fail", async () => {
   );
 });
 
-// TODO: register 200 OK
-
 test("logout - pass", async () => {
   const { accessToken } = loginTokens;
 
