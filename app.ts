@@ -10,6 +10,7 @@ import { handleGeneralError } from "./middleware/general-error-handler";
 import { noRouteFoundHandler } from "./middleware/no-route-handler";
 import { setupSwagger } from "./swagger/setupSwagger";
 import cookieParser from "cookie-parser";
+import { validateAccessToken } from "./auth/middleware";
 
 const initApp = async () => {
   const port = serverConfig.port;
@@ -19,9 +20,9 @@ const initApp = async () => {
   app.use(bodyParser.json());
   app.use(cookieParser());
 
-  app.use("/posts", postsController);
-  app.use("/comments", commentsController);
-  app.use("/users", usersController);
+  app.use("/posts", validateAccessToken, postsController);
+  app.use("/comments", validateAccessToken, commentsController);
+  app.use("/users", validateAccessToken, usersController);
   app.use("/auth", authController);
 
   setupSwagger(app);

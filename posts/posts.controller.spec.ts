@@ -3,15 +3,24 @@ import mongoose from "mongoose";
 import request from "supertest";
 import initApp from "../app";
 import { UserModel } from "../users/user.model";
-import { examplePost, exampleUser } from "../utils/example-data";
-import { flushCollections } from "../utils/flush-database";
+import {
+  flushCollections,
+  examplePost,
+  exampleUser,
+  getAuthHeader,
+} from "../utils/tests";
 import { PostModel } from "./post.model";
+import authService from "../auth/auth.service";
 
 let app: Express;
+let baseHeaders: Record<string, string>;
 
 beforeAll(async () => {
   await initApp().then(async (appInstance) => {
     app = appInstance;
+    const { accessToken } = authService.buildLoginTokens(exampleUser._id);
+    baseHeaders = getAuthHeader(accessToken);
+
     await flushCollections();
     await UserModel.create(exampleUser);
   });
@@ -28,37 +37,43 @@ afterAll(async () => {
 });
 
 test("Get Post by id - pass", async () => {
-  const response = await request(app).get(`/posts/${examplePost._id}`);
+  const response = await request(app)
+    .get(`/posts/${examplePost._id}`)
+    .set(baseHeaders);
 
   expect(response.statusCode).toBe(200);
   expect(response.body._id).toBe(examplePost._id);
 });
 
 test("Get Post by id - fail", async () => {
-  const response = await request(app).get(`/posts/123`);
+  const response = await request(app).get(`/posts/123`).set(baseHeaders);
 
   expect(response.statusCode).toBe(400);
 });
 
 test("Get all posts - pass", async () => {
-  const response = await request(app).get("/posts");
+  const response = await request(app).get("/posts").set(baseHeaders);
 
   expect(response.statusCode).toBe(200);
   expect(response.body[0]._id).toBe(examplePost._id);
 });
 
 test("Delete Post by id - pass", async () => {
-  const response = await request(app).delete(`/posts/${examplePost._id}`);
+  const response = await request(app)
+    .delete(`/posts/${examplePost._id}`)
+    .set(baseHeaders);
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app).get(`/posts/${examplePost._id}`);
+  const response2 = await request(app)
+    .get(`/posts/${examplePost._id}`)
+    .set(baseHeaders);
 
   expect(response2.statusCode).toBe(400);
 });
 
 test("Delete Post by id - fail", async () => {
-  const response = await request(app).delete(`/posts/123`);
+  const response = await request(app).delete(`/posts/123`).set(baseHeaders);
 
   expect(response.statusCode).toBe(404);
   expect(response.body.message).toBe("Post did not exist");
@@ -67,11 +82,14 @@ test("Delete Post by id - fail", async () => {
 test("Update Post by id - pass", async () => {
   const response = await request(app)
     .put(`/posts/${examplePost._id}`)
+    .set(baseHeaders)
     .send({ message: "I am Avni" });
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app).get(`/posts/${examplePost._id}`);
+  const response2 = await request(app)
+    .get(`/posts/${examplePost._id}`)
+    .set(baseHeaders);
 
   expect(response2.statusCode).toBe(200);
 
@@ -81,6 +99,7 @@ test("Update Post by id - pass", async () => {
 test("Update Post by id - fail", async () => {
   const response = await request(app)
     .put(`/posts/123`)
+    .set(baseHeaders)
     .send({ message: "I am Avni" });
 
   expect(response.statusCode).toBe(400);
@@ -90,6 +109,7 @@ test("Update Post by id - fail", async () => {
 test("Create post - pass", async () => {
   const response = await request(app)
     .post("/posts")
+    .set(baseHeaders)
     .send({ message: "I am Avni", sender: examplePost.sender });
 
   expect(response.statusCode).toBe(200);

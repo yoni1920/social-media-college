@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { serverConfig } from "../../config";
 import { UnauthorizedException } from "../../exceptions";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import usersService from "../../users/users.service";
 
 const authorizationPrefix = "Bearer";
 
@@ -38,10 +39,22 @@ export const validateAccessToken = async (
       serverConfig.accessTokenSecret
     ) as JwtPayload;
 
+    const userResult = await usersService.doesUserExist(userID);
+
+    if (!userResult) {
+      throw new UnauthorizedException(
+        "Invalid Refresh Token User Identification"
+      );
+    }
+
     req.userID = userID;
 
     next();
   } catch (error) {
+    if (error instanceof UnauthorizedException) {
+      throw error;
+    }
+
     throw new UnauthorizedException(
       "Invalid access token",
       (error as Error).stack

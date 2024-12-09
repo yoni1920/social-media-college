@@ -62,6 +62,10 @@ const refreshAccessToken = async (
 
     return generateAccessToken(userResult._id);
   } catch (error) {
+    if (error instanceof UnauthorizedException) {
+      throw error;
+    }
+
     throw new UnauthorizedException(
       "Invalid refresh token",
       (error as Error).stack
