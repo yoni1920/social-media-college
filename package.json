@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --forceExit --runInBand",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --forceExit --runInBand --coverage",
     "start:dev": "nodemon -r dotenv/config main.ts",
     "start": "tsc && node --env-file=.env dist/main.js"
   },

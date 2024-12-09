@@ -58,6 +58,24 @@ test("Get all posts - pass", async () => {
   expect(response.body[0]._id).toBe(examplePost._id);
 });
 
+test("Get all posts by sender - pass", async () => {
+  const response = await request(app)
+    .get(`/posts?senderID=${examplePost.sender}`)
+    .set(baseHeaders);
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body[0]._id).toBe(examplePost._id);
+});
+
+test("Get all posts by sender - fail", async () => {
+  const response = await request(app)
+    .get(`/posts?senderID=avnizzzz`)
+    .set(baseHeaders);
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body.length).toBe(0);
+});
+
 test("Delete Post by id - pass", async () => {
   const response = await request(app)
     .delete(`/posts/${examplePost._id}`)

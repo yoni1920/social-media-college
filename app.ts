@@ -47,6 +47,8 @@ const initApp = async () => {
     };
 
     console.error(errorLog);
+
+    process.exit(1);
   }
 
   return app;
