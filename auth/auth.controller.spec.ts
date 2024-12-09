@@ -37,8 +37,6 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-// TODO: login, without password
-
 test("login with username - pass", async () => {
   const response = await request(app).post("/auth/login").send({
     username: exampleUser.username,
