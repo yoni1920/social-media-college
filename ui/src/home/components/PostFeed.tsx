@@ -1,5 +1,9 @@
-import { Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 export const PostFeed = () => {
-  return <Typography>Welcome to the app!!</Typography>;
+  return (
+    <Stack>
+      <Typography>hello</Typography>
+    </Stack>
+  );
 };

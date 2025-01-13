@@ -8,6 +8,7 @@ import {
   RegistrationFields,
 } from "../types/registration-fields";
 import { CredentialInput } from "./CredentialInput";
+import { AuthCard } from "./AuthCard";
 
 const initialRegistrationFields: RegistrationFields = {
   username: "",
@@ -157,90 +158,96 @@ export const Registration = () => {
   };
 
   return (
-    <Stack gap={4} my={4} alignItems={"center"}>
-      <AppTitleLogo />
-      <Typography textAlign={"center"} fontSize={"large"} fontWeight={"light"}>
-        Welcome, Register your information to get started
-      </Typography>
-      <form
-        onSubmit={onSubmit}
-        style={{
-          width: "100%",
-        }}
-      >
-        <Stack alignItems={"center"} gap={3}>
-          <Stack alignItems={"center"} gap={2} width={"100%"}>
-            <CredentialInput
-              required
-              variant="filled"
-              value={registrationFields.username}
-              onChange={onRegistrationTextFieldChange("username")}
-              label="Username"
-              error={Boolean(registrationFieldErrors.username)}
-              helperText={registrationFieldErrors.username}
-            />
+    <AuthCard>
+      <Stack gap={4} my={4} alignItems={"center"}>
+        <AppTitleLogo />
+        <Typography
+          textAlign={"center"}
+          fontSize={"large"}
+          fontWeight={"light"}
+        >
+          Welcome, Register your information to get started
+        </Typography>
+        <form
+          onSubmit={onSubmit}
+          style={{
+            width: "100%",
+          }}
+        >
+          <Stack alignItems={"center"} gap={3}>
+            <Stack alignItems={"center"} gap={2} width={"100%"}>
+              <CredentialInput
+                required
+                variant="filled"
+                value={registrationFields.username}
+                onChange={onRegistrationTextFieldChange("username")}
+                label="Username"
+                error={Boolean(registrationFieldErrors.username)}
+                helperText={registrationFieldErrors.username}
+              />
 
-            <CredentialInput
-              required
-              variant="filled"
-              value={registrationFields.email}
-              onChange={onRegistrationTextFieldChange("email")}
-              label="Email Address"
-              error={Boolean(registrationFieldErrors.email)}
-              helperText={registrationFieldErrors.email}
-            />
+              <CredentialInput
+                required
+                variant="filled"
+                value={registrationFields.email}
+                onChange={onRegistrationTextFieldChange("email")}
+                label="Email Address"
+                error={Boolean(registrationFieldErrors.email)}
+                helperText={registrationFieldErrors.email}
+              />
 
-            <CredentialInput
-              required
-              variant="filled"
-              value={registrationFields.name}
-              onChange={onRegistrationTextFieldChange("name")}
-              label="Name"
-              error={Boolean(registrationFieldErrors.name)}
-              helperText={registrationFieldErrors.name}
-            />
+              <CredentialInput
+                required
+                variant="filled"
+                value={registrationFields.name}
+                onChange={onRegistrationTextFieldChange("name")}
+                label="Name"
+                error={Boolean(registrationFieldErrors.name)}
+                helperText={registrationFieldErrors.name}
+              />
 
-            <CredentialInput
-              type="password"
-              required
-              variant="filled"
-              value={registrationFields.password}
-              onChange={onPasswordChange}
-              label="Password"
-              error={Boolean(registrationFieldErrors.password)}
-              helperText={registrationFieldErrors.password}
-            />
+              <CredentialInput
+                type="password"
+                required
+                variant="filled"
+                value={registrationFields.password}
+                onChange={onPasswordChange}
+                label="Password"
+                error={Boolean(registrationFieldErrors.password)}
+                helperText={registrationFieldErrors.password}
+              />
 
-            <CredentialInput
-              type="password"
-              required
-              variant="filled"
-              value={registrationFields.confirmPassword}
-              onChange={onConfirmPasswordChange}
-              label="Confirm Password"
-              error={Boolean(registrationFieldErrors.confirmPassword)}
-              helperText={registrationFieldErrors.confirmPassword}
-            />
+              <CredentialInput
+                type="password"
+                required
+                variant="filled"
+                value={registrationFields.confirmPassword}
+                onChange={onConfirmPasswordChange}
+                label="Confirm Password"
+                error={Boolean(registrationFieldErrors.confirmPassword)}
+                helperText={registrationFieldErrors.confirmPassword}
+              />
 
-            <DatePicker
-              disableFuture
-              format="DD/MM/YYYY"
-              label="Birthdate"
-              onChange={onBirthdateChange}
-              value={dayjs(registrationFields.birthDate)}
-            />
+              <DatePicker
+                disableFuture
+                format="DD/MM/YYYY"
+                label="Birthdate"
+                onChange={onBirthdateChange}
+                value={dayjs(registrationFields.birthDate)}
+              />
+            </Stack>
+
+            <Button
+              type="submit"
+              variant="outlined"
+              size="large"
+              disabled={Object.keys(registrationFieldErrors).length > 0}
+            >
+              Submit
+            </Button>
           </Stack>
-
-          <Button
-            type="submit"
-            variant="outlined"
-            size="large"
-            disabled={Object.keys(registrationFieldErrors).length > 0}
-          >
-            Submit
-          </Button>
-        </Stack>
-      </form>
-    </Stack>
+        </form>
+      </Stack>
+    </AuthCard>
   );
 };

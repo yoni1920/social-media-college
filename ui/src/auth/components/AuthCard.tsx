@@ -1,8 +1,7 @@
 import { Paper } from "@mui/material";
-import { SignIn } from "./SignIn";
-import { Registration } from "./Registration";
+import { PropsWithChildren } from "react";
 
-export const Authentication = () => {
+export const AuthCard = ({ children }: PropsWithChildren) => {
   return (
     <Paper
       elevation={4}
@@ -11,8 +10,7 @@ export const Authentication = () => {
         width: "600px",
       }}
     >
-      {/* <SignIn /> */}
-      <Registration />
+      {children}
     </Paper>
   );
 };
