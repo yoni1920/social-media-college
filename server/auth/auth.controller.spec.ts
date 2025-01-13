@@ -1,4 +1,4 @@
-import { Express } from "express";
+import { Express, raw } from "express";
 import mongoose from "mongoose";
 import request, { Response } from "supertest";
 import initApp from "../app";
@@ -10,7 +10,7 @@ import {
   flushCollections,
   getAuthHeader,
 } from "../utils/tests";
-import { REFRESH_TOKEN_COOKIE_KEY } from "./constants";
+import { ACCESS_TOKEN_COOKIE_KEY, REFRESH_TOKEN_COOKIE_KEY } from "./constants";
 import { LoginTokens } from "./types";
 import authService from "./auth.service";
 import { serverConfig } from "../config";
@@ -46,7 +46,7 @@ test("login with username - pass", async () => {
   expect(response.statusCode).toBe(200);
   expect(response.body.accessToken).toBeDefined();
 
-  validateRefreshTokenCookie(response);
+  validateTokenCookies(response);
 });
 
 test("login with email - pass", async () => {
@@ -58,7 +58,7 @@ test("login with email - pass", async () => {
   expect(response.statusCode).toBe(200);
   expect(response.body.accessToken).toBeDefined();
 
-  validateRefreshTokenCookie(response);
+  validateTokenCookies(response);
 });
 
 test("login email does not exist - fail", async () => {
@@ -231,17 +231,25 @@ test("registration - pass", async () => {
   expect(response.statusCode).toBe(200);
   expect(response.body.user).toBeDefined();
   expect(response.body.accessToken).toBeDefined();
+
+  validateTokenCookies(response);
 });
 
-const validateRefreshTokenCookie = (response: Response) => {
+const validateTokenCookies = (response: Response) => {
   const rawCookie = response.get("Set-Cookie");
   expect(rawCookie).toBeDefined();
 
-  // const includesRefreshToken = (rawCookie as string[])[0].startsWith(
-  //   REFRESH_TOKEN_COOKIE_KEY
-  // );
+  const tokenCookies = rawCookie as string[];
+  expect(tokenCookies.length).toBe(2);
 
-  // expect(includesRefreshToken).toBeTruthy();
+  const includesAccessToken = tokenCookies.some((cookie) =>
+    cookie.startsWith(ACCESS_TOKEN_COOKIE_KEY)
+  );
 
-  expect(true).toBeTruthy();
+  const includesRefreshToken = tokenCookies.some((cookie) =>
+    cookie.startsWith(REFRESH_TOKEN_COOKIE_KEY)
+  );
+
+  expect(includesAccessToken).toBeTruthy();
+  expect(includesRefreshToken).toBeTruthy();
 };
