@@ -2,6 +2,7 @@ import { User, USER_FIELDS_EXCEPT_PASSWORD, UserModel } from "./user.model";
 import { handleDuplicateKeyException } from "../utils/mongodb-exceptions";
 import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
 import { ResourceExistsResult, UpdateResourceResult } from "../types/resources";
+import { UserReturnDTO } from "./dto-schema/user-return-dto";
 
 const getAllUsers = async (): Promise<User[]> => {
   return await UserModel.find({}).select(USER_FIELDS_EXCEPT_PASSWORD);
@@ -27,7 +28,7 @@ const updateUser = async (
   userID: string,
   user: UpdateUserDTO
 ): Promise<UpdateResourceResult> => {
-  const { lastErrorObject, value: updatedPost } =
+  const { lastErrorObject, value: updatedUser } =
     await UserModel.findByIdAndUpdate(userID, user, {
       includeResultMetadata: true,
       new: true,
@@ -35,16 +36,18 @@ const updateUser = async (
 
   return {
     updatedExisting: lastErrorObject?.updatedExisting,
-    updatedAt: updatedPost?.updatedAt,
+    updatedAt: updatedUser?.updatedAt,
   };
 };
 
-const createUser = async (userDTO: CreateUserDTO): Promise<User> => {
+const createUser = async (userDTO: CreateUserDTO): Promise<UserReturnDTO> => {
   const user = new UserModel(userDTO);
 
-  return (
+  const newUser = (
     await user.save().catch((err) => handleDuplicateKeyException(err))
   ).toObject();
+
+  return convertToUserReturnDTO(newUser);
 };
 
 const deleteUserById = async (userID: string): Promise<boolean> => {
@@ -54,6 +57,11 @@ const deleteUserById = async (userID: string): Promise<boolean> => {
 const doesUserExist = async (userID: string): Promise<ResourceExistsResult> => {
   return await UserModel.exists({ _id: userID });
 };
+
+const convertToUserReturnDTO = ({
+  password,
+  ...otherUserFields
+}: User): UserReturnDTO => ({ ...otherUserFields });
 
 export default {
   getAllUsers,

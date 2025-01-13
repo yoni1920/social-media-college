@@ -19,7 +19,7 @@ beforeAll(async () => {
   await initApp().then(async (appInstance) => {
     app = appInstance;
     const { accessToken } = authService.buildLoginTokens(adminUser._id);
-    baseHeaders = getAuthHeader(accessToken);
+    baseHeaders = getAuthHeader(accessToken.token);
 
     await flushCollections();
 

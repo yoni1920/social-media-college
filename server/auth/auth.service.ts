@@ -14,7 +14,9 @@ const invalidCredentialsError = new UnauthorizedException(
   "User credentials do not match"
 );
 
-const loginUser = async (userCredentials: LoginDTO): Promise<LoginTokens> => {
+const loginUser = async (
+  userCredentials: LoginDTO
+): Promise<{ user: User; tokens: LoginTokens }> => {
   const user = await getUserByCredentials(userCredentials);
 
   if (!user) {
@@ -23,7 +25,7 @@ const loginUser = async (userCredentials: LoginDTO): Promise<LoginTokens> => {
     throw invalidCredentialsError;
   }
 
-  const { password: hashedPassword, _id: userID } = user;
+  const { password: hashedPassword, _id: userID, ...otherUserFields } = user;
 
   const isPasswordValid = await compare(
     userCredentials.password,
@@ -36,12 +38,15 @@ const loginUser = async (userCredentials: LoginDTO): Promise<LoginTokens> => {
     throw invalidCredentialsError;
   }
 
-  return buildLoginTokens(userID);
+  return {
+    user: { _id: userID, ...otherUserFields } as User,
+    tokens: buildLoginTokens(userID),
+  };
 };
 
 const refreshAccessToken = async (
   refreshToken: string | undefined
-): Promise<string> => {
+): Promise<LoginTokens["accessToken"]> => {
   if (!refreshToken) {
     throw new UnauthorizedException("Missing refresh token");
   }
@@ -98,10 +103,15 @@ const buildLoginTokens = (userID: string): LoginTokens => {
   };
 };
 
-const generateAccessToken = (userID: string): string => {
-  return jwt.sign({ userID }, serverConfig.accessTokenSecret, {
+const generateAccessToken = (userID: string): LoginTokens["accessToken"] => {
+  const accessToken = jwt.sign({ userID }, serverConfig.accessTokenSecret, {
     expiresIn: ExpirySecs.TEN_MINUTES,
   });
+
+  return {
+    token: accessToken,
+    cookieExpiry: ExpirySecs.TEN_MINUTES,
+  };
 };
 
 export default {
