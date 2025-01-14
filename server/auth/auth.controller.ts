@@ -125,7 +125,7 @@ router.post("/login", validateBody(loginSchema), async (req, res) => {
 
   res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
     sameSite: "lax",
-    maxAge: refreshToken.cookieExpiry * 1_000,
+    maxAge: accessToken.cookieExpiry * 1_000,
   });
 
   res.send({ user, accessToken: accessToken.token });
