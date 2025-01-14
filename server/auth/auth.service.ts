@@ -46,7 +46,7 @@ const loginUser = async (
 
 const refreshAccessToken = async (
   refreshToken: string | undefined
-): Promise<LoginTokens["accessToken"]> => {
+): Promise<LoginTokens> => {
   if (!refreshToken) {
     throw new UnauthorizedException("Missing refresh token");
   }
@@ -65,7 +65,7 @@ const refreshAccessToken = async (
       );
     }
 
-    return generateAccessToken(userResult._id);
+    return buildLoginTokens(userResult._id);
   } catch (error) {
     if (error instanceof UnauthorizedException) {
       throw error;
@@ -88,29 +88,23 @@ const getUserByCredentials = async ({
 };
 
 const buildLoginTokens = (userID: string): LoginTokens => {
-  const accessToken = generateAccessToken(userID);
+  const accessToken = jwt.sign({ userID }, serverConfig.accessTokenSecret, {
+    expiresIn: ExpirySecs.TEN_MINUTES,
+  });
 
   const refreshToken = jwt.sign({ userID }, serverConfig.refreshTokenSecret, {
     expiresIn: ExpirySecs.ONE_DAY,
   });
 
   return {
-    accessToken,
+    accessToken: {
+      token: accessToken,
+      cookieExpiry: ExpirySecs.TEN_MINUTES,
+    },
     refreshToken: {
       token: refreshToken,
       cookieExpiry: ExpirySecs.ONE_DAY,
     },
-  };
-};
-
-const generateAccessToken = (userID: string): LoginTokens["accessToken"] => {
-  const accessToken = jwt.sign({ userID }, serverConfig.accessTokenSecret, {
-    expiresIn: ExpirySecs.TEN_MINUTES,
-  });
-
-  return {
-    token: accessToken,
-    cookieExpiry: ExpirySecs.TEN_MINUTES,
   };
 };
 

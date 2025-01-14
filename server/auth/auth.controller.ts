@@ -65,14 +65,11 @@ router.post(
 
     res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
       maxAge: refreshToken.cookieExpiry * 1_000,
     });
 
     res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
-      sameSite: "none",
-      secure: true,
+      sameSite: "lax",
       maxAge: accessToken.cookieExpiry * 1_000,
     });
 
@@ -122,14 +119,12 @@ router.post("/login", validateBody(loginSchema), async (req, res) => {
 
   res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
     httpOnly: true,
-    sameSite: "none",
-    secure: true,
+    sameSite: "lax",
     maxAge: refreshToken.cookieExpiry * 1_000,
   });
 
   res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
-    sameSite: "none",
-    secure: true,
+    sameSite: "lax",
     maxAge: refreshToken.cookieExpiry * 1_000,
   });
 
@@ -178,14 +173,19 @@ router.post("/refresh", async (req, res) => {
   const refreshToken: string | undefined =
     req.cookies?.[REFRESH_TOKEN_COOKIE_KEY];
 
-  const { token: accessToken, cookieExpiry } =
+  const { accessToken, refreshToken: newRefreshToken } =
     await authService.refreshAccessToken(refreshToken);
 
+  res.cookie(REFRESH_TOKEN_COOKIE_KEY, newRefreshToken.token, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: newRefreshToken.cookieExpiry * 1_000,
+  });
+
   res
-    .cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken, {
-      sameSite: "none",
-      secure: true,
-      maxAge: cookieExpiry * 1_000,
+    .cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
+      sameSite: "lax",
+      maxAge: accessToken.cookieExpiry * 1_000,
     })
     .send({ accessToken });
 });

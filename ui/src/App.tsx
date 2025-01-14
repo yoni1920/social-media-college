@@ -19,12 +19,11 @@ function App() {
       >
         <Router>
           <Routes>
-            <Route path="/" element={<SignIn />} />
+            <Route path="/" element={<PostFeed />} />
             <Route path="/registration" element={<Registration />} />
-            <Route path="/home" element={<PostFeed />} />
+            <Route path="/login" element={<SignIn />} />
           </Routes>
         </Router>
-        {/* {accessToken ? <PostFeed /> : <Authentication />} */}
       </Stack>
     </LocalizationProvider>
   );

@@ -1,7 +1,9 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { AppTitleLogo } from "../../components/AppTitleLogo";
+import { authApi } from "../api";
 import { CredentialErrors } from "../types";
+import { isValidEmail } from "../utils";
 import { AuthCard } from "./AuthCard";
 import { CredentialInput } from "./CredentialInput";
 
@@ -15,8 +17,6 @@ export const SignIn = () => {
     userID: "",
     password: "",
   });
-
-  //   const [generalError, setGeneralError] = useState<string>("");
 
   const [credentialErrors, setCredentialErrors] = useState<
     CredentialErrors<UserCredentials>
@@ -46,10 +46,22 @@ export const SignIn = () => {
     []
   );
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
-    console.log(event);
+    const userID = userCredentials.userID;
+    const userField = isValidEmail(userID) ? "email" : "username";
+
+    const data = {
+      password: userCredentials.password,
+      [userField]: userID,
+    };
+
+    const response = await authApi.post("/login", data, {
+      withCredentials: true,
+    });
+
+    console.log(response);
   };
 
   return (
