@@ -1,3 +1,7 @@
-export type CredentialErrors<T extends object> = Partial<
-  Record<keyof T, string>
+export type CredentialErrors<T extends object> = Record<
+  keyof T,
+  {
+    error: boolean;
+    message: string;
+  }
 >;

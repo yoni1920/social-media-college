@@ -70,10 +70,11 @@ router.post(
 
     res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
       sameSite: "lax",
+      httpOnly: true,
       maxAge: accessToken.cookieExpiry * 1_000,
     });
 
-    res.send({ user, accessToken: accessToken.token });
+    res.send({ user });
   }
 );
 
@@ -125,10 +126,11 @@ router.post("/login", validateBody(loginSchema), async (req, res) => {
 
   res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
     sameSite: "lax",
+    httpOnly: true,
     maxAge: accessToken.cookieExpiry * 1_000,
   });
 
-  res.send({ user, accessToken: accessToken.token });
+  res.send({ user });
 });
 
 /**
@@ -184,10 +186,11 @@ router.post("/refresh", async (req, res) => {
 
   res
     .cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
+      httpOnly: true,
       sameSite: "lax",
       maxAge: accessToken.cookieExpiry * 1_000,
     })
-    .send({ accessToken });
+    .send({ message: "refreshed" });
 });
 
 export default router;

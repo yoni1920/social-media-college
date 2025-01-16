@@ -1,19 +1,17 @@
-import { Express, raw } from "express";
+import { Express } from "express";
 import mongoose from "mongoose";
 import request, { Response } from "supertest";
 import initApp from "../app";
 import { UserModel } from "../users/user.model";
 import {
   EXAMPLE_USER_PASSWORD_PLAINTEXT,
-  exampleUser,
   exampleNewUser,
+  exampleUser,
   flushCollections,
-  getAuthHeader,
 } from "../utils/tests";
+import authService from "./auth.service";
 import { ACCESS_TOKEN_COOKIE_KEY, REFRESH_TOKEN_COOKIE_KEY } from "./constants";
 import { LoginTokens } from "./types";
-import authService from "./auth.service";
-import { serverConfig } from "../config";
 
 let app: Express;
 let loginTokens: LoginTokens;
@@ -44,7 +42,7 @@ test("login with username - pass", async () => {
   });
 
   expect(response.statusCode).toBe(200);
-  expect(response.body.accessToken).toBeDefined();
+  expect(response.body.user).toBeDefined();
 
   validateTokenCookies(response);
 });
@@ -56,7 +54,7 @@ test("login with email - pass", async () => {
   });
 
   expect(response.statusCode).toBe(200);
-  expect(response.body.accessToken).toBeDefined();
+  expect(response.body.user).toBeDefined();
 
   validateTokenCookies(response);
 });
@@ -122,7 +120,8 @@ test("refresh - pass", async () => {
     .set("Cookie", [`${REFRESH_TOKEN_COOKIE_KEY}=${refreshToken}`]);
 
   expect(response.statusCode).toBe(200);
-  expect(response.body.accessToken).toBeDefined();
+  expect(response.body.message).toBeDefined();
+  expect(response.body.message).toBe("refreshed");
 });
 
 test("refresh missing refresh token - fail", async () => {
@@ -164,41 +163,30 @@ test("refresh invalid user on refresh token - fail", async () => {
 });
 
 test("logout - pass", async () => {
-  const { accessToken } = loginTokens;
-
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .post("/auth/logout")
-    .set(getAuthHeader(accessToken.token));
+    .set("Cookie", [
+      `${ACCESS_TOKEN_COOKIE_KEY}=${loginTokens.accessToken.token}`,
+    ]);
 
   expect(response.statusCode).toBe(200);
 });
 
-test("logout/validate-access-token missing access token header - fail", async () => {
-  const response = await request(app).post("/auth/logout");
+test("logout/validate-access-token missing access token - fail", async () => {
+  const response = await request.agent(app).post("/auth/logout");
 
   expect(response.statusCode).toBe(401);
 
   expect(response.body.message).toBe("User is unauthorized");
-  expect(response.body.details).toBe("Missing authorization header");
-});
-
-test("logout/validate-access-token access token header without prefix - fail", async () => {
-  const response = await request(app)
-    .post("/auth/logout")
-    .set({ [serverConfig.authorizationHeader]: loginTokens.accessToken.token });
-
-  expect(response.statusCode).toBe(401);
-
-  expect(response.body.message).toBe("User is unauthorized");
-  expect(response.body.details).toBe(
-    "Invalid authorization bearer header format"
-  );
+  expect(response.body.details).toBe("Missing access token");
 });
 
 test("logout/validate-access-token invalid access token - fail", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .post("/auth/logout")
-    .set(getAuthHeader("faketoken"));
+    .set("Cookie", [`${ACCESS_TOKEN_COOKIE_KEY}=${"faketoken"}`]);
 
   expect(response.statusCode).toBe(401);
 
@@ -211,9 +199,10 @@ test("logout/validate-access-token invalid user access token - fail", async () =
     accessToken: { token: fakeUserAccessToken },
   } = authService.buildLoginTokens("fake_user");
 
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .post("/auth/logout")
-    .set(getAuthHeader(fakeUserAccessToken));
+    .set("Cookie", [`${ACCESS_TOKEN_COOKIE_KEY}=${fakeUserAccessToken}`]);
 
   expect(response.statusCode).toBe(401);
 
@@ -230,7 +219,6 @@ test("registration - pass", async () => {
 
   expect(response.statusCode).toBe(200);
   expect(response.body.user).toBeDefined();
-  expect(response.body.accessToken).toBeDefined();
 
   validateTokenCookies(response);
 });
