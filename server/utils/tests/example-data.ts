@@ -19,6 +19,7 @@ export const exampleUser = {
   email: "3C5oB@example.com",
   bio: "King",
   birthDate: "2000-01-01",
+  name: "Ido Avni",
 };
 
 export const adminUser = {
@@ -38,6 +39,7 @@ export const exampleNewUser = {
   password: "1234",
   email: "newuser@example.com",
   birthDate: "1990-01-01",
+  name: "",
 };
 
 export const exampleComment = {

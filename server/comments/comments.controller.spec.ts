@@ -2,26 +2,26 @@ import { Express } from "express";
 import mongoose from "mongoose";
 import request from "supertest";
 import initApp from "../app";
+import authService from "../auth/auth.service";
 import { PostModel } from "../posts/post.model";
 import { UserModel } from "../users/user.model";
 import {
-  flushCollections,
   exampleComment,
   examplePost,
   exampleUser,
-  getAuthHeader,
+  flushCollections,
+  getAuthCookies,
 } from "../utils/tests";
 import { CommentModel } from "./comment.model";
-import authService from "../auth/auth.service";
 
 let app: Express;
-let baseHeaders: Record<string, string>;
+let authCookies: string[];
 
 beforeAll(async () => {
   await initApp().then(async (appInstance) => {
     app = appInstance;
     const { accessToken } = authService.buildLoginTokens(exampleUser._id);
-    baseHeaders = getAuthHeader(accessToken);
+    authCookies = getAuthCookies(accessToken.token);
 
     await flushCollections();
     await UserModel.create(exampleUser);
@@ -40,68 +40,83 @@ afterAll(async () => {
 });
 
 test("Get Comment by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .get(`/comments/${exampleComment._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body._id).toBe(exampleComment._id);
 });
 
 test("Get Comment by id - fail", async () => {
-  const response = await request(app).get(`/comments/123`).set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .get(`/comments/123`)
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(400);
 });
 
 test("Get all comments - pass", async () => {
-  const response = await request(app).get("/comments").set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .get("/comments")
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body[0]._id).toBe(exampleComment._id);
 });
 
 test("Get comments by post id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .get(`/comments?postID=${examplePost._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body[0].postID).toBe(examplePost._id);
 });
 
 test("Delete Comment by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .delete(`/comments/${exampleComment._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app)
+  const response2 = await request
+    .agent(app)
     .get(`/comments/${exampleComment._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response2.statusCode).toBe(400);
 });
 
 test("Delete Comment by id - fail", async () => {
-  const response = await request(app).delete(`/comments/123`).set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .delete(`/comments/123`)
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(404);
   expect(response.body.message).toBe("Comment did not exist");
 });
 
 test("Update Comment by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .put(`/comments/${exampleComment._id}`)
     .send({ message: "New Comment" })
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app)
+  const response2 = await request
+    .agent(app)
     .get(`/comments/${exampleComment._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response2.statusCode).toBe(200);
 
@@ -109,21 +124,26 @@ test("Update Comment by id - pass", async () => {
 });
 
 test("Update Comment by id - fail", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .put(`/comments/123`)
     .send({ message: "New Comment" })
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(400);
   expect(response.body.message).toBe("Comment to update does not exist");
 });
 
 test("Create comment - pass", async () => {
-  const response = await request(app).post("/comments").set(baseHeaders).send({
-    message: "New Comment",
-    sender: exampleUser._id,
-    postID: examplePost._id,
-  });
+  const response = await request
+    .agent(app)
+    .post("/comments")
+    .set("Cookie", authCookies)
+    .send({
+      message: "New Comment",
+      sender: exampleUser._id,
+      postID: examplePost._id,
+    });
 
   expect(response.statusCode).toBe(200);
   expect(response.body.message).toBe("created new comment");

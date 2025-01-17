@@ -8,18 +8,18 @@ import {
   exampleNewUser,
   exampleUser,
   flushCollections,
-  getAuthHeader,
+  getAuthCookies,
 } from "../utils/tests";
 import { UserModel } from "./user.model";
 
 let app: Express;
-let baseHeaders: Record<string, string>;
+let authCookies: string[];
 
 beforeAll(async () => {
   await initApp().then(async (appInstance) => {
     app = appInstance;
     const { accessToken } = authService.buildLoginTokens(adminUser._id);
-    baseHeaders = getAuthHeader(accessToken);
+    authCookies = getAuthCookies(accessToken.token);
 
     await flushCollections();
 
@@ -40,59 +40,73 @@ afterAll(async () => {
 });
 
 test("Get User by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .get(`/users/${exampleUser._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body._id).toBe(exampleUser._id);
 });
 
 test("Get User by id - fail", async () => {
-  const response = await request(app).get(`/users/123`).set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .get(`/users/123`)
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(400);
 });
 
 test("Get all users - pass", async () => {
-  const response = await request(app).get("/users").set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .get("/users")
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body.length).toBe(2);
 });
 
 test("Delete User by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .delete(`/users/${exampleUser._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app)
+  const response2 = await request
+    .agent(app)
     .get(`/users/${exampleUser._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response2.statusCode).toBe(400);
 });
 
 test("Delete User by id - fail", async () => {
-  const response = await request(app).delete(`/users/123`).set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .delete(`/users/123`)
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(404);
   expect(response.body.message).toBe("User did not exist");
 });
 
 test("Update User by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .put(`/users/${exampleUser._id}`)
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send({ username: "New Username" });
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app)
+  const response2 = await request
+    .agent(app)
     .get(`/users/${exampleUser._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response2.statusCode).toBe(200);
 
@@ -100,9 +114,10 @@ test("Update User by id - pass", async () => {
 });
 
 test("Update User by id - fail", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .put(`/users/123`)
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send({ username: "New Username" });
 
   expect(response.statusCode).toBe(400);
@@ -110,9 +125,10 @@ test("Update User by id - fail", async () => {
 });
 
 test("Create user - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .post("/users")
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send(exampleNewUser);
 
   expect(response.statusCode).toBe(200);
@@ -128,11 +144,10 @@ test("Create duplicate username - fail", async () => {
     username: adminUser.username,
   };
 
-  console.log(newUser);
-
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .post("/users")
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send(newUser);
 
   expect(response.statusCode).toBe(400);
@@ -148,9 +163,10 @@ test("Create duplicate email - fail", async () => {
     email: adminUser.email,
   };
 
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .post("/users")
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send(newUser);
 
   expect(response.statusCode).toBe(400);

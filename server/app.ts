@@ -11,14 +11,25 @@ import { noRouteFoundHandler } from "./middleware/no-route-handler";
 import { setupSwagger } from "./swagger/setupSwagger";
 import cookieParser from "cookie-parser";
 import { validateAccessToken } from "./auth/middleware";
+import cors from "cors";
+import passport from "passport";
 
 const initApp = async () => {
   const port = serverConfig.port;
 
   const app = express();
+  app.use(
+    cors({
+      origin: serverConfig.clientUrl,
+      credentials: true,
+    })
+  );
+
   app.use(bodyParser.urlencoded({ extended: true, limit: "1mb" }));
   app.use(bodyParser.json());
   app.use(cookieParser());
+  app.use(passport.initialize());
+  require("./auth/strategies/google.strategy");
 
   app.use("/posts", validateAccessToken, postsController);
   app.use("/comments", validateAccessToken, commentsController);

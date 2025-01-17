@@ -1,11 +1,14 @@
 import { Router, Request, Response } from "express";
 import { validateBody } from "../middleware/body-validator";
 import authService from "./auth.service";
-import { REFRESH_TOKEN_COOKIE_KEY } from "./constants";
+import { ACCESS_TOKEN_COOKIE_KEY, REFRESH_TOKEN_COOKIE_KEY } from "./constants";
 import { loginSchema } from "./dto-schema";
 import { validateAccessToken } from "./middleware";
 import { createUserSchema } from "../users/dto-schema";
 import usersService from "../users/users.service";
+import passport from "passport";
+import { serverConfig } from "../config";
+import { UserReturnDTO } from "../users/dto-schema/user-return-dto";
 
 const router = Router();
 
@@ -57,23 +60,24 @@ router.post(
   "/registration",
   validateBody(createUserSchema),
   async (req, res) => {
-    const { _id: userID, createdAt } = await usersService.createUser(req.body);
+    const user = await usersService.createUser(req.body);
 
-    const { accessToken, refreshToken } = authService.buildLoginTokens(userID);
+    const { accessToken, refreshToken } = authService.buildLoginTokens(
+      user._id
+    );
 
     res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
       maxAge: refreshToken.cookieExpiry * 1_000,
     });
 
-    res.send({
-      message: "successfully registered!",
-      userID,
-      createdAt,
-      accessToken,
+    res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
+      sameSite: "lax",
+      httpOnly: true,
+      maxAge: accessToken.cookieExpiry * 1_000,
     });
+
+    res.send({ user });
   }
 );
 
@@ -112,16 +116,24 @@ router.post(
  *         description: Unauthorized user
  */
 router.post("/login", validateBody(loginSchema), async (req, res) => {
-  const { accessToken, refreshToken } = await authService.loginUser(req.body);
+  const {
+    user,
+    tokens: { accessToken, refreshToken },
+  } = await authService.loginUser(req.body);
 
-  res
-    .cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      maxAge: refreshToken.cookieExpiry * 1_000,
-    })
-    .send({ accessToken });
+  res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: refreshToken.cookieExpiry * 1_000,
+  });
+
+  res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
+    sameSite: "lax",
+    httpOnly: true,
+    maxAge: accessToken.cookieExpiry * 1_000,
+  });
+
+  res.send({ user });
 });
 
 /**
@@ -141,10 +153,12 @@ router.post(
   "/logout",
   validateAccessToken,
   async (req: Request, res: Response) => {
-    res.clearCookie(REFRESH_TOKEN_COOKIE_KEY).send({
-      message: "User logged off",
-      userID: req.userID,
-    });
+    res
+      .clearCookie(REFRESH_TOKEN_COOKIE_KEY)
+      .clearCookie(ACCESS_TOKEN_COOKIE_KEY)
+      .send({
+        message: "User logged off",
+      });
   }
 );
 
@@ -163,9 +177,61 @@ router.post("/refresh", async (req, res) => {
   const refreshToken: string | undefined =
     req.cookies?.[REFRESH_TOKEN_COOKIE_KEY];
 
-  const accessToken = await authService.refreshAccessToken(refreshToken);
+  const { accessToken, refreshToken: newRefreshToken } =
+    await authService.refreshAccessToken(refreshToken);
 
-  res.send({ accessToken });
+  res.cookie(REFRESH_TOKEN_COOKIE_KEY, newRefreshToken.token, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: newRefreshToken.cookieExpiry * 1_000,
+  });
+
+  res
+    .cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: accessToken.cookieExpiry * 1_000,
+    })
+    .send({ message: "refreshed" });
 });
+
+router.post("/me", validateAccessToken, async (req: Request, res: Response) => {
+  const user = req.authUser;
+
+  res.json({ user });
+});
+
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: `${serverConfig.clientUrl}`,
+    session: false,
+  }),
+  (req, res) => {
+    const authUser = req.user as UserReturnDTO;
+    const { accessToken, refreshToken } = authService.buildLoginTokens(
+      authUser._id
+    );
+
+    res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: refreshToken.cookieExpiry * 1_000,
+    });
+
+    res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
+      sameSite: "lax",
+      httpOnly: true,
+      maxAge: accessToken.cookieExpiry * 1_000,
+    });
+
+    res.redirect(serverConfig.clientUrl);
+  }
+);
 
 export default router;

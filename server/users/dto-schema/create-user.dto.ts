@@ -6,6 +6,11 @@ export const createUserSchema = z.strictObject({
   email: z.string().email().min(1),
   birthDate: z.string().date(),
   bio: z.string().optional(),
+  name: z.string(),
 });
 
 export type CreateUserDTO = z.infer<typeof createUserSchema>;
+
+export type CreateGoogleUserDTO = Omit<CreateUserDTO, "password"> & {
+  googleId: string;
+};

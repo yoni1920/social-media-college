@@ -3,8 +3,13 @@ import commentsService from "../comments/comments.service";
 import { BadRequestException } from "../exceptions";
 import postsService from "../posts/posts.service";
 import { USER_PASSWORD_SALT_ROUNDS } from "./constants";
-import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
+import {
+  CreateGoogleUserDTO,
+  CreateUserDTO,
+  UpdateUserDTO,
+} from "./dto-schema";
 import usersRepository from "./users.repository";
+import { isGoogleUserDTO } from "./utils";
 
 const getAllUsers = async () => {
   return await usersRepository.getAllUsers();
@@ -36,7 +41,11 @@ const updateUser = async (
   return updatedAt;
 };
 
-const createUser = async (userDTO: CreateUserDTO) => {
+const createUser = async (userDTO: CreateUserDTO | CreateGoogleUserDTO) => {
+  if (isGoogleUserDTO(userDTO)) {
+    return await usersRepository.createUser(userDTO);
+  }
+
   const { password: userPassword, ...otherUserData } = userDTO;
 
   const password = await hash(userPassword, USER_PASSWORD_SALT_ROUNDS);

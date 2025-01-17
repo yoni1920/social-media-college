@@ -7,19 +7,19 @@ import {
   flushCollections,
   examplePost,
   exampleUser,
-  getAuthHeader,
+  getAuthCookies,
 } from "../utils/tests";
 import { PostModel } from "./post.model";
 import authService from "../auth/auth.service";
 
 let app: Express;
-let baseHeaders: Record<string, string>;
+let authCookies: string[];
 
 beforeAll(async () => {
   await initApp().then(async (appInstance) => {
     app = appInstance;
     const { accessToken } = authService.buildLoginTokens(exampleUser._id);
-    baseHeaders = getAuthHeader(accessToken);
+    authCookies = getAuthCookies(accessToken.token);
 
     await flushCollections();
     await UserModel.create(exampleUser);
@@ -37,77 +37,93 @@ afterAll(async () => {
 });
 
 test("Get Post by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .get(`/posts/${examplePost._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body._id).toBe(examplePost._id);
 });
 
 test("Get Post by id - fail", async () => {
-  const response = await request(app).get(`/posts/123`).set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .get(`/posts/123`)
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(400);
 });
 
 test("Get all posts - pass", async () => {
-  const response = await request(app).get("/posts").set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .get("/posts")
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body[0]._id).toBe(examplePost._id);
 });
 
 test("Get all posts by sender - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .get(`/posts?senderID=${examplePost.sender}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body[0]._id).toBe(examplePost._id);
 });
 
 test("Get all posts by sender - fail", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .get(`/posts?senderID=avnizzzz`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
   expect(response.body.length).toBe(0);
 });
 
 test("Delete Post by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .delete(`/posts/${examplePost._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app)
+  const response2 = await request
+    .agent(app)
     .get(`/posts/${examplePost._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response2.statusCode).toBe(400);
 });
 
 test("Delete Post by id - fail", async () => {
-  const response = await request(app).delete(`/posts/123`).set(baseHeaders);
+  const response = await request
+    .agent(app)
+    .delete(`/posts/123`)
+    .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(404);
   expect(response.body.message).toBe("Post did not exist");
 });
 
 test("Update Post by id - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .put(`/posts/${examplePost._id}`)
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send({ message: "I am Avni" });
 
   expect(response.statusCode).toBe(200);
 
-  const response2 = await request(app)
+  const response2 = await request
+    .agent(app)
     .get(`/posts/${examplePost._id}`)
-    .set(baseHeaders);
+    .set("Cookie", authCookies);
 
   expect(response2.statusCode).toBe(200);
 
@@ -115,9 +131,10 @@ test("Update Post by id - pass", async () => {
 });
 
 test("Update Post by id - fail", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .put(`/posts/123`)
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send({ message: "I am Avni" });
 
   expect(response.statusCode).toBe(400);
@@ -125,9 +142,10 @@ test("Update Post by id - fail", async () => {
 });
 
 test("Create post - pass", async () => {
-  const response = await request(app)
+  const response = await request
+    .agent(app)
     .post("/posts")
-    .set(baseHeaders)
+    .set("Cookie", authCookies)
     .send({ message: "I am Avni", sender: examplePost.sender });
 
   expect(response.statusCode).toBe(200);

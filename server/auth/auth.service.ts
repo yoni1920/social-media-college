@@ -11,10 +11,12 @@ import { ExpirySecs } from "./enums";
 import { LoginTokens } from "./types";
 
 const invalidCredentialsError = new UnauthorizedException(
-  "User credentials do not match"
+  "User identification and/or password are wrong"
 );
 
-const loginUser = async (userCredentials: LoginDTO): Promise<LoginTokens> => {
+const loginUser = async (
+  userCredentials: LoginDTO
+): Promise<{ user: User; tokens: LoginTokens }> => {
   const user = await getUserByCredentials(userCredentials);
 
   if (!user) {
@@ -23,7 +25,18 @@ const loginUser = async (userCredentials: LoginDTO): Promise<LoginTokens> => {
     throw invalidCredentialsError;
   }
 
-  const { password: hashedPassword, _id: userID } = user;
+  const {
+    password: hashedPassword,
+    _id: userID,
+    googleId,
+    ...otherUserFields
+  } = user;
+
+  if (googleId) {
+    throw new UnauthorizedException(
+      "Exists google account connected to user, authenticate via Google"
+    );
+  }
 
   const isPasswordValid = await compare(
     userCredentials.password,
@@ -36,12 +49,15 @@ const loginUser = async (userCredentials: LoginDTO): Promise<LoginTokens> => {
     throw invalidCredentialsError;
   }
 
-  return buildLoginTokens(userID);
+  return {
+    user: { _id: userID, ...otherUserFields } as User,
+    tokens: buildLoginTokens(userID),
+  };
 };
 
 const refreshAccessToken = async (
   refreshToken: string | undefined
-): Promise<string> => {
+): Promise<LoginTokens> => {
   if (!refreshToken) {
     throw new UnauthorizedException("Missing refresh token");
   }
@@ -60,7 +76,7 @@ const refreshAccessToken = async (
       );
     }
 
-    return generateAccessToken(userResult._id);
+    return buildLoginTokens(userResult._id);
   } catch (error) {
     if (error instanceof UnauthorizedException) {
       throw error;
@@ -83,25 +99,24 @@ const getUserByCredentials = async ({
 };
 
 const buildLoginTokens = (userID: string): LoginTokens => {
-  const accessToken = generateAccessToken(userID);
+  const accessToken = jwt.sign({ userID }, serverConfig.accessTokenSecret, {
+    expiresIn: ExpirySecs.TEN_MINUTES,
+  });
 
   const refreshToken = jwt.sign({ userID }, serverConfig.refreshTokenSecret, {
     expiresIn: ExpirySecs.ONE_DAY,
   });
 
   return {
-    accessToken,
+    accessToken: {
+      token: accessToken,
+      cookieExpiry: ExpirySecs.TEN_MINUTES,
+    },
     refreshToken: {
       token: refreshToken,
       cookieExpiry: ExpirySecs.ONE_DAY,
     },
   };
-};
-
-const generateAccessToken = (userID: string): string => {
-  return jwt.sign({ userID }, serverConfig.accessTokenSecret, {
-    expiresIn: ExpirySecs.TEN_MINUTES,
-  });
 };
 
 export default {
