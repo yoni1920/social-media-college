@@ -2,7 +2,7 @@ import { Button, Stack, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
 import { HttpStatus } from "../../enums";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/use-auth";
 import { CredentialErrors } from "../types/credential-errors";
 import { UserLoginDTO } from "../types/user-login-dto";
 import { isValidEmail } from "../utils";

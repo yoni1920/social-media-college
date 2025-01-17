@@ -193,4 +193,11 @@ router.post("/refresh", async (req, res) => {
     .send({ message: "refreshed" });
 });
 
+router.post("/me", validateAccessToken, async (req: Request, res: Response) => {
+  const userID = req.userID;
+  const user = userID ? await usersService.getUserByID(userID) : null;
+
+  res.json({ user });
+});
+
 export default router;

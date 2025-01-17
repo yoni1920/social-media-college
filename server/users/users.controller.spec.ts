@@ -144,8 +144,6 @@ test("Create duplicate username - fail", async () => {
     username: adminUser.username,
   };
 
-  console.log(newUser);
-
   const response = await request
     .agent(app)
     .post("/users")

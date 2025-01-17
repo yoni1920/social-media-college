@@ -1,19 +1,16 @@
 import { Stack, Typography } from "@mui/material";
-import { useAuth } from "../../auth/hooks/useAuth";
-import { User } from "../../types";
+import { useAuth } from "../../auth/hooks/use-auth";
 
 export const PostFeed = () => {
   const { user } = useAuth();
 
-  const { name, email, birthDate, username } = user as User;
-
-  return (
+  return user ? (
     <Stack>
       <Typography>hello</Typography>
-      <Typography>{name}</Typography>
-      <Typography>{email}</Typography>
-      <Typography>{username}</Typography>
-      <Typography>{birthDate.toDateString()}</Typography>
+      <Typography>{user.name}</Typography>
+      <Typography>{user.email}</Typography>
+      <Typography>{user.username}</Typography>
+      <Typography>{user.birthDate.toDateString()}</Typography>
     </Stack>
-  );
+  ) : null;
 };

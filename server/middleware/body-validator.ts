@@ -5,8 +5,6 @@ import { BadRequestException } from "../exceptions";
 export const validateBody =
   <T extends ZodRawShape>(schema: ZodObject<T> | ZodEffects<ZodObject<T>>) =>
   (req: Request, _res: Response, next: NextFunction) => {
-    console.log(req.body);
-
     const validationResult = schema.safeParse(req.body);
 
     if (!validationResult.success) {

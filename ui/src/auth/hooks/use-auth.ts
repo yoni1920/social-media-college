@@ -18,6 +18,7 @@ type AuthContextValue = {
     registrationData: RegistrationDTO,
     authHandlers?: AuthResultHandlers
   ) => Promise<void>;
+  isLoadingUserAuth: boolean;
 };
 export const AuthContext = createContext<AuthContextValue>(
   null as unknown as AuthContextValue

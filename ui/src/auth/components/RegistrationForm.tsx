@@ -4,7 +4,7 @@ import { isAxiosError } from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { HttpStatus } from "../../enums";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/use-auth";
 import { CredentialErrors } from "../types/credential-errors";
 import {
   MINIMUM_PASSWORD_LENGTH,
@@ -202,8 +202,6 @@ export const RegistrationForm = () => {
       const parseResult = registrationSchema.safeParse(requiredRegistration);
 
       if (!parseResult.success) {
-        console.log(parseResult.error);
-
         updateRegistrationErrors(
           "email",
           true,

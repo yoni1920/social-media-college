@@ -1,11 +1,11 @@
 import { PropsWithChildren } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/use-auth";
 
 export const ProtectedRoute = ({ children }: PropsWithChildren) => {
-  const { user } = useAuth();
+  const { user, isLoadingUserAuth } = useAuth();
 
-  if (!user) {
+  if (!user && !isLoadingUserAuth) {
     return <Navigate to="/login" />;
   }
 
