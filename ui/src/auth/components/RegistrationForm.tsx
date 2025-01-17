@@ -3,12 +3,8 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { isAxiosError } from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AppTitleLogo } from "../../components/AppTitleLogo";
 import { HttpStatus } from "../../enums";
-import { useUserStore } from "../../store/user-store";
-import { User } from "../../types";
-import { handleRegisterUser } from "../api/utils";
+import { useAuth } from "../hooks/useAuth";
 import { CredentialErrors } from "../types/credential-errors";
 import {
   MINIMUM_PASSWORD_LENGTH,
@@ -16,7 +12,6 @@ import {
   registrationSchema,
   RequiredRegistrationFields,
 } from "../types/registration-fields";
-import { AuthCard } from "./AuthCard";
 import { CredentialInput } from "./CredentialInput";
 
 type RegistrationFields = RequiredRegistrationFields & {
@@ -44,8 +39,7 @@ const initialErrorFields: CredentialErrors<RegistrationFields> = {
 export type RegistrationTextFields = Omit<RegistrationFields, "birthDate">;
 
 export const RegistrationForm = () => {
-  const { saveUser } = useUserStore();
-  const navigate = useNavigate();
+  const { register } = useAuth();
 
   const [registrationFields, setRegistrationFields] =
     useState<RegistrationFields>(initialRegistrationFields);
@@ -179,14 +173,6 @@ export const RegistrationForm = () => {
     [updateRegistrationErrors]
   );
 
-  const onRegisterSuccess = useCallback(
-    (user: User) => {
-      saveUser(user);
-      navigate("/");
-    },
-    [saveUser, navigate]
-  );
-
   const onRegisterError = useCallback((error: Error) => {
     if (
       isAxiosError(error) &&
@@ -203,42 +189,41 @@ export const RegistrationForm = () => {
     }
   }, []);
 
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+  const onSubmit = useCallback(
+    async (event: FormEvent) => {
+      event.preventDefault();
 
-    const { confirmPassword, ...requiredFields } = registrationFields;
+      const { confirmPassword, ...requiredFields } = registrationFields;
 
-    const requiredRegistration: RequiredRegistrationFields = {
-      ...requiredFields,
-    };
+      const requiredRegistration: RequiredRegistrationFields = {
+        ...requiredFields,
+      };
 
-    const parseResult = registrationSchema.safeParse(requiredRegistration);
+      const parseResult = registrationSchema.safeParse(requiredRegistration);
 
-    if (!parseResult.success) {
-      console.log(parseResult.error);
+      if (!parseResult.success) {
+        console.log(parseResult.error);
 
-      updateRegistrationErrors(
-        "email",
-        true,
-        parseResult.error.errors[0].message
-      );
+        updateRegistrationErrors(
+          "email",
+          true,
+          parseResult.error.errors[0].message
+        );
 
-      return;
-    }
+        return;
+      }
 
-    const { birthDate, ...otherFields } = requiredRegistration;
+      const { birthDate, ...otherFields } = requiredRegistration;
 
-    const registrationDTO: RegistrationDTO = {
-      ...otherFields,
-      birthDate: birthDate.toJSON().split("T")[0],
-    };
+      const registrationDTO: RegistrationDTO = {
+        ...otherFields,
+        birthDate: birthDate.toJSON().split("T")[0],
+      };
 
-    await handleRegisterUser(
-      registrationDTO,
-      onRegisterSuccess,
-      onRegisterError
-    );
-  };
+      await register(registrationDTO, { onError: onRegisterError });
+    },
+    [register, onRegisterError, registrationFields, updateRegistrationErrors]
+  );
 
   return (
     <form

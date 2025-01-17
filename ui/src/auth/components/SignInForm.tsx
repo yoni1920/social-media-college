@@ -1,12 +1,10 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { HttpStatus } from "../../enums";
-import { useUserStore } from "../../store/user-store";
-import { User } from "../../types";
-import { handleSignInUser } from "../api/utils";
+import { useAuth } from "../hooks/useAuth";
 import { CredentialErrors } from "../types/credential-errors";
+import { UserLoginDTO } from "../types/user-login-dto";
 import { isValidEmail } from "../utils";
 import { CredentialInput } from "./CredentialInput";
 
@@ -26,6 +24,7 @@ const initalErrors: CredentialErrors<UserCredentials> = {
 };
 
 export const SignInForm = () => {
+  const { login } = useAuth();
   const [userCredentials, setUserCredentials] =
     useState<UserCredentials>(initialCredentials);
 
@@ -33,9 +32,6 @@ export const SignInForm = () => {
     useState<CredentialErrors<UserCredentials>>(initalErrors);
 
   const [generalError, setGeneralError] = useState<string>("");
-
-  const { saveUser } = useUserStore();
-  const navigate = useNavigate();
 
   const onUserCredentialsChange = useCallback(
     <T extends keyof UserCredentials>(credentialField: T) =>
@@ -59,14 +55,6 @@ export const SignInForm = () => {
         }));
       },
     []
-  );
-
-  const onSignInSuccess = useCallback(
-    (user: User) => {
-      saveUser(user);
-      navigate("/");
-    },
-    [saveUser, navigate]
   );
 
   const onSignInError = useCallback((error: Error) => {
@@ -96,14 +84,14 @@ export const SignInForm = () => {
       const userID = userCredentials.userID;
       const userField = isValidEmail(userID) ? "email" : "username";
 
-      const loginData = {
+      const loginData: UserLoginDTO = {
         password: userCredentials.password,
         [userField]: userID,
       };
 
-      await handleSignInUser(loginData, onSignInSuccess, onSignInError);
+      await login(loginData, { onError: onSignInError });
     },
-    [userCredentials, onSignInSuccess, onSignInError]
+    [userCredentials, login, onSignInError]
   );
 
   const isSubmitDisabled = useMemo(

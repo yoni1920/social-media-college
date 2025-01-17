@@ -5,10 +5,10 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { SignIn } from "./auth/components/SignIn";
 import { Registration } from "./auth/components/Registration";
 import { PostFeed } from "./home/components/PostFeed";
+import { AuthProvider } from "./auth/providers/auth-provider";
+import { ProtectedRoute } from "./auth/components/ProtectedRoute";
 
 function App() {
-  // const [accessToken, setAccessToken] = useState<string | null>(null);
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack
@@ -18,11 +18,20 @@ function App() {
         justifyContent={"center"}
       >
         <Router>
-          <Routes>
-            <Route path="/" element={<PostFeed />} />
-            <Route path="/registration" element={<Registration />} />
-            <Route path="/login" element={<SignIn />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <PostFeed />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/registration" element={<Registration />} />
+              <Route path="/login" element={<SignIn />} />
+            </Routes>
+          </AuthProvider>
         </Router>
       </Stack>
     </LocalizationProvider>
