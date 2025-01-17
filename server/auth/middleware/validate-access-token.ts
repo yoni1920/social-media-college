@@ -1,15 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { serverConfig } from "../../config";
-import { UnauthorizedException } from "../../exceptions";
+import { BadRequestException, UnauthorizedException } from "../../exceptions";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import usersService from "../../users/users.service";
 import { ACCESS_TOKEN_COOKIE_KEY } from "../constants";
-
-const authorizationPrefix = "Bearer";
+import { User } from "../../users/user.model";
 
 declare module "express" {
   interface Request {
-    userID?: string;
+    user?: User;
   }
 }
 
@@ -31,20 +30,23 @@ export const validateAccessToken = async (
       serverConfig.accessTokenSecret
     ) as JwtPayload;
 
-    const userResult = await usersService.doesUserExist(userID);
+    const userResult = await usersService.getUserByID(userID);
 
-    if (!userResult) {
-      throw new UnauthorizedException(
-        "Invalid Refresh Token User Identification"
-      );
-    }
-
-    req.userID = userID;
+    req.user = userResult;
 
     next();
   } catch (error) {
     if (error instanceof UnauthorizedException) {
       throw error;
+    }
+
+    if (
+      error instanceof BadRequestException &&
+      error.message === "User does not exist"
+    ) {
+      throw new UnauthorizedException(
+        "Invalid Refresh Token User Identification"
+      );
     }
 
     throw new UnauthorizedException(

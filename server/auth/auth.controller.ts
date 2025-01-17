@@ -155,7 +155,6 @@ router.post(
       .clearCookie(ACCESS_TOKEN_COOKIE_KEY)
       .send({
         message: "User logged off",
-        userID: req.userID,
       });
   }
 );
@@ -194,8 +193,7 @@ router.post("/refresh", async (req, res) => {
 });
 
 router.post("/me", validateAccessToken, async (req: Request, res: Response) => {
-  const userID = req.userID;
-  const user = userID ? await usersService.getUserByID(userID) : null;
+  const user = req.user;
 
   res.json({ user });
 });
