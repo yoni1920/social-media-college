@@ -6,6 +6,9 @@ import { loginSchema } from "./dto-schema";
 import { validateAccessToken } from "./middleware";
 import { createUserSchema } from "../users/dto-schema";
 import usersService from "../users/users.service";
+import passport from "passport";
+import { serverConfig } from "../config";
+import { UserReturnDTO } from "../users/dto-schema/user-return-dto";
 
 const router = Router();
 
@@ -193,9 +196,42 @@ router.post("/refresh", async (req, res) => {
 });
 
 router.post("/me", validateAccessToken, async (req: Request, res: Response) => {
-  const user = req.user;
+  const user = req.authUser;
 
   res.json({ user });
 });
+
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: `${serverConfig.clientUrl}`,
+    session: false,
+  }),
+  (req, res) => {
+    const authUser = req.user as UserReturnDTO;
+    const { accessToken, refreshToken } = authService.buildLoginTokens(
+      authUser._id
+    );
+
+    res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken.token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: refreshToken.cookieExpiry * 1_000,
+    });
+
+    res.cookie(ACCESS_TOKEN_COOKIE_KEY, accessToken.token, {
+      sameSite: "lax",
+      httpOnly: true,
+      maxAge: accessToken.cookieExpiry * 1_000,
+    });
+
+    res.redirect(serverConfig.clientUrl);
+  }
+);
 
 export default router;

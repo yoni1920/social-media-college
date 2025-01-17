@@ -37,16 +37,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       saveUser(data.user);
     } catch (error) {
       console.error("Get User Me went wrong", error);
-
-      setUser(null);
     } finally {
       setIsLoadingUserAuth(false);
     }
   }, [saveUser]);
 
   useEffect(() => {
-    getUserMe();
-  }, [getUserMe]);
+    if (!user) {
+      getUserMe();
+    }
+  }, [getUserMe, user]);
 
   const onAuthenticationSuccess = useCallback(
     (rawUser: User) => {

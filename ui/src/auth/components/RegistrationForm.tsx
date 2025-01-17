@@ -2,7 +2,7 @@ import { Button, Stack, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { isAxiosError } from "axios";
 import dayjs, { Dayjs } from "dayjs";
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
 import { HttpStatus } from "../../enums";
 import { useAuth } from "../hooks/use-auth";
 import { CredentialErrors } from "../types/credential-errors";
@@ -223,6 +223,11 @@ export const RegistrationForm = () => {
     [register, onRegisterError, registrationFields, updateRegistrationErrors]
   );
 
+  const isRegisterSubmitDisabled = useMemo(
+    () => Object.values(registrationFieldErrors).some(({ error }) => error),
+    [registrationFieldErrors]
+  );
+
   return (
     <form
       onSubmit={onSubmit}
@@ -301,12 +306,11 @@ export const RegistrationForm = () => {
           type="submit"
           variant="contained"
           size="large"
-          disabled={Object.values(registrationFieldErrors).some(
-            ({ error }) => error
-          )}
+          disabled={isRegisterSubmitDisabled}
           sx={{
             padding: "0.6rem",
             width: "60%",
+            background: "linear-gradient(90deg, #1976d2, #4caf50)",
           }}
         >
           Register

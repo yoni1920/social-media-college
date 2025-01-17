@@ -11,7 +11,7 @@ import { ExpirySecs } from "./enums";
 import { LoginTokens } from "./types";
 
 const invalidCredentialsError = new UnauthorizedException(
-  "User credentials do not match"
+  "User identification and/or password are wrong"
 );
 
 const loginUser = async (
@@ -25,7 +25,18 @@ const loginUser = async (
     throw invalidCredentialsError;
   }
 
-  const { password: hashedPassword, _id: userID, ...otherUserFields } = user;
+  const {
+    password: hashedPassword,
+    _id: userID,
+    googleId,
+    ...otherUserFields
+  } = user;
+
+  if (googleId) {
+    throw new UnauthorizedException(
+      "Exists google account connected to user, authenticate via Google"
+    );
+  }
 
   const isPasswordValid = await compare(
     userCredentials.password,

@@ -3,8 +3,20 @@ import { AppTitleLogo } from "../../components/AppTitleLogo";
 import { AuthCard } from "./AuthCard";
 import { GoogleAuthButton } from "./GoogleAuthButton";
 import { SignInForm } from "./SignInForm";
+import { useAuth } from "../hooks/use-auth";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const SignIn = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
   return (
     <AuthCard>
       <Stack gap={3} my={4} alignItems={"center"}>

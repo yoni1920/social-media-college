@@ -8,7 +8,7 @@ import { User } from "../../users/user.model";
 
 declare module "express" {
   interface Request {
-    user?: User;
+    authUser?: User;
   }
 }
 
@@ -32,7 +32,7 @@ export const validateAccessToken = async (
 
     const userResult = await usersService.getUserByID(userID);
 
-    req.user = userResult;
+    req.authUser = userResult;
 
     next();
   } catch (error) {

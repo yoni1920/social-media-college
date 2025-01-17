@@ -62,7 +62,7 @@ export const SignInForm = () => {
       isAxiosError(error) &&
       error.response?.status === HttpStatus.UNAUTHORIZED
     ) {
-      setGeneralError("User identification and/or password are wrong");
+      setGeneralError(error.response.data.details);
       setCredentialErrors({
         userID: { error: true, message: "" },
         password: { error: true, message: "" },
@@ -139,6 +139,7 @@ export const SignInForm = () => {
             variant="contained"
             disabled={isSubmitDisabled}
             sx={{
+              background: "linear-gradient(90deg, #1976d2, #4caf50)",
               padding: "0.6rem",
               width: "60%",
             }}

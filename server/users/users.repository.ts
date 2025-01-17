@@ -1,16 +1,20 @@
-import { User, USER_FIELDS_EXCEPT_PASSWORD, UserModel } from "./user.model";
+import { User, USER_FIELDS_WITHOUT_SENSITIVE, UserModel } from "./user.model";
 import { handleDuplicateKeyException } from "../utils/mongodb-exceptions";
-import { CreateUserDTO, UpdateUserDTO } from "./dto-schema";
+import {
+  CreateGoogleUserDTO,
+  CreateUserDTO,
+  UpdateUserDTO,
+} from "./dto-schema";
 import { ResourceExistsResult, UpdateResourceResult } from "../types/resources";
 import { UserReturnDTO } from "./dto-schema/user-return-dto";
 
 const getAllUsers = async (): Promise<User[]> => {
-  return await UserModel.find({}).select(USER_FIELDS_EXCEPT_PASSWORD);
+  return await UserModel.find({}).select(USER_FIELDS_WITHOUT_SENSITIVE);
 };
 
 const getUserByID = async (userID: string): Promise<User | undefined> => {
   return (
-    await UserModel.findById(userID).select(USER_FIELDS_EXCEPT_PASSWORD)
+    await UserModel.findById(userID).select(USER_FIELDS_WITHOUT_SENSITIVE)
   )?.toObject();
 };
 
@@ -40,7 +44,9 @@ const updateUser = async (
   };
 };
 
-const createUser = async (userDTO: CreateUserDTO): Promise<UserReturnDTO> => {
+const createUser = async (
+  userDTO: CreateUserDTO | CreateGoogleUserDTO
+): Promise<UserReturnDTO> => {
   const user = new UserModel(userDTO);
 
   const newUser = (
@@ -60,6 +66,7 @@ const doesUserExist = async (userID: string): Promise<ResourceExistsResult> => {
 
 const convertToUserReturnDTO = ({
   password,
+  googleId,
   ...otherUserFields
 }: User): UserReturnDTO => ({ ...otherUserFields });
 

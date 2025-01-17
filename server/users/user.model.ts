@@ -9,6 +9,7 @@ export interface User extends BaseResource {
   bio?: string;
   birthDate: Date;
   name?: string;
+  googleId?: string;
 }
 
 const userSchema = new Schema<User>(
@@ -24,7 +25,7 @@ const userSchema = new Schema<User>(
     },
     password: {
       type: String,
-      required: true,
+      default: "",
     },
     email: {
       type: String,
@@ -32,6 +33,10 @@ const userSchema = new Schema<User>(
       unique: true,
     },
     bio: {
+      type: String,
+      default: "",
+    },
+    googleId: {
       type: String,
       default: "",
     },
@@ -52,6 +57,6 @@ export const USER_POPULATE_FIELDS = {
   subFields: ["username"],
 } as const;
 
-export const USER_FIELDS_EXCEPT_PASSWORD = ["-password"];
+export const USER_FIELDS_WITHOUT_SENSITIVE = ["-password", "-googleId"];
 
 export const UserModel = model<User>("User", userSchema);

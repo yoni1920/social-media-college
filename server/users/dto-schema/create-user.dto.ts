@@ -10,3 +10,7 @@ export const createUserSchema = z.strictObject({
 });
 
 export type CreateUserDTO = z.infer<typeof createUserSchema>;
+
+export type CreateGoogleUserDTO = Omit<CreateUserDTO, "password"> & {
+  googleId: string;
+};
