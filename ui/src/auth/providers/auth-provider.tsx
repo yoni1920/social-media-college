@@ -33,7 +33,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const getUserMe = useCallback(async () => {
     try {
       const { data } = await selfAuthApi.post<{ user: User | null }>("/me");
-      await new Promise((r) => setTimeout(r, 2000));
 
       saveUser(data.user);
     } catch (error) {
@@ -89,8 +88,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     [onAuthenticationSuccess]
   );
 
+  const logout = useCallback(async () => {
+    await authApi.post("/logout");
+
+    window.location.reload();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, login, register, isLoadingUserAuth }}>
+    <AuthContext.Provider
+      value={{ user, login, register, logout, isLoadingUserAuth }}
+    >
       {children}
     </AuthContext.Provider>
   );

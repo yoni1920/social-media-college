@@ -38,8 +38,8 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
                   <Route path="/home" element={<Home />} />
-                  <Route path="/profile" element={<Profile />} />
                   <Route path="/new-post" element={<NewPost />} />
+                  <Route path="/profile/:id?" element={<Profile />} />
                 </Route>
               </Route>
 

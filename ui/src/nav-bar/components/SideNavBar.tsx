@@ -1,25 +1,16 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import { AppTitleLogo } from "../../components/AppTitleLogo";
 import { Stack } from "@mui/material";
+import Drawer from "@mui/material/Drawer";
+import Toolbar from "@mui/material/Toolbar";
+import { AppTitleLogo } from "../../components/AppTitleLogo";
+import { useCurrentTab } from "../hooks";
+import { NavFooter } from "./NavFooter";
+import { NavTabs } from "./NavTabs";
 
-// const drawerWidth = 240;
 const DRAWER_WIDTH = 260;
 
 export const SideNavBar = () => {
+  const { currentTab } = useCurrentTab();
+
   return (
     <Stack>
       <Drawer
@@ -35,36 +26,22 @@ export const SideNavBar = () => {
         variant="permanent"
         anchor="left"
       >
-        {/* <Toolbar /> */}
-        <Toolbar sx={{ justifyContent: "center", mt: 2 }}>
-          <AppTitleLogo variant="h5" />
-        </Toolbar>
-        {/* <Divider /> */}
-        <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        <Stack justifyContent={"space-between"} height={"100%"}>
+          <Stack gap={8}>
+            <Toolbar sx={{ justifyContent: "center", mt: 2 }}>
+              <AppTitleLogo
+                mt={3}
+                sx={{
+                  fontSize: 30,
+                }}
+              />
+            </Toolbar>
+
+            <NavTabs currentTab={currentTab} />
+          </Stack>
+
+          <NavFooter />
+        </Stack>
       </Drawer>
     </Stack>
   );
