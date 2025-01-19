@@ -7,4 +7,5 @@ export type User = {
   bio?: string;
   birthDate: Date;
   name?: string;
+  picture: string;
 };
