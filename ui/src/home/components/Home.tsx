@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import { useAuth } from "../../auth/hooks/use-auth";
 
-export const PostFeed = () => {
+export const Home = () => {
   const { user } = useAuth();
 
   return user ? (

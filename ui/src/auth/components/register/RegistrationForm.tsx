@@ -3,16 +3,16 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { isAxiosError } from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
-import { HttpStatus } from "../../enums";
-import { useAuth } from "../hooks/use-auth";
-import { CredentialErrors } from "../types/credential-errors";
+import { HttpStatus } from "../../../enums";
+import { useAuth } from "../../hooks/use-auth";
+import { CredentialErrors } from "../../types/credential-errors";
 import {
   MINIMUM_PASSWORD_LENGTH,
   RegistrationDTO,
   registrationSchema,
   RequiredRegistrationFields,
-} from "../types/registration-fields";
-import { CredentialInput } from "./CredentialInput";
+} from "../../types/registration-fields";
+import { CredentialInput } from "../CredentialInput";
 
 type RegistrationFields = RequiredRegistrationFields & {
   confirmPassword: string;
@@ -235,7 +235,7 @@ export const RegistrationForm = () => {
         width: "100%",
       }}
     >
-      <Stack alignItems={"center"} gap={2}>
+      <Stack alignItems={"center"} gap={1}>
         <Stack alignItems={"center"} gap={2} width={"100%"}>
           <CredentialInput
             required
@@ -307,11 +307,11 @@ export const RegistrationForm = () => {
           variant="contained"
           size="large"
           disabled={isRegisterSubmitDisabled}
-          sx={{
+          sx={(theme) => ({
             padding: "0.6rem",
             width: "60%",
-            background: "linear-gradient(90deg, #1976d2, #4caf50)",
-          }}
+            background: theme.palette.gradient.main,
+          })}
         >
           Register
         </Button>

@@ -1,26 +1,14 @@
 import { Divider, Link, Stack, Typography } from "@mui/material";
-import { AppTitleLogo } from "../../components/AppTitleLogo";
-import { AuthCard } from "./AuthCard";
-import { GoogleAuthButton } from "./GoogleAuthButton";
+import { AppTitleLogo } from "../../../components/AppTitleLogo";
+import { AppCard } from "../../../components/AppCard";
+import { GoogleAuthButton } from "../GoogleAuthButton";
 import { SignInForm } from "./SignInForm";
-import { useAuth } from "../hooks/use-auth";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 export const SignIn = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
-
   return (
-    <AuthCard>
+    <AppCard>
       <Stack gap={3} my={4} alignItems={"center"}>
-        <AppTitleLogo />
+        <AppTitleLogo variant="h3" />
 
         <Typography
           textAlign={"center"}
@@ -38,11 +26,11 @@ export const SignIn = () => {
 
         <Stack direction={"row"} alignItems={"center"} gap={0.5}>
           <Typography>Don't have an account yet?</Typography>
-          <Link underline="hover" href="/registration">
+          <Link underline="hover" href="/register">
             <Typography>Sign up</Typography>
           </Link>
         </Stack>
       </Stack>
-    </AuthCard>
+    </AppCard>
   );
 };

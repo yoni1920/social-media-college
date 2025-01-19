@@ -4,10 +4,13 @@ export const theme = createTheme({
   cssVariables: true,
   palette: {
     primary: {
-      main: "#556cd6",
+      main: "#1976d2",
     },
     secondary: {
-      main: "#19857b",
+      main: "#4caf50",
+    },
+    gradient: {
+      main: "linear-gradient(90deg, #1976d2, #4caf50)",
     },
   },
 });
