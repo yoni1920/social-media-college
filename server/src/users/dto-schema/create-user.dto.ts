@@ -9,8 +9,11 @@ export const createUserSchema = z.strictObject({
   name: z.string(),
 });
 
-export type CreateUserDTO = z.infer<typeof createUserSchema>;
+export type CreateUserDTO = z.infer<typeof createUserSchema> & {
+  picture: string;
+};
 
-export type CreateGoogleUserDTO = Omit<CreateUserDTO, "password"> & {
-  googleId: string;
+export type CreateExternalUserDTO = Omit<CreateUserDTO, "password"> & {
+  externalId: string;
+  picture: string;
 };

@@ -9,7 +9,8 @@ export interface User extends BaseResource {
   bio?: string;
   birthDate: Date;
   name?: string;
-  googleId?: string;
+  externalId?: string;
+  picture: string;
 }
 
 const userSchema = new Schema<User>(
@@ -36,7 +37,7 @@ const userSchema = new Schema<User>(
       type: String,
       default: "",
     },
-    googleId: {
+    externalId: {
       type: String,
       default: "",
     },
@@ -46,6 +47,10 @@ const userSchema = new Schema<User>(
     },
     birthDate: {
       type: Date,
+      required: true,
+    },
+    picture: {
+      type: String,
       required: true,
     },
   },

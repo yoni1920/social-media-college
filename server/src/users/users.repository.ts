@@ -1,7 +1,7 @@
 import { User, USER_FIELDS_WITHOUT_SENSITIVE, UserModel } from "./user.model";
 import { handleDuplicateKeyException } from "../utils/mongodb-exceptions";
 import {
-  CreateGoogleUserDTO,
+  CreateExternalUserDTO,
   CreateUserDTO,
   UpdateUserDTO,
 } from "./dto-schema";
@@ -45,7 +45,7 @@ const updateUser = async (
 };
 
 const createUser = async (
-  userDTO: CreateUserDTO | CreateGoogleUserDTO
+  userDTO: CreateUserDTO | CreateExternalUserDTO
 ): Promise<UserReturnDTO> => {
   const user = new UserModel(userDTO);
 
@@ -66,7 +66,7 @@ const doesUserExist = async (userID: string): Promise<ResourceExistsResult> => {
 
 const convertToUserReturnDTO = ({
   password,
-  googleId,
+  externalId,
   ...otherUserFields
 }: User): UserReturnDTO => ({ ...otherUserFields });
 
