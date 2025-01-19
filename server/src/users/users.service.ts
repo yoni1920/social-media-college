@@ -54,7 +54,7 @@ const createUser = async (userDTO: CreateUserDTO | CreateExternalUserDTO) => {
   const user: CreateUserDTO = {
     ...otherUserData,
     password,
-    picture: `${serverConfig.serverUrl}/users/default/picture`,
+    picture: `${serverConfig.serverUrl}/images/default.webp`,
   };
 
   return await usersRepository.createUser(user);

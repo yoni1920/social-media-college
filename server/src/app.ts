@@ -25,6 +25,7 @@ const initApp = async () => {
     })
   );
 
+  app.use(express.static("public"));
   app.use(bodyParser.urlencoded({ extended: true, limit: "1mb" }));
   app.use(bodyParser.json());
   app.use(cookieParser());
