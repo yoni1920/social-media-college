@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const getUserMe = useCallback(async () => {
     try {
       const { data } = await selfAuthApi.post<{ user: User | null }>("/me");
+      await new Promise((r) => setTimeout(r, 2000));
 
       saveUser(data.user);
     } catch (error) {

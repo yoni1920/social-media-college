@@ -1,17 +1,25 @@
-import { Typography } from "@mui/material";
+import { Typography, TypographyProps, useTheme } from "@mui/material";
 
-export const AppTitleLogo = () => {
+export const AppTitleLogo = ({
+  variant = "h3",
+  sx,
+  ...props
+}: TypographyProps) => {
+  const theme = useTheme();
+
   return (
     <Typography
-      paddingY={1}
-      variant="h3"
+      variant={variant}
       fontWeight={"bold"}
       fontFamily={"Playwrite IN"}
+      paddingY={1}
       sx={{
-        background: "linear-gradient(90deg, #1976d2, #4caf50)",
+        background: theme.palette.gradient.main,
         color: "transparent",
         backgroundClip: "text",
+        ...sx,
       }}
+      {...props}
     >
       WeSocial.io
     </Typography>

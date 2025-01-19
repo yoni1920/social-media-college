@@ -1,12 +1,22 @@
 import { Stack } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { SignIn } from "./auth/components/SignIn";
-import { Registration } from "./auth/components/Registration";
-import { PostFeed } from "./home/components/PostFeed";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import { SignIn } from "./auth/components/sign-in/SignIn";
+import { Registration } from "./auth/components/register/Registration";
+import { Home } from "./home/components/Home";
 import { AuthProvider } from "./auth/providers/auth-provider";
-import { ProtectedRoute } from "./auth/components/ProtectedRoute";
+import { ProtectedRoute } from "./auth/components/routing/ProtectedRoute";
+import { Profile } from "./profile/components/Profile";
+import { NewPost } from "./new-post/components/NewPost";
+import { Layout } from "./components/Layout";
+import { AuthRoute } from "./auth/components/routing/AuthRoute";
+import { NotFound } from "./not-found/components/NotFound";
 
 function App() {
   return (
@@ -20,16 +30,22 @@ function App() {
         <Router>
           <AuthProvider>
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <PostFeed />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/registration" element={<Registration />} />
-              <Route path="/login" element={<SignIn />} />
+              <Route element={<AuthRoute />}>
+                <Route path="/register" element={<Registration />} />
+                <Route path="/login" element={<SignIn />} />
+              </Route>
+
+              <Route element={<ProtectedRoute />}>
+                <Route element={<Layout />}>
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/new-post" element={<NewPost />} />
+                </Route>
+              </Route>
+
+              <Route path="/" element={<Navigate to="/home" replace />} />
+
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
         </Router>

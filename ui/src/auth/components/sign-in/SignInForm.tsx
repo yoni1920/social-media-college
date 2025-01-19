@@ -1,12 +1,12 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
-import { HttpStatus } from "../../enums";
-import { useAuth } from "../hooks/use-auth";
-import { CredentialErrors } from "../types/credential-errors";
-import { UserLoginDTO } from "../types/user-login-dto";
-import { isValidEmail } from "../utils";
-import { CredentialInput } from "./CredentialInput";
+import { HttpStatus } from "../../../enums";
+import { useAuth } from "../../hooks/use-auth";
+import { CredentialErrors } from "../../types/credential-errors";
+import { UserLoginDTO } from "../../types/user-login-dto";
+import { isValidEmail } from "../../utils";
+import { CredentialInput } from "../CredentialInput";
 
 type UserCredentials = {
   userID: string;
@@ -138,11 +138,11 @@ export const SignInForm = () => {
             size="large"
             variant="contained"
             disabled={isSubmitDisabled}
-            sx={{
-              background: "linear-gradient(90deg, #1976d2, #4caf50)",
+            sx={(theme) => ({
+              background: theme.palette.gradient.main,
               padding: "0.6rem",
               width: "60%",
-            }}
+            })}
           >
             <Typography fontSize={"medium"}>Sign In</Typography>
           </Button>
