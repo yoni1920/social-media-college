@@ -1,4 +1,4 @@
-import { List } from "@mui/material";
+import { Stack } from "@mui/material";
 import { usePosts } from "./hooks/usePosts";
 import { Post } from "./Post";
 
@@ -9,10 +9,10 @@ export const PostsFeed = ({ profileId }: Props) => {
   const posts = usePosts(profileId);
 
   return (
-    <List>
+    <Stack gap={2} marginBlock={3}>
       {posts.map((post) => (
-        <Post post={post} />
+        <Post key={post._id} post={post} />
       ))}
-    </List>
+    </Stack>
   );
 };

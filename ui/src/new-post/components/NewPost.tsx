@@ -9,7 +9,9 @@ import { RouteTab } from "../../enums";
 
 export const NewPost = () => {
   const { user } = useAuth();
-  const [post, setPost] = useState<Partial<TPost>>({
+  const [post, setPost] = useState<
+    Partial<Omit<TPost, "sender"> & { sender: string }>
+  >({
     message: "",
     sender: user?._id,
   });

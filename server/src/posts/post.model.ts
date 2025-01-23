@@ -1,10 +1,11 @@
 import { Schema, model } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
 import { BaseResource } from "../types/resources";
+import { User } from "users/user.model";
 
 export interface Post extends BaseResource {
   message: string;
-  sender: string;
+  sender: Pick<User, "_id" | "username">;
 }
 
 const postSchema = new Schema<Post>(
