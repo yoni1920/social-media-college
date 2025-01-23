@@ -10,11 +10,11 @@ export const useCurrentTab = () => {
     []
   );
 
-  const currentTab = useMemo((): RouteTab => {
+  const currentTab = useMemo((): RouteTab | null => {
     const result = matchRoutes(routes, location);
 
     if (!result) {
-      return RouteTab.HOME;
+      return null;
     }
 
     const [{ route: targetRoute }] = result;
@@ -22,7 +22,7 @@ export const useCurrentTab = () => {
       (route) => route === targetRoute.path
     );
 
-    return routeTab ?? RouteTab.HOME;
+    return routeTab ?? null;
   }, [routes, location]);
 
   return {

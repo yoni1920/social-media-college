@@ -10,7 +10,7 @@ import { RouteTab } from "../../enums";
 import { useAuth } from "../../auth/hooks/use-auth";
 
 type Props = {
-  currentTab: RouteTab;
+  currentTab: RouteTab | null;
 };
 
 export const NavTabs = memo(({ currentTab }: Props) => {
