@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Avatar, Stack, Typography } from "@mui/material";
 import { useAuth } from "../../auth/hooks/use-auth";
 
 export const Home = () => {
@@ -11,6 +11,7 @@ export const Home = () => {
       <Typography>{user.email}</Typography>
       <Typography>{user.username}</Typography>
       <Typography>{user.birthDate.toDateString()}</Typography>
+      <Avatar src={user.picture} alt={user.name} />
     </Stack>
   ) : null;
 };

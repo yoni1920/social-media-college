@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --forceExit --runInBand",
-    "start:dev": "nodemon -r dotenv/config main.ts",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --setupFiles dotenv/config --detectOpenHandles --forceExit --runInBand",
+    "start:dev": "nodemon -r dotenv/config src/main.ts",
     "start": "tsc && node --env-file=.env dist/main.js"
   },
   "keywords": [],

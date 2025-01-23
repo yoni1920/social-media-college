@@ -3,16 +3,19 @@ import {
   AddCircleOutline,
   HomeOutlined,
 } from "@mui/icons-material";
-import { Tab, Tabs } from "@mui/material";
+import { Avatar, Tab, Tabs } from "@mui/material";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { RouteTab } from "../../enums";
+import { useAuth } from "../../auth/hooks/use-auth";
 
 type Props = {
-  currentTab: RouteTab;
+  currentTab: RouteTab | null;
 };
 
 export const NavTabs = memo(({ currentTab }: Props) => {
+  const { user } = useAuth();
+
   return (
     <Tabs orientation="vertical" variant="scrollable" value={currentTab}>
       <Tab
@@ -44,15 +47,21 @@ export const NavTabs = memo(({ currentTab }: Props) => {
         }}
       />
       <Tab
-        icon={<AccountCircleOutlined sx={{ fontSize: "1.8rem" }} />}
+        icon={
+          <Avatar
+            alt={user?.name ?? ""}
+            src={user?.picture ?? ""}
+            sx={{ width: 36, height: 36 }}
+          />
+        }
         iconPosition="start"
         label="Profile"
         value={RouteTab.PROFILE}
         to={"/profile"}
         component={Link}
         sx={{
+          marginLeft: "12px",
           justifyContent: "flex-start",
-          marginLeft: 2,
           gap: 1,
           fontSize: "1rem",
         }}

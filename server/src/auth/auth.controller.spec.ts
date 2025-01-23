@@ -32,6 +32,8 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
+  await flushCollections();
+
   await mongoose.connection.close();
 });
 
@@ -68,7 +70,9 @@ test("login email does not exist - fail", async () => {
   expect(response.statusCode).toBe(401);
 
   expect(response.body.message).toBe("User is unauthorized");
-  expect(response.body.details).toBe("User credentials do not match");
+  expect(response.body.details).toBe(
+    "User identification and/or password are wrong"
+  );
 });
 
 test("login username does not exist - fail", async () => {
@@ -80,7 +84,9 @@ test("login username does not exist - fail", async () => {
   expect(response.statusCode).toBe(401);
 
   expect(response.body.message).toBe("User is unauthorized");
-  expect(response.body.details).toBe("User credentials do not match");
+  expect(response.body.details).toBe(
+    "User identification and/or password are wrong"
+  );
 });
 
 test("login wrong password - fail", async () => {
@@ -92,7 +98,9 @@ test("login wrong password - fail", async () => {
   expect(response.statusCode).toBe(401);
 
   expect(response.body.message).toBe("User is unauthorized");
-  expect(response.body.details).toBe("User credentials do not match");
+  expect(response.body.details).toBe(
+    "User identification and/or password are wrong"
+  );
 });
 
 test("login without username or email - fail", async () => {

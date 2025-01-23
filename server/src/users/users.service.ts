@@ -4,12 +4,13 @@ import { BadRequestException } from "../exceptions";
 import postsService from "../posts/posts.service";
 import { USER_PASSWORD_SALT_ROUNDS } from "./constants";
 import {
-  CreateGoogleUserDTO,
+  CreateExternalUserDTO,
   CreateUserDTO,
   UpdateUserDTO,
 } from "./dto-schema";
 import usersRepository from "./users.repository";
-import { isGoogleUserDTO } from "./utils";
+import { isExternalUserDTO } from "./utils";
+import { serverConfig } from "../config";
 
 const getAllUsers = async () => {
   return await usersRepository.getAllUsers();
@@ -41,8 +42,8 @@ const updateUser = async (
   return updatedAt;
 };
 
-const createUser = async (userDTO: CreateUserDTO | CreateGoogleUserDTO) => {
-  if (isGoogleUserDTO(userDTO)) {
+const createUser = async (userDTO: CreateUserDTO | CreateExternalUserDTO) => {
+  if (isExternalUserDTO(userDTO)) {
     return await usersRepository.createUser(userDTO);
   }
 
@@ -53,6 +54,7 @@ const createUser = async (userDTO: CreateUserDTO | CreateGoogleUserDTO) => {
   const user: CreateUserDTO = {
     ...otherUserData,
     password,
+    picture: `${serverConfig.serverUrl}/images/default.webp`,
   };
 
   return await usersRepository.createUser(user);

@@ -20,6 +20,7 @@ export const exampleUser = {
   bio: "King",
   birthDate: "2000-01-01",
   name: "Ido Avni",
+  picture: "example",
 };
 
 export const adminUser = {
@@ -32,6 +33,7 @@ export const adminUser = {
   email: "admin@example.com",
   bio: "admin",
   birthDate: "2001-08-11",
+  picture: "example",
 };
 
 export const exampleNewUser = {

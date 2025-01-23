@@ -28,13 +28,13 @@ const loginUser = async (
   const {
     password: hashedPassword,
     _id: userID,
-    googleId,
+    externalId,
     ...otherUserFields
   } = user;
 
-  if (googleId) {
+  if (externalId) {
     throw new UnauthorizedException(
-      "Exists google account connected to user, authenticate via Google"
+      "Exists external account connected to user, authenticate via social media"
     );
   }
 

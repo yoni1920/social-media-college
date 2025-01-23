@@ -36,6 +36,8 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
+  await flushCollections();
+
   await mongoose.connection.close();
 });
 
