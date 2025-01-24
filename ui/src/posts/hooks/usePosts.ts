@@ -7,7 +7,7 @@ export const usePosts = (profileId?: string) => {
 
   useEffect(() => {
     postsApi
-      .get(`/${profileId ? `?sender=${profileId}` : ""}`)
+      .get(`/${profileId ? `?senderID=${profileId}` : ""}`)
       .then(({ data }) => {
         setPosts(data);
       });

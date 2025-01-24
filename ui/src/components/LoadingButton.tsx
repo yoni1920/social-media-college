@@ -1,5 +1,6 @@
-import { Button, ButtonProps, CircularProgress } from "@mui/material";
+import { Button, ButtonProps } from "@mui/material";
 import { useState } from "react";
+import { GradientCircularProgress } from "./GradientLoader";
 
 type Props = Omit<ButtonProps, "onClick"> & {
   onClick?: (
@@ -32,7 +33,7 @@ export const LoadingButton = ({
 
   return (
     <Button onClick={onClickWithLoadingState} {...props}>
-      {loading ? <CircularProgress /> : children}
+      {loading ? <GradientCircularProgress /> : children}
     </Button>
   );
 };

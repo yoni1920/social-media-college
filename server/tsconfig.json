@@ -5,6 +5,7 @@
     "target": "ES2023",
     "moduleResolution": "node",
     "sourceMap": true,
+    "skipLibCheck": true,
     "outDir": "dist",
     "strict": true,
     "baseUrl": "src"

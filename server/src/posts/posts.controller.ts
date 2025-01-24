@@ -2,8 +2,16 @@ import express from "express";
 import { validateBody } from "../middleware/body-validator";
 import { updatePostSchema, createPostSchema } from "./dto-schema";
 import postsService from "./posts.service";
+import { v4 } from "uuid";
+import multer from "multer";
+import { rename } from "fs/promises";
 
+const POSTS_DISK_STORAGE_PATH = "./storage/posts";
 const router = express.Router();
+const postsImageStorage = multer.diskStorage({
+  destination: POSTS_DISK_STORAGE_PATH,
+});
+const postsUploader = multer({ storage: postsImageStorage });
 
 /**
  * @openapi
@@ -47,15 +55,21 @@ const router = express.Router();
  *       400:
  *         description: Bad request
  */
-router.post("/", validateBody(createPostSchema), async (req, res) => {
-  const { id, createdAt } = await postsService.createPost(req.body);
-
-  res.send({
-    message: "created new post",
-    postID: id,
-    date: createdAt,
-  });
-});
+router.post(
+  "/",
+  postsUploader.single("image"),
+  validateBody(createPostSchema),
+  async (req, res) => {
+    const { id, createdAt } = await postsService.createPost(req.body);
+    if (req.file)
+      await rename(req.file.path, `${POSTS_DISK_STORAGE_PATH}/${id}.jpg`);
+    res.send({
+      message: "created new post",
+      postID: id,
+      date: createdAt,
+    });
+  }
+);
 
 /**
  * @openapi
@@ -113,6 +127,12 @@ router.get("/:postID", async (req, res) => {
   res.send(post);
 });
 
+router.get("/image/:postID", async (req, res) => {
+  const postID = req.params.postID;
+
+  res.sendFile(`${POSTS_DISK_STORAGE_PATH}/${postID}.jpg`, { root: "." });
+});
+
 /**
  * @openapi
  * /posts/{postID}:
@@ -145,18 +165,23 @@ router.get("/:postID", async (req, res) => {
  *       400:
  *         description: Bad request
  */
-router.put("/:postID", validateBody(updatePostSchema), async (req, res) => {
-  const postID = req.params.postID;
-  const postDTO = req.body;
+router.put(
+  "/:postID",
+  validateBody(updatePostSchema),
+  postsUploader.single("image"),
+  async (req, res) => {
+    const postID = req.params.postID;
+    const postDTO = req.body;
 
-  const updatedAt = await postsService.updatePost(postID, postDTO);
+    const updatedAt = await postsService.updatePost(postID, postDTO);
 
-  res.send({
-    message: "Post updated",
-    postID,
-    date: updatedAt,
-  });
-});
+    res.send({
+      message: "Post updated",
+      postID,
+      date: updatedAt,
+    });
+  }
+);
 /**
  * @openapi
  * /posts/{postID}:

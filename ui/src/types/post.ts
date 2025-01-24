@@ -1,5 +1,5 @@
 export type TPost = {
   _id: string;
   message: string;
-  sender: { _id: string; username: string };
+  sender: { _id: string; username: string; name: string; picture: string };
 };

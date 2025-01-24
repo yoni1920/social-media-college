@@ -59,7 +59,7 @@ const userSchema = new Schema<User>(
 
 export const USER_POPULATE_FIELDS = {
   field: "sender",
-  subFields: ["username"],
+  subFields: ["username", "name", "picture"],
 } as const;
 
 export const USER_FIELDS_WITHOUT_SENSITIVE = ["-password", "-googleId"];

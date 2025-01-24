@@ -4,6 +4,7 @@ import usersService from "../users/users.service";
 import commentsService from "../comments/comments.service";
 import { Post } from "./post.model";
 import { CreatePostDTO, UpdatePostDTO } from "./dto-schema";
+import { Request } from "express";
 
 const getAllPosts = async (): Promise<Post[]> => {
   return await postsRepository.getAllPosts();
