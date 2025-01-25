@@ -30,7 +30,7 @@ const initApp = async () => {
   app.use(bodyParser.json());
   app.use(cookieParser());
   app.use(passport.initialize());
-  require("./auth/strategies/google.strategy");
+  await import("./auth/strategies/google.strategy");
 
   app.use("/posts", validateAccessToken, postsController);
   app.use("/comments", validateAccessToken, commentsController);

@@ -1,9 +1,20 @@
 import express from "express";
 import { validateBody } from "../middleware/body-validator";
-import { updatePostSchema, createPostSchema } from "./dto-schema";
+import {
+  updatePostSchema,
+  createPostSchema,
+  POSTS_DISK_STORAGE_PATH,
+} from "./dto-schema";
 import postsService from "./posts.service";
+import multer from "multer";
+import { BadRequestException } from "../exceptions";
+import { glob } from "glob";
 
 const router = express.Router();
+const postsImageStorage = multer.diskStorage({
+  destination: POSTS_DISK_STORAGE_PATH,
+});
+const postsUploader = multer({ storage: postsImageStorage });
 
 /**
  * @openapi
@@ -47,15 +58,21 @@ const router = express.Router();
  *       400:
  *         description: Bad request
  */
-router.post("/", validateBody(createPostSchema), async (req, res) => {
-  const { id, createdAt } = await postsService.createPost(req.body);
-
-  res.send({
-    message: "created new post",
-    postID: id,
-    date: createdAt,
-  });
-});
+router.post(
+  "/",
+  postsUploader.single("image"),
+  validateBody(createPostSchema),
+  async (req, res) => {
+    if (!req.file)
+      throw new BadRequestException("Can't upload post without file", {});
+    const { id, createdAt } = await postsService.createPost(req.body, req.file);
+    res.send({
+      message: "created new post",
+      postID: id,
+      date: createdAt,
+    });
+  }
+);
 
 /**
  * @openapi
@@ -113,6 +130,20 @@ router.get("/:postID", async (req, res) => {
   res.send(post);
 });
 
+router.get("/image/:postID", async (req, res) => {
+  const { postID } = req.params;
+  const fileName =
+    req.query.fileName ??
+    (await glob(`${POSTS_DISK_STORAGE_PATH}/${postID}*`))[0].replace(
+      `${POSTS_DISK_STORAGE_PATH}/${postID}-`,
+      ""
+    );
+
+  res.sendFile(`${POSTS_DISK_STORAGE_PATH}/${postID}-${fileName}`, {
+    root: ".",
+  });
+});
+
 /**
  * @openapi
  * /posts/{postID}:
@@ -145,18 +176,23 @@ router.get("/:postID", async (req, res) => {
  *       400:
  *         description: Bad request
  */
-router.put("/:postID", validateBody(updatePostSchema), async (req, res) => {
-  const postID = req.params.postID;
-  const postDTO = req.body;
+router.put(
+  "/:postID",
+  validateBody(updatePostSchema),
+  postsUploader.single("image"),
+  async (req, res) => {
+    const postID = req.params.postID;
+    const postDTO = req.body;
 
-  const updatedAt = await postsService.updatePost(postID, postDTO);
+    const updatedAt = await postsService.updatePost(postID, postDTO, req.file);
 
-  res.send({
-    message: "Post updated",
-    postID,
-    date: updatedAt,
-  });
-});
+    res.send({
+      message: "Post updated",
+      postID,
+      date: updatedAt,
+    });
+  }
+);
 /**
  * @openapi
  * /posts/{postID}:
