@@ -13,8 +13,6 @@ const googleAuth = new GoogleStrategy(
     proxy: true,
   },
   async (_accessToken, _refreshToken, profile, done) => {
-    console.log(profile);
-
     try {
       const existingUser = await usersService.getUserByEmail(profile.email);
 

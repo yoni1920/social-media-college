@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, isAxiosError } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { HttpStatus } from "../enums";
 import { authApi } from "./auth-api";
 
