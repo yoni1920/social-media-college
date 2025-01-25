@@ -2,6 +2,7 @@ import { UpdateResourceResult, ResourceExistsResult } from "../types/resources";
 import { USER_POPULATE_FIELDS } from "../users/user.model";
 import { CreatePostDTO, UpdatePostDTO } from "./dto-schema";
 import { Post, PostModel } from "./post.model";
+import {} from "fs/promises";
 
 const getAllPosts = async (): Promise<Post[]> => {
   return await PostModel.find({})

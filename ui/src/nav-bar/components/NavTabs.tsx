@@ -8,16 +8,24 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { RouteTab } from "../../enums";
 import { useAuth } from "../../auth/hooks/use-auth";
+import { UserAvatar } from "../../components/UserAvatar";
 
 type Props = {
   currentTab: RouteTab | null;
 };
 
+const SHOWN_TABS = [RouteTab.HOME, RouteTab.NEW_POST, RouteTab.USER_PROFILE];
+
 export const NavTabs = memo(({ currentTab }: Props) => {
   const { user } = useAuth();
 
   return (
-    <Tabs orientation="vertical" variant="scrollable" value={currentTab}>
+    <Tabs
+      orientation="vertical"
+      variant="scrollable"
+      value={
+        currentTab && SHOWN_TABS.includes(currentTab) ? currentTab : false
+      }>
       <Tab
         icon={<HomeOutlined sx={{ fontSize: "1.8rem" }} />}
         iconPosition="start"
@@ -47,17 +55,11 @@ export const NavTabs = memo(({ currentTab }: Props) => {
         }}
       />
       <Tab
-        icon={
-          <Avatar
-            alt={user?.name ?? ""}
-            src={user?.picture ?? ""}
-            sx={{ width: 36, height: 36 }}
-          />
-        }
+        icon={<UserAvatar name={user?.name} picture={user?.picture} />}
         iconPosition="start"
         label="Profile"
-        value={RouteTab.PROFILE}
-        to={"/profile"}
+        value={RouteTab.USER_PROFILE}
+        to={"/user"}
         component={Link}
         sx={{
           marginLeft: "12px",
