@@ -23,6 +23,7 @@ export const createPostSchema = z.strictObject({
   id: z.string().optional(),
   sender: z.string().min(1),
   message: z.string().default(""),
+  fileName: z.string().optional(),
 });
 
 export type CreatePostDTO = z.infer<typeof createPostSchema>;

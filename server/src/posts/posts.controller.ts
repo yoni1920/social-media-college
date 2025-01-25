@@ -1,12 +1,15 @@
 import express from "express";
 import { validateBody } from "../middleware/body-validator";
-import { updatePostSchema, createPostSchema } from "./dto-schema";
+import {
+  updatePostSchema,
+  createPostSchema,
+  POSTS_DISK_STORAGE_PATH,
+} from "./dto-schema";
 import postsService from "./posts.service";
 import multer from "multer";
-import { rename, rm } from "fs/promises";
+import { BadRequestException } from "../exceptions";
 import { glob } from "glob";
 
-const POSTS_DISK_STORAGE_PATH = "./storage/posts";
 const router = express.Router();
 const postsImageStorage = multer.diskStorage({
   destination: POSTS_DISK_STORAGE_PATH,
@@ -60,14 +63,9 @@ router.post(
   postsUploader.single("image"),
   validateBody(createPostSchema),
   async (req, res) => {
-    const { id, createdAt } = await postsService.createPost(req.body);
-    if (req.file)
-      await rename(
-        req.file.path,
-        `${POSTS_DISK_STORAGE_PATH}/${id}.${req.file.originalname
-          .split(".")
-          .pop()}`
-      );
+    if (!req.file)
+      throw new BadRequestException("Can't upload post without file", {});
+    const { id, createdAt } = await postsService.createPost(req.body, req.file);
     res.send({
       message: "created new post",
       postID: id,
@@ -133,9 +131,17 @@ router.get("/:postID", async (req, res) => {
 });
 
 router.get("/image/:postID", async (req, res) => {
-  const postID = req.params.postID;
-  const [file] = await glob(`${POSTS_DISK_STORAGE_PATH}/${postID}.*`);
-  res.sendFile(file, { root: "." });
+  const { postID } = req.params;
+  const fileName =
+    req.query.fileName ??
+    (await glob(`${POSTS_DISK_STORAGE_PATH}/${postID}*`))[0].replace(
+      `${POSTS_DISK_STORAGE_PATH}/${postID}-`,
+      ""
+    );
+
+  res.sendFile(`${POSTS_DISK_STORAGE_PATH}/${postID}-${fileName}`, {
+    root: ".",
+  });
 });
 
 /**
@@ -178,22 +184,7 @@ router.put(
     const postID = req.params.postID;
     const postDTO = req.body;
 
-    if (req.file) {
-      const [oldFileName] = await glob(
-        `${POSTS_DISK_STORAGE_PATH}/${postID}.*`
-      );
-      await Promise.all([
-        await rm(oldFileName),
-        await rename(
-          req.file.path,
-          `${POSTS_DISK_STORAGE_PATH}/${postID}.${req.file.originalname
-            .split(".")
-            .pop()}`
-        ),
-      ]);
-    }
-
-    const updatedAt = await postsService.updatePost(postID, postDTO);
+    const updatedAt = await postsService.updatePost(postID, postDTO, req.file);
 
     res.send({
       message: "Post updated",

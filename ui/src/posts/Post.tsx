@@ -37,7 +37,9 @@ export const Post = ({ post, onChanged }: Props) => {
           marginBlock={1}
           width="300px"
           height="300px"
-          src={`${import.meta.env.VITE_SERVER_URL}/posts/image/${post._id}`}
+          src={`${import.meta.env.VITE_SERVER_URL}/posts/image/${
+            post._id
+          }?fileName=${post.fileName}`}
         />
         <CardActions sx={{ justifyContent: "space-between" }}>
           <CommentAction postID={post._id} onSuccess={refresh} />

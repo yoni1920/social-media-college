@@ -6,6 +6,7 @@ import { User } from "users/user.model";
 export interface Post extends BaseResource {
   message: string;
   sender: Pick<User, "_id" | "username">;
+  fileName: string;
 }
 
 const postSchema = new Schema<Post>(
@@ -21,6 +22,10 @@ const postSchema = new Schema<Post>(
     sender: {
       type: String,
       ref: "User",
+      required: true,
+    },
+    fileName: {
+      type: String,
       required: true,
     },
   },
