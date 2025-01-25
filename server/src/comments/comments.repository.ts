@@ -1,9 +1,12 @@
+import { USER_POPULATE_FIELDS } from "../users/user.model";
 import { UpdateResourceResult } from "../types/resources";
 import { Comment, CommentModel } from "./comment.model";
 import { CreateCommentDTO, UpdateCommentDTO } from "./dto-schema";
 
 const getAllComments = async (): Promise<Comment[]> => {
-  return await CommentModel.find({});
+  return await CommentModel.find({})
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
+    .exec();
 };
 
 const getCommentByID = async (commentID: string): Promise<Comment | null> => {
@@ -11,7 +14,9 @@ const getCommentByID = async (commentID: string): Promise<Comment | null> => {
 };
 
 const getCommentsByPostID = async (postID: string): Promise<Comment[]> => {
-  return await CommentModel.find({ postID });
+  return await CommentModel.find({ postID })
+    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
+    .exec();
 };
 
 const updateComment = async (

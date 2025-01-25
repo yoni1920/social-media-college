@@ -1,4 +1,11 @@
-import { Button, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Stack,
+  TextField,
+} from "@mui/material";
 import React, { useRef, useState } from "react";
 import { TPost } from "../../types/post";
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -42,44 +49,46 @@ export const NewPost = () => {
     navigate(RouteTab.HOME);
   };
   return (
-    <Stack
-      justifyContent="center"
-      alignItems="center"
-      onSubmit={onSubmit}
-      gap={3}>
-      <TextField
-        value={post.message}
-        error={post.message === ""}
-        placeholder="What's on your mind?"
-        onChange={(event) =>
-          setPost((currentData) => ({
-            ...currentData,
-            message: event.target.value,
-          }))
-        }
-        helperText={post.message === "" ? "Message is required" : ""}
-      />
-      {file && (
-        <img
-          src={URL.createObjectURL(file)}
-          alt="preview"
-          style={{ maxWidth: "100%" }}
+    <Card>
+      <Stack alignItems="center" justifyContent="center" gap={2}>
+        {file && (
+          <img
+            src={URL.createObjectURL(file)}
+            alt="preview"
+            width="300px"
+            height="300px"
+          />
+        )}
+        <CardActions>
+          <Button
+            color={file === null ? "error" : "primary"}
+            onClick={() => inputRef.current?.click()}>
+            <input
+              ref={inputRef}
+              type="file"
+              style={{ display: "none" }}
+              accept="image/*"
+              multiple={false}
+              onChange={onFileChosen}
+            />
+            {file ? file.name : "Choose Image"}
+          </Button>
+        </CardActions>
+        <TextField
+          value={post.message}
+          error={post.message === ""}
+          sx={{ width: "100%", paddingInline: 1 }}
+          placeholder="What's on your mind?"
+          onChange={(event) =>
+            setPost((currentData) => ({
+              ...currentData,
+              message: event.target.value,
+            }))
+          }
+          helperText={post.message === "" ? "Message is required" : ""}
         />
-      )}
-      <Button
-        color={file === null ? "error" : "primary"}
-        onClick={() => inputRef.current?.click()}>
-        <input
-          ref={inputRef}
-          type="file"
-          style={{ display: "none" }}
-          accept="image/*"
-          multiple={false}
-          onChange={onFileChosen}
-        />
-        {file ? file.name : "Choose Image"}
-      </Button>
-      <LoadingButton onClick={onSubmit}>Upload</LoadingButton>
-    </Stack>
+        <LoadingButton onClick={onSubmit}>Upload</LoadingButton>
+      </Stack>
+    </Card>
   );
 };

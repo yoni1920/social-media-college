@@ -8,6 +8,7 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { RouteTab } from "../../enums";
 import { useAuth } from "../../auth/hooks/use-auth";
+import { UserAvatar } from "../../components/UserAvatar";
 
 type Props = {
   currentTab: RouteTab | null;
@@ -47,13 +48,7 @@ export const NavTabs = memo(({ currentTab }: Props) => {
         }}
       />
       <Tab
-        icon={
-          <Avatar
-            alt={user?.name ?? ""}
-            src={user?.picture ?? ""}
-            sx={{ width: 36, height: 36 }}
-          />
-        }
+        icon={<UserAvatar name={user?.name} picture={user?.picture} />}
         iconPosition="start"
         label="Profile"
         value={RouteTab.PROFILE}

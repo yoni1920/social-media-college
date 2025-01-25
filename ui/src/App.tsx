@@ -17,6 +17,7 @@ import { NewPost } from "./new-post/components/NewPost";
 import { Layout } from "./components/Layout";
 import { AuthRoute } from "./auth/components/routing/AuthRoute";
 import { NotFound } from "./not-found/components/NotFound";
+import { ProfilePage } from "./profile/components/ProfilePage";
 
 function App() {
   return (
@@ -25,8 +26,7 @@ function App() {
         width={"inherit"}
         height={"inherit"}
         alignItems={"center"}
-        justifyContent={"center"}
-      >
+        justifyContent={"center"}>
         <Router>
           <AuthProvider>
             <Routes>
@@ -39,7 +39,7 @@ function App() {
                 <Route element={<Layout />}>
                   <Route path="/home" element={<Home />} />
                   <Route path="/new-post" element={<NewPost />} />
-                  <Route path="/profile/:id?" element={<Profile />} />
+                  <Route path="/profile/:id?" element={<ProfilePage />} />
                 </Route>
               </Route>
 

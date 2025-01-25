@@ -1,15 +1,16 @@
-import { List, Stack, Typography } from "@mui/material";
-import { useAuth, useUser } from "../../auth/hooks/use-auth";
-import { usePosts } from "../../posts/hooks/usePosts";
-import { Post } from "../../posts/Post";
+import { Stack } from "@mui/material";
 import { PostsFeed } from "../../posts/PostsFeed";
-
-export const Profile = () => {
-  const user = useUser();
+import { useProfile } from "../../auth/hooks/use-profile";
+import { UserData } from "./UserData/UserData";
+type Props = {
+  profileId: string;
+};
+export const Profile = ({ profileId }: Props) => {
+  const user = useProfile(profileId);
   return (
     <Stack>
-      <Typography>{user.name}</Typography>
-      <PostsFeed profileId={user._id} />
+      <UserData user={user} />
+      <PostsFeed profileId={user?._id} />
     </Stack>
   );
 };
