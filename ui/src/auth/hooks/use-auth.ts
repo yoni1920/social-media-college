@@ -29,6 +29,6 @@ export const useAuth = () => useContext(AuthContext);
 
 export const useUser = () => {
   const { user } = useAuth();
-  if (!user) throw new Error("User is not authorized");
-  return user;
+
+  return user as User;
 };

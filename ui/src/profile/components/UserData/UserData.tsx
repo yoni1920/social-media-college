@@ -11,9 +11,14 @@ import { UserAvatar } from "../../../components/UserAvatar";
 import { useUser } from "../../../auth/hooks/use-auth";
 
 type Props = { user?: User };
+
 export const UserData = ({ user }: Props) => {
+  const { _id: selfUserId } = useUser();
+
   if (!user) return;
-  const myUserId = useUser()._id;
+
+  console.log(user);
+
   return (
     <Card>
       <CardContent>
@@ -22,18 +27,20 @@ export const UserData = ({ user }: Props) => {
           <Typography>{user.username}</Typography>
         </Stack>
         <Typography>{user.name}</Typography>
-        <Typography>{user.bio ? <b>Bio:</b> + `${user.bio}` : ""}</Typography>
+        <Typography>{user.bio}</Typography>
 
         <Button
           variant="text"
           size="small"
           onClick={() => {
             window.location.href = `mailto:${user.email}`;
-          }}>
+          }}
+        >
           {user.email}
         </Button>
       </CardContent>
-      {user._id === myUserId ? (
+
+      {user._id === selfUserId ? (
         <CardActions>
           <Button size="small" variant="text">
             Edit profile
