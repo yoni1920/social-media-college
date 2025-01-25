@@ -14,38 +14,50 @@ import { useNavigate } from "react-router-dom";
 import { postsApi } from "../../api/posts-api";
 import { RouteTab } from "../../enums";
 
-export const NewPost = () => {
+type Props = {
+  post?: Partial<TPost>;
+  onSuccess?: () => void;
+};
+export const SavePostForm = ({
+  post: { _id, ...initialPost } = {},
+  onSuccess,
+}: Props) => {
   const { user } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
   const [post, setPost] = useState<
     Partial<Omit<TPost, "sender"> & { sender: string }>
-  >({
-    sender: user?._id,
-  });
+  >(
+    Object.assign(initialPost ?? {}, {
+      sender: user?._id,
+    })
+  );
   const [file, setFile] = useState<File | null>();
 
   const navigate = useNavigate();
   const onFileChosen = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event);
     if (event.target.files) {
       setFile(event.target.files[0]);
     }
   };
 
   const onSubmit = async () => {
-    if (!file || !post.message) {
+    if ((!file && !_id) || !post.message) {
       return;
     }
 
     const formData = new FormData();
-    formData.append("image", file);
+    if (file) {
+      formData.append("image", file);
+    }
     formData.append("message", post.message);
     formData.append("sender", post.sender ?? "");
-    await postsApi.post("/", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    await postsApi[_id ? "putForm" : "postForm"](
+      `/${_id ? _id : ""}`,
+      formData
+    );
+    if (onSuccess) {
+      return onSuccess();
+    }
     navigate(RouteTab.HOME);
   };
   return (
@@ -79,6 +91,7 @@ export const NewPost = () => {
           error={post.message === ""}
           sx={{ width: "100%", paddingInline: 1 }}
           placeholder="What's on your mind?"
+          multiline
           onChange={(event) =>
             setPost((currentData) => ({
               ...currentData,

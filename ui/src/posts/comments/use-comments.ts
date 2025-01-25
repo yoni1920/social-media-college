@@ -8,8 +8,12 @@ export const useComments = (postId: string) => {
     () => commentsApi.get(`/?postID=${postId}`),
     [postId]
   );
-  const { data: comments, isLoading } =
-    usePaginatedQuery<TComment[]>(fetchByPostID);
+  const {
+    data: comments,
+    isLoading,
+    refresh,
+    fetchNextPage,
+  } = usePaginatedQuery<TComment[]>(fetchByPostID);
 
-  return { comments, isLoading };
+  return { comments, isLoading, refresh, fetchNextPage };
 };

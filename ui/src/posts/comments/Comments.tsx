@@ -1,23 +1,25 @@
-import { Stack } from "@mui/material";
-import { useComments } from "./use-comments";
+import { Divider, Stack } from "@mui/material";
 import { Comment } from "./Comment";
 import { GradientCircularProgress } from "../../components/GradientLoader";
+import { TComment } from "../../types/comment";
 
 type Props = {
-  postId: string;
+  comments?: TComment[];
+  isLoading: boolean;
 };
-export const Comments = ({ postId }: Props) => {
-  const { comments, isLoading } = useComments(postId);
-
+export const Comments = ({ comments = [], isLoading = false }: Props) => {
   return (
     <Stack gap={2}>
       {!isLoading ? (
-        comments?.map((comment) => (
-          <Comment
-            key={comment._id}
-            sender={comment.sender}
-            message={comment.message}
-          />
+        comments?.map((comment, index) => (
+          <>
+            {index > 0 && <Divider orientation="horizontal" />}
+            <Comment
+              key={comment._id}
+              sender={comment.sender}
+              message={comment.message}
+            />
+          </>
         ))
       ) : (
         <GradientCircularProgress />

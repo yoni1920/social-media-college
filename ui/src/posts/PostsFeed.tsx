@@ -7,12 +7,14 @@ type Props = {
   profileId?: string;
 };
 export const PostsFeed = ({ profileId }: Props) => {
-  const { posts, isLoading } = usePosts(profileId);
+  const { posts, isLoading, refresh } = usePosts(profileId);
 
   return (
     <Stack gap={2} marginBlock={3}>
       {!isLoading ? (
-        posts?.map((post) => <Post key={post._id} post={post} />)
+        posts?.map((post) => (
+          <Post key={post._id} post={post} onChanged={refresh} />
+        ))
       ) : (
         <GradientCircularProgress />
       )}

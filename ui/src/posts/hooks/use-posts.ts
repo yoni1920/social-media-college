@@ -8,8 +8,8 @@ export const usePosts = (profileId?: string) => {
     () => postsApi.get(`/${profileId ? `?senderID=${profileId}` : ""}`),
     [profileId]
   );
-  const { data: posts, isLoading } =
+  const { data: posts, ...extraData } =
     usePaginatedQuery<TPost[]>(fetchBySenderId);
 
-  return { posts, isLoading };
+  return { posts, ...extraData };
 };

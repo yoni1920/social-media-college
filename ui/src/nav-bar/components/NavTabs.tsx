@@ -14,11 +14,18 @@ type Props = {
   currentTab: RouteTab | null;
 };
 
+const SHOWN_TABS = [RouteTab.HOME, RouteTab.NEW_POST, RouteTab.USER_PROFILE];
+
 export const NavTabs = memo(({ currentTab }: Props) => {
   const { user } = useAuth();
 
   return (
-    <Tabs orientation="vertical" variant="scrollable" value={currentTab}>
+    <Tabs
+      orientation="vertical"
+      variant="scrollable"
+      value={
+        currentTab && SHOWN_TABS.includes(currentTab) ? currentTab : false
+      }>
       <Tab
         icon={<HomeOutlined sx={{ fontSize: "1.8rem" }} />}
         iconPosition="start"
@@ -51,8 +58,8 @@ export const NavTabs = memo(({ currentTab }: Props) => {
         icon={<UserAvatar name={user?.name} picture={user?.picture} />}
         iconPosition="start"
         label="Profile"
-        value={RouteTab.PROFILE}
-        to={"/profile"}
+        value={RouteTab.USER_PROFILE}
+        to={"/user"}
         component={Link}
         sx={{
           marginLeft: "12px",

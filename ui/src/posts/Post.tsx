@@ -6,34 +6,31 @@ import {
   Card,
   CardContent,
   CardActions,
-  Fab,
-  IconButton,
 } from "@mui/material";
 import { TPost } from "../types/post";
-import { useNavigate } from "react-router-dom";
-import { UserAvatar } from "../components/UserAvatar";
-import { Comment } from "@mui/icons-material";
 import { useState } from "react";
 import { Comments } from "./comments/Comments";
-import { AddCommentDialog } from "./comments/AddCommentDialog";
+import { SenderInfo } from "../nav-bar/components/SenderInfo";
+import { useComments } from "./comments/use-comments";
+import { CommentAction } from "./actions/CommentAction";
+import { useUser } from "../auth/hooks/use-auth";
+import { DeletePostAction } from "./actions/DeletePostAction";
+import { EditPostAction } from "./actions/EditPostAction";
 
 type Props = {
   post: TPost;
+  onChanged: () => void;
 };
-export const Post = ({ post }: Props) => {
+export const Post = ({ post, onChanged }: Props) => {
   const [areCommentsShown, setAreCommentsShown] = useState(false);
-  const [isCommenting, setIsCommenting] = useState(false);
-  const navigate = useNavigate();
+  const { comments, isLoading, refresh } = useComments(post._id);
+  const { _id: userId } = useUser();
+
   return (
     <Card>
       <CardContent>
         <Stack direction="row" alignItems="center" gap={1}>
-          <UserAvatar name={post.sender.name} picture={post.sender.picture} />
-          <Button
-            variant="text"
-            onClick={() => navigate(`/profile/${post.sender._id}`)}>
-            {post.sender.username}
-          </Button>
+          <SenderInfo sender={post.sender} />
         </Stack>
         <Box
           component="img"
@@ -42,15 +39,14 @@ export const Post = ({ post }: Props) => {
           height="300px"
           src={`${import.meta.env.VITE_SERVER_URL}/posts/image/${post._id}`}
         />
-        <CardActions>
-          <IconButton color="primary" onClick={() => setIsCommenting(true)}>
-            <Comment />
-          </IconButton>
-          <AddCommentDialog
-            open={isCommenting}
-            close={() => setIsCommenting(false)}
-            postID={post._id}
-          />
+        <CardActions sx={{ justifyContent: "space-between" }}>
+          <CommentAction postID={post._id} onSuccess={refresh} />
+          {userId === post.sender._id && (
+            <Box>
+              <EditPostAction post={post} onSuccess={onChanged} />
+              <DeletePostAction postID={post._id} onSuccess={onChanged} />
+            </Box>
+          )}
         </CardActions>
         <Typography marginBlockEnd={1} marginInlineStart={1}>
           {post.message}
@@ -65,7 +61,9 @@ export const Post = ({ post }: Props) => {
           }}>
           {areCommentsShown ? "Hide comments" : "Show comments"}
         </Button>
-        {areCommentsShown && <Comments postId={post._id} />}
+        {areCommentsShown && (
+          <Comments comments={comments} isLoading={isLoading} />
+        )}
       </CardContent>
     </Card>
   );

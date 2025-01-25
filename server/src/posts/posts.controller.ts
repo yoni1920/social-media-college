@@ -2,9 +2,9 @@ import express from "express";
 import { validateBody } from "../middleware/body-validator";
 import { updatePostSchema, createPostSchema } from "./dto-schema";
 import postsService from "./posts.service";
-import { v4 } from "uuid";
 import multer from "multer";
-import { rename } from "fs/promises";
+import { rename, rm } from "fs/promises";
+import { glob } from "glob";
 
 const POSTS_DISK_STORAGE_PATH = "./storage/posts";
 const router = express.Router();
@@ -62,7 +62,12 @@ router.post(
   async (req, res) => {
     const { id, createdAt } = await postsService.createPost(req.body);
     if (req.file)
-      await rename(req.file.path, `${POSTS_DISK_STORAGE_PATH}/${id}.jpg`);
+      await rename(
+        req.file.path,
+        `${POSTS_DISK_STORAGE_PATH}/${id}.${req.file.originalname
+          .split(".")
+          .pop()}`
+      );
     res.send({
       message: "created new post",
       postID: id,
@@ -129,8 +134,8 @@ router.get("/:postID", async (req, res) => {
 
 router.get("/image/:postID", async (req, res) => {
   const postID = req.params.postID;
-
-  res.sendFile(`${POSTS_DISK_STORAGE_PATH}/${postID}.jpg`, { root: "." });
+  const [file] = await glob(`${POSTS_DISK_STORAGE_PATH}/${postID}.*`);
+  res.sendFile(file, { root: "." });
 });
 
 /**
@@ -172,6 +177,21 @@ router.put(
   async (req, res) => {
     const postID = req.params.postID;
     const postDTO = req.body;
+
+    if (req.file) {
+      const [oldFileName] = await glob(
+        `${POSTS_DISK_STORAGE_PATH}/${postID}.*`
+      );
+      await Promise.all([
+        await rm(oldFileName),
+        await rename(
+          req.file.path,
+          `${POSTS_DISK_STORAGE_PATH}/${postID}.${req.file.originalname
+            .split(".")
+            .pop()}`
+        ),
+      ]);
+    }
 
     const updatedAt = await postsService.updatePost(postID, postDTO);
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { type AxiosResponse } from "axios";
 
 export const usePaginatedQuery = <T>(
@@ -6,21 +6,26 @@ export const usePaginatedQuery = <T>(
   initialPage = 0
 ) => {
   const [page, setPage] = useState(initialPage);
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<T | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const fetchNextPage = useCallback(async () => {
+  const refresh = useCallback(async () => {
     setIsLoading(true);
     try {
-      const nextPage = page + 1;
-      const { data } = await queryFn(nextPage);
+      const { data } = await queryFn(page);
       setData(data);
-      setPage(nextPage);
     } catch (error) {
       setIsError(true);
     } finally {
       setIsLoading(false);
+    }
+    return !isError;
+  }, [queryFn]);
+
+  const fetchNextPage = useCallback(async () => {
+    if (await refresh()) {
+      setPage((page) => page + 1);
     }
   }, [page, queryFn]);
 
@@ -28,5 +33,5 @@ export const usePaginatedQuery = <T>(
     fetchNextPage();
   }, [queryFn]);
 
-  return { data, isLoading, isError, fetchNextPage };
+  return { data, isLoading, isError, fetchNextPage, refresh };
 };
