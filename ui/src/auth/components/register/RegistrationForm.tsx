@@ -13,6 +13,7 @@ import {
   RequiredRegistrationFields,
 } from "../../types/registration-fields";
 import { CredentialInput } from "../CredentialInput";
+import { FormSubmitButton } from "../../../components/FormSubmitButton";
 
 type RegistrationFields = RequiredRegistrationFields & {
   confirmPassword: string;
@@ -302,19 +303,7 @@ export const RegistrationForm = () => {
           {generalError}
         </Typography>
 
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          disabled={isRegisterSubmitDisabled}
-          sx={(theme) => ({
-            padding: "0.6rem",
-            width: "60%",
-            background: theme.palette.gradient.main,
-          })}
-        >
-          Register
-        </Button>
+        <FormSubmitButton text="Register" disabled={isRegisterSubmitDisabled} />
       </Stack>
     </form>
   );

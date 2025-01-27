@@ -8,8 +8,7 @@ import {
   POSTS_DISK_STORAGE_PATH,
   UpdatePostDTO,
 } from "./dto-schema";
-import { rename, rm } from "fs/promises";
-import { glob } from "glob";
+import storageService from "../file-storage/storage.service";
 
 const getAllPosts = async (): Promise<Post[]> => {
   return await postsRepository.getAllPosts();
@@ -30,21 +29,19 @@ const updatePost = async (
   post: UpdatePostDTO,
   file?: Express.Multer.File
 ): Promise<Date | undefined> => {
-  post.fileName ??= `${Date.now()}.${file?.originalname.split(".").pop()}`;
+  post.fileName ??= storageService.generateFileName(file);
+
   const { updatedExisting, updatedAt } = await postsRepository.updatePost(
     postID,
     post
   );
 
   if (file) {
-    await glob(`${POSTS_DISK_STORAGE_PATH}/${postID}-*`).then((files) =>
-      Promise.all(
-        files.map((fileName) => fileName !== file.path && rm(fileName))
-      )
-    );
-    await rename(
-      file.path,
-      `${POSTS_DISK_STORAGE_PATH}/${postID}-${post.fileName}`
+    await storageService.replaceResourceFile(
+      POSTS_DISK_STORAGE_PATH,
+      postID,
+      file,
+      post.fileName
     );
   }
 
@@ -71,11 +68,16 @@ const getPostIDsBySenderID = async (senderID: string): Promise<string[]> => {
 
 const createPost = async (post: CreatePostDTO, file: Express.Multer.File) => {
   await usersService.verifySenderUserExists(post.sender);
-  const extension = file?.originalname.split(".").pop();
-  post.fileName = `${Date.now()}.${extension}`;
 
+  post.fileName = storageService.generateFileName(file);
   const { _id: id, createdAt } = await postsRepository.createPost(post);
-  await rename(file.path, `${POSTS_DISK_STORAGE_PATH}/${id}-${post.fileName}`);
+
+  await storageService.saveResourceFile(
+    POSTS_DISK_STORAGE_PATH,
+    id,
+    file,
+    post.fileName
+  );
 
   return {
     id,
@@ -85,13 +87,8 @@ const createPost = async (post: CreatePostDTO, file: Express.Multer.File) => {
 
 const deletePost = async (...postIDs: string[]) => {
   await commentsService.deleteCommentsByPostIDs(...postIDs);
-  await Promise.all(
-    postIDs.map((id) =>
-      glob(`${POSTS_DISK_STORAGE_PATH}/${id}-*`).then((files) =>
-        Promise.all(files.map((file) => rm(file)))
-      )
-    )
-  );
+  await storageService.deleteFilesByIds(POSTS_DISK_STORAGE_PATH, postIDs);
+
   return await postsRepository.deletePostsByIDs(postIDs);
 };
 

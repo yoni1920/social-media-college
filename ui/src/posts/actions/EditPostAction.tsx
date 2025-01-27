@@ -5,6 +5,7 @@ import { SavePostForm } from "../../new-post/components/SavePostForm";
 import { TPost } from "../../types/post";
 
 type Props = { post: TPost; onSuccess: () => void };
+
 export const EditPostAction = ({ onSuccess, post }: Props) => {
   const [isDialogShown, setIsDialogShown] = useState(false);
 
@@ -13,7 +14,8 @@ export const EditPostAction = ({ onSuccess, post }: Props) => {
       <IconButton
         onClick={() => {
           setIsDialogShown(true);
-        }}>
+        }}
+      >
         <Edit />
       </IconButton>
       <Dialog open={isDialogShown} onClose={() => setIsDialogShown(false)}>

@@ -2,14 +2,18 @@ import { hash } from "bcrypt";
 import commentsService from "../comments/comments.service";
 import { BadRequestException } from "../exceptions";
 import postsService from "../posts/posts.service";
-import { USER_PASSWORD_SALT_ROUNDS } from "./constants";
+import {
+  USER_PASSWORD_SALT_ROUNDS,
+  USER_PICTURE_STORAGE_PATH,
+} from "./constants";
 import {
   CreateExternalUserDTO,
   CreateUserDTO,
   UpdateUserDTO,
 } from "./dto-schema";
 import usersRepository from "./users.repository";
-import { isExternalUserDTO } from "./utils";
+import { getDefaultProfilePicture, isExternalUserDTO } from "./utils";
+import storageService from "../file-storage/storage.service";
 import { serverConfig } from "../config";
 
 const getAllUsers = async () => {
@@ -28,12 +32,33 @@ const getUserByID = async (userID: string) => {
 
 const updateUser = async (
   userID: string,
-  user: UpdateUserDTO
+  userDTO: UpdateUserDTO,
+  file?: Express.Multer.File
 ): Promise<Date | undefined> => {
+  const { removePicture, ...otherFields } = userDTO;
+
+  const pictureFileName = removePicture
+    ? getDefaultProfilePicture()
+    : `${serverConfig.serverUrl}/users/image/${userID}`;
+
+  const user: UpdateUserDTO = {
+    ...otherFields,
+    picture: pictureFileName,
+  };
+
   const { updatedExisting, updatedAt } = await usersRepository.updateUser(
     userID,
     user
   );
+
+  if (file) {
+    await storageService.replaceResourceFile(
+      USER_PICTURE_STORAGE_PATH,
+      userID,
+      file,
+      storageService.generateFileName(file)
+    );
+  }
 
   if (!updatedExisting) {
     throw new BadRequestException("User to update does not exist", { userID });
@@ -54,7 +79,7 @@ const createUser = async (userDTO: CreateUserDTO | CreateExternalUserDTO) => {
   const user: CreateUserDTO = {
     ...otherUserData,
     password,
-    picture: `${serverConfig.serverUrl}/images/default.webp`,
+    picture: getDefaultProfilePicture(),
   };
 
   return await usersRepository.createUser(user);

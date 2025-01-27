@@ -4,7 +4,9 @@ import { Profile } from "./Profile";
 import { RouteTab } from "../../enums";
 
 export const ProfilePage = () => {
-  const { _id: ownUserId } = useUser();
+  const {
+    user: { _id: ownUserId },
+  } = useUser();
   const { id } = useParams();
 
   const navigate = useNavigate();

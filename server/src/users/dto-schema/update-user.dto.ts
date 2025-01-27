@@ -1,11 +1,13 @@
+import { User } from "users/user.model";
 import { z } from "zod";
 
 export const updateUserSchema = z.strictObject({
   username: z.string().optional(),
-  email: z.string().email().optional(),
-  birthDate: z.string().date().optional(),
   bio: z.string().optional(),
   name: z.string().optional(),
+  removePicture: z.boolean().optional(),
 });
 
-export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
+export type UpdateUserDTO = z.infer<typeof updateUserSchema> & {
+  picture?: User["picture"];
+};

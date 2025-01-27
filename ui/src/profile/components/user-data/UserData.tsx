@@ -6,18 +6,24 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { User } from "../../../types";
-import { UserAvatar } from "../../../components/UserAvatar";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useUser } from "../../../auth/hooks/use-auth";
+import { UserAvatar } from "../../../components/UserAvatar";
+import { RouteTab } from "../../../enums";
+import { User } from "../../../types";
 
-type Props = { user?: User };
+type Props = { user: User };
 
 export const UserData = ({ user }: Props) => {
-  const { _id: selfUserId } = useUser();
+  const {
+    user: { _id: selfUserId },
+  } = useUser();
 
-  if (!user) return;
-
-  console.log(user);
+  const canEditProfile = useMemo(
+    () => user._id === selfUserId,
+    [user._id, selfUserId]
+  );
 
   return (
     <Card>
@@ -40,11 +46,13 @@ export const UserData = ({ user }: Props) => {
         </Button>
       </CardContent>
 
-      {user._id === selfUserId ? (
+      {canEditProfile ? (
         <CardActions>
-          <Button size="small" variant="text">
-            Edit profile
-          </Button>
+          <Link to={RouteTab.EDIT_PROFILE}>
+            <Button size="small" variant="text">
+              Edit profile
+            </Button>
+          </Link>
           <Button size="small" variant="text">
             Delete profile
           </Button>

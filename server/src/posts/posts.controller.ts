@@ -8,7 +8,7 @@ import {
 import postsService from "./posts.service";
 import multer from "multer";
 import { BadRequestException } from "../exceptions";
-import { glob } from "glob";
+import storageService from "../file-storage/storage.service";
 
 const router = express.Router();
 const postsImageStorage = multer.diskStorage({
@@ -66,6 +66,7 @@ router.post(
     if (!req.file)
       throw new BadRequestException("Can't upload post without file", {});
     const { id, createdAt } = await postsService.createPost(req.body, req.file);
+
     res.send({
       message: "created new post",
       postID: id,
@@ -132,14 +133,14 @@ router.get("/:postID", async (req, res) => {
 
 router.get("/image/:postID", async (req, res) => {
   const { postID } = req.params;
-  const fileName =
-    req.query.fileName ??
-    (await glob(`${POSTS_DISK_STORAGE_PATH}/${postID}*`))[0].replace(
-      `${POSTS_DISK_STORAGE_PATH}/${postID}-`,
-      ""
-    );
 
-  res.sendFile(`${POSTS_DISK_STORAGE_PATH}/${postID}-${fileName}`, {
+  const fileDirectory = await storageService.getFileDirectory(
+    POSTS_DISK_STORAGE_PATH,
+    postID,
+    req.query.fileName as string | undefined
+  );
+
+  res.sendFile(fileDirectory, {
     root: ".",
   });
 });

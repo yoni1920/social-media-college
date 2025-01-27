@@ -1,14 +1,10 @@
-import {
-  AccountCircleOutlined,
-  AddCircleOutline,
-  HomeOutlined,
-} from "@mui/icons-material";
-import { Avatar, Tab, Tabs } from "@mui/material";
+import { AddCircleOutline, HomeOutlined } from "@mui/icons-material";
+import { Tab, Tabs } from "@mui/material";
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { RouteTab } from "../../enums";
 import { useAuth } from "../../auth/hooks/use-auth";
 import { UserAvatar } from "../../components/UserAvatar";
+import { RouteTab } from "../../enums";
 
 type Props = {
   currentTab: RouteTab | null;
@@ -23,15 +19,14 @@ export const NavTabs = memo(({ currentTab }: Props) => {
     <Tabs
       orientation="vertical"
       variant="scrollable"
-      value={
-        currentTab && SHOWN_TABS.includes(currentTab) ? currentTab : false
-      }>
+      value={currentTab && SHOWN_TABS.includes(currentTab) ? currentTab : false}
+    >
       <Tab
         icon={<HomeOutlined sx={{ fontSize: "1.8rem" }} />}
         iconPosition="start"
         label="Home"
         value={RouteTab.HOME}
-        to={"/home"}
+        to={RouteTab.HOME}
         component={Link}
         sx={{
           justifyContent: "flex-start",
@@ -45,7 +40,7 @@ export const NavTabs = memo(({ currentTab }: Props) => {
         iconPosition="start"
         label="New Post"
         value={RouteTab.NEW_POST}
-        to={"/new-post"}
+        to={RouteTab.NEW_POST}
         component={Link}
         sx={{
           justifyContent: "flex-start",
@@ -59,12 +54,12 @@ export const NavTabs = memo(({ currentTab }: Props) => {
         iconPosition="start"
         label="Profile"
         value={RouteTab.USER_PROFILE}
-        to={"/user"}
+        to={RouteTab.USER_PROFILE}
         component={Link}
         sx={{
-          marginLeft: "12px",
+          marginLeft: 1.5,
           justifyContent: "flex-start",
-          gap: 1,
+          gap: 2,
           fontSize: "1rem",
         }}
       />

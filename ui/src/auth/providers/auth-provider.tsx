@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const getUserMe = useCallback(async () => {
     try {
+      setIsLoadingUserAuth(true);
       const { data } = await selfAuthApi.post<{ user: User | null }>("/me");
 
       saveUser(data.user);
@@ -96,7 +97,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, isLoadingUserAuth }}
+      value={{ user, login, register, logout, isLoadingUserAuth, getUserMe }}
     >
       {children}
     </AuthContext.Provider>

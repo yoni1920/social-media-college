@@ -1,23 +1,17 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Card, CardActions, Stack, TextField } from "@mui/material";
 import React, { useRef, useState } from "react";
-import { TPost } from "../../types/post";
-import { useAuth } from "../../auth/hooks/use-auth";
-import { LoadingButton } from "../../components/LoadingButton";
 import { useNavigate } from "react-router-dom";
 import { postsApi } from "../../api/posts-api";
+import { useAuth } from "../../auth/hooks/use-auth";
+import { LoadingButton } from "../../components/LoadingButton";
 import { RouteTab } from "../../enums";
+import { TPost } from "../../types/post";
 
 type Props = {
   post?: Partial<TPost>;
   onSuccess?: () => void;
 };
+
 export const SavePostForm = ({
   post: { _id, ...initialPost } = {},
   onSuccess,
@@ -58,6 +52,7 @@ export const SavePostForm = ({
     if (onSuccess) {
       return onSuccess();
     }
+
     navigate(RouteTab.HOME);
   };
   return (
@@ -74,7 +69,8 @@ export const SavePostForm = ({
         <CardActions>
           <Button
             color={file === null ? "error" : "primary"}
-            onClick={() => inputRef.current?.click()}>
+            onClick={() => inputRef.current?.click()}
+          >
             <input
               ref={inputRef}
               type="file"

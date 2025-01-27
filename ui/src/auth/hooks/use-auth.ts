@@ -20,6 +20,7 @@ type AuthContextValue = {
   ) => Promise<void>;
   logout: () => Promise<void>;
   isLoadingUserAuth: boolean;
+  getUserMe: () => Promise<void>;
 };
 export const AuthContext = createContext<AuthContextValue>(
   null as unknown as AuthContextValue
@@ -28,7 +29,10 @@ export const AuthContext = createContext<AuthContextValue>(
 export const useAuth = () => useContext(AuthContext);
 
 export const useUser = () => {
-  const { user } = useAuth();
+  const { user, getUserMe } = useAuth();
 
-  return user as User;
+  return {
+    user: user as User,
+    refreshSelfUser: getUserMe,
+  };
 };

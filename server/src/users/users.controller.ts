@@ -2,8 +2,17 @@ import express from "express";
 import { validateBody } from "../middleware/body-validator";
 import { createUserSchema, updateUserSchema } from "./dto-schema";
 import usersService from "./users.service";
+import multer from "multer";
+import { USER_PICTURE_STORAGE_PATH } from "./constants";
+import storageService from "../file-storage/storage.service";
 
 const router = express.Router();
+
+const userPictureStorage = multer.diskStorage({
+  destination: USER_PICTURE_STORAGE_PATH,
+});
+
+const userPictureUploader = multer({ storage: userPictureStorage });
 
 /**
  * @openapi
@@ -158,18 +167,23 @@ router.get("/:userID", async (req, res) => {
  *       401:
  *         description: Unauthorized user
  */
-router.put("/:userID", validateBody(updateUserSchema), async (req, res) => {
-  const userID = req.params.userID;
-  const userDTO = req.body;
+router.put(
+  "/:userID",
+  validateBody(updateUserSchema),
+  userPictureUploader.single("image"),
+  async (req, res) => {
+    const userID = req.params.userID;
+    const userDTO = req.body;
 
-  const updatedAt = await usersService.updateUser(userID, userDTO);
+    const updatedAt = await usersService.updateUser(userID, userDTO, req.file);
 
-  res.send({
-    message: "User updated",
-    userID,
-    date: updatedAt,
-  });
-});
+    res.send({
+      message: "User updated",
+      userID,
+      date: updatedAt,
+    });
+  }
+);
 
 /**
  * @openapi
@@ -207,6 +221,19 @@ router.delete("/:userID", async (req, res) => {
       userID,
     });
   }
+});
+
+router.get("/image/:userID", async (req, res) => {
+  const { userID } = req.params;
+
+  const fileDirectory = await storageService.getFileDirectory(
+    USER_PICTURE_STORAGE_PATH,
+    userID
+  );
+
+  res.sendFile(fileDirectory, {
+    root: ".",
+  });
 });
 
 export default router;

@@ -1,1 +1,2 @@
-export * from './is-google-user';
+export * from './get-default-profile-picture';
+export * from './is-external-user';

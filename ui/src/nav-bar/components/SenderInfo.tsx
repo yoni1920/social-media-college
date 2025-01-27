@@ -11,7 +11,7 @@ type Props = {
 };
 export const SenderInfo = ({ sender }: Props) => {
   const navigate = useNavigate();
-  const ownUser = useUser();
+  const { user: ownUser } = useUser();
 
   const onUsernameClick = useCallback(() => {
     navigate(
@@ -19,7 +19,7 @@ export const SenderInfo = ({ sender }: Props) => {
         ? RouteTab.USER_PROFILE
         : `/profile/${sender._id}`
     );
-  }, [sender._id]);
+  }, [sender._id, ownUser._id, navigate]);
 
   return (
     <>
