@@ -1,8 +1,7 @@
-import { Button, Stack, Typography } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
+import { Stack, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
-import dayjs, { Dayjs } from "dayjs";
 import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
+import { FormSubmitButton } from "../../../components/FormSubmitButton";
 import { HttpStatus } from "../../../enums";
 import { useAuth } from "../../hooks/use-auth";
 import { CredentialErrors } from "../../types/credential-errors";
@@ -10,12 +9,10 @@ import {
   MINIMUM_PASSWORD_LENGTH,
   RegistrationDTO,
   registrationSchema,
-  RequiredRegistrationFields,
 } from "../../types/registration-fields";
 import { CredentialInput } from "../CredentialInput";
-import { FormSubmitButton } from "../../../components/FormSubmitButton";
 
-type RegistrationFields = RequiredRegistrationFields & {
+type RegistrationFields = RegistrationDTO & {
   confirmPassword: string;
 };
 
@@ -24,7 +21,6 @@ const initialRegistrationFields: RegistrationFields = {
   password: "",
   confirmPassword: "",
   email: "",
-  birthDate: new Date(),
   name: "",
 };
 
@@ -33,14 +29,11 @@ const initialErrorFields: CredentialErrors<RegistrationFields> = {
   password: { error: false, message: "" },
   confirmPassword: { error: false, message: "" },
   email: { error: false, message: "" },
-  birthDate: { error: false, message: "" },
   name: { error: false, message: "" },
 };
 
-export type RegistrationTextFields = Omit<RegistrationFields, "birthDate">;
-
 export const RegistrationForm = () => {
-  const { register } = useAuth();
+  const { register, isLoadingAuthFormResponse } = useAuth();
 
   const [registrationFields, setRegistrationFields] =
     useState<RegistrationFields>(initialRegistrationFields);
@@ -71,7 +64,7 @@ export const RegistrationForm = () => {
   );
 
   const onRegistrationTextFieldChange = useCallback(
-    <T extends keyof RegistrationTextFields>(field: T) =>
+    <T extends keyof RegistrationFields>(field: T) =>
       (event: ChangeEvent<HTMLInputElement>) => {
         const fieldValue = event.currentTarget.value;
 
@@ -153,27 +146,6 @@ export const RegistrationForm = () => {
     ]
   );
 
-  const onBirthdateChange = useCallback(
-    (value: Dayjs | null) => {
-      const date = value?.toDate();
-      const isInvalidDate = !date || date.toString() === "Invalid Date";
-
-      updateRegistrationErrors(
-        "birthDate",
-        isInvalidDate,
-        !date ? "Field cannot be empty" : "Invalid Date"
-      );
-
-      if (!isInvalidDate) {
-        setRegistrationFields((prevFields) => ({
-          ...prevFields,
-          birthDate: date,
-        }));
-      }
-    },
-    [updateRegistrationErrors]
-  );
-
   const onRegisterError = useCallback((error: Error) => {
     if (
       isAxiosError(error) &&
@@ -196,7 +168,7 @@ export const RegistrationForm = () => {
 
       const { confirmPassword, ...requiredFields } = registrationFields;
 
-      const requiredRegistration: RequiredRegistrationFields = {
+      const requiredRegistration: RegistrationDTO = {
         ...requiredFields,
       };
 
@@ -212,14 +184,7 @@ export const RegistrationForm = () => {
         return;
       }
 
-      const { birthDate, ...otherFields } = requiredRegistration;
-
-      const registrationDTO: RegistrationDTO = {
-        ...otherFields,
-        birthDate: birthDate.toJSON().split("T")[0],
-      };
-
-      await register(registrationDTO, { onError: onRegisterError });
+      await register(requiredRegistration, { onError: onRegisterError });
     },
     [register, onRegisterError, registrationFields, updateRegistrationErrors]
   );
@@ -289,21 +254,17 @@ export const RegistrationForm = () => {
             error={registrationFieldErrors.confirmPassword.error}
             helperText={registrationFieldErrors.confirmPassword.message}
           />
-
-          <DatePicker
-            disableFuture
-            format="DD/MM/YYYY"
-            label="Birthdate"
-            onChange={onBirthdateChange}
-            value={dayjs(registrationFields.birthDate)}
-          />
         </Stack>
 
         <Typography color="error" fontSize={"small"}>
           {generalError}
         </Typography>
 
-        <FormSubmitButton text="Register" disabled={isRegisterSubmitDisabled} />
+        <FormSubmitButton
+          text="Register"
+          disabled={isRegisterSubmitDisabled}
+          loading={isLoadingAuthFormResponse}
+        />
       </Stack>
     </form>
   );

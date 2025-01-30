@@ -1,12 +1,24 @@
-import { Button, ButtonProps, Typography, useTheme } from "@mui/material";
+import {
+  Button,
+  ButtonProps,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
 type Props = {
   disabled?: boolean;
   text: string;
   sx?: ButtonProps["sx"];
+  loading?: boolean;
 };
 
-export const FormSubmitButton = ({ disabled, text, sx }: Props) => {
+export const FormSubmitButton = ({
+  disabled,
+  text,
+  sx,
+  loading = false,
+}: Props) => {
   const theme = useTheme();
 
   return (
@@ -14,10 +26,10 @@ export const FormSubmitButton = ({ disabled, text, sx }: Props) => {
       type="submit"
       size="large"
       variant="contained"
-      disabled={disabled}
+      disabled={disabled || loading}
       sx={{
         background: theme.palette.gradient.main,
-        padding: "0.6rem",
+        paddingY: "0.8rem",
         width: "60%",
         "&:disabled": {
           opacity: 0.5,
@@ -25,9 +37,17 @@ export const FormSubmitButton = ({ disabled, text, sx }: Props) => {
         ...sx,
       }}
     >
-      <Typography fontSize={"medium"} fontWeight={"500"}>
-        {text ?? ""}
-      </Typography>
+      {loading ? (
+        <CircularProgress
+          thickness={5}
+          sx={{ color: "#0255d1" }}
+          size={"24px"}
+        />
+      ) : (
+        <Typography fontSize={"medium"} fontWeight={"500"}>
+          {text ?? ""}
+        </Typography>
+      )}
     </Button>
   );
 };

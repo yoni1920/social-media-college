@@ -31,7 +31,6 @@ const userPictureUploader = multer({ storage: userPictureStorage });
  *              - username
  *              - password
  *              - email
- *              - birthDate
  *            properties:
  *              username:
  *                type: string
@@ -41,10 +40,6 @@ const userPictureUploader = multer({ storage: userPictureStorage });
  *                type: string
  *                required: true
  *                example: 4o5e6@example.com
- *              birthDate:
- *                type: string
- *                required: true
- *                example: 2000-01-01
  *              bio:
  *                type: string
  *                required: false
@@ -142,10 +137,6 @@ router.get("/:userID", async (req, res) => {
  *                type: string
  *                required: false
  *                example: 4o5e6@example.com
- *              birthDate:
- *                type: string
- *                required: false
- *                example: 2000-01-01
  *              bio:
  *                type: string
  *                required: false

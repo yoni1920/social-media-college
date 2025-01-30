@@ -18,7 +18,6 @@ export const exampleUser = {
   ),
   email: "3C5oB@example.com",
   bio: "King",
-  birthDate: "2000-01-01",
   name: "Ido Avni",
   picture: "example",
 };
@@ -32,7 +31,6 @@ export const adminUser = {
   ),
   email: "admin@example.com",
   bio: "admin",
-  birthDate: "2001-08-11",
   picture: "example",
 };
 
@@ -40,7 +38,6 @@ export const exampleNewUser = {
   username: "New User",
   password: "1234",
   email: "newuser@example.com",
-  birthDate: "1990-01-01",
   name: "",
 };
 

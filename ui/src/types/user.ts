@@ -5,7 +5,6 @@ export type User = {
   username: string;
   email: string;
   bio: string;
-  birthDate: Date;
   name?: string;
   picture: string;
 };

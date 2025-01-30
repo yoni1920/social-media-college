@@ -25,7 +25,8 @@ const initalErrors: CredentialErrors<UserCredentials> = {
 };
 
 export const SignInForm = () => {
-  const { login } = useAuth();
+  const { login, isLoadingAuthFormResponse } = useAuth();
+
   const [userCredentials, setUserCredentials] =
     useState<UserCredentials>(initialCredentials);
 
@@ -134,7 +135,11 @@ export const SignInForm = () => {
             {generalError}
           </Typography>
 
-          <FormSubmitButton disabled={isSubmitDisabled} text="Sign In" />
+          <FormSubmitButton
+            disabled={isSubmitDisabled}
+            text="Sign In"
+            loading={isLoadingAuthFormResponse}
+          />
         </Stack>
       </Stack>
     </form>

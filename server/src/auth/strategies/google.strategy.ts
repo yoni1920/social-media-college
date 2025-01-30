@@ -29,7 +29,6 @@ const googleAuth = new GoogleStrategy(
       const userDTO: CreateExternalUserDTO = {
         name: profile.displayName as string,
         email: profile.email as string,
-        birthDate: new Date().toJSON().split("T")[0],
         username: profile.email as string,
         externalId: profile.id as string,
         picture: profile.picture as string,

@@ -7,7 +7,6 @@ export interface User extends BaseResource {
   password: string;
   email: string;
   bio?: string;
-  birthDate: Date;
   name?: string;
   externalId?: string;
   picture: string;
@@ -44,10 +43,6 @@ const userSchema = new Schema<User>(
     name: {
       type: String,
       default: "",
-    },
-    birthDate: {
-      type: Date,
-      required: true,
     },
     picture: {
       type: String,

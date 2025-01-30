@@ -10,6 +10,8 @@ export type AuthResultHandlers = {
 
 type AuthContextValue = {
   user: User | null;
+  isLoadingUserAuth: boolean;
+  isLoadingAuthFormResponse: boolean;
   login: (
     userCredentials: UserLoginDTO,
     authResultHandlers?: AuthResultHandlers
@@ -19,7 +21,6 @@ type AuthContextValue = {
     authHandlers?: AuthResultHandlers
   ) => Promise<void>;
   logout: () => Promise<void>;
-  isLoadingUserAuth: boolean;
   getUserMe: () => Promise<void>;
 };
 export const AuthContext = createContext<AuthContextValue>(
