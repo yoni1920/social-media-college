@@ -27,7 +27,6 @@ const router = Router();
  *              - username
  *              - password
  *              - email
- *              - birthDate
  *              - bio
  *            properties:
  *              username:
@@ -42,10 +41,6 @@ const router = Router();
  *                type: string
  *                required: true
  *                example: 4o5e6@example.com
- *              birthDate:
- *                type: string
- *                required: true
- *                example: 2000-01-01
  *              bio:
  *                type: string
  *                required: false

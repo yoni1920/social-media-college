@@ -9,7 +9,7 @@ type Props = { postID: string; onSuccess: () => void };
 export const CommentAction = ({ postID, onSuccess }: Props) => {
   const [isCommenting, setIsCommenting] = useState(false);
   const [message, setMessage] = useState("");
-  const user = useUser();
+  const { user } = useUser();
 
   const submitComment = useCallback(async () => {
     if (message !== "") {
@@ -17,14 +17,16 @@ export const CommentAction = ({ postID, onSuccess }: Props) => {
       onSuccess();
       setMessage("");
     }
-  }, [message, postID]);
+  }, [message, postID, onSuccess, user._id]);
+
   return (
     <>
       <IconButton
         color="primary"
         onClick={() => {
           setIsCommenting(true);
-        }}>
+        }}
+      >
         <Comment />
       </IconButton>
       <ConfirmationDialog

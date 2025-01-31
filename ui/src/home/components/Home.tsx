@@ -1,6 +1,7 @@
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useAuth } from "../../auth/hooks/use-auth";
 import { PostsFeed } from "../../posts/PostsFeed";
+import { Navigate } from "react-router-dom";
 
 export const Home = () => {
   const { user } = useAuth();
@@ -9,5 +10,7 @@ export const Home = () => {
     <Stack>
       <PostsFeed />
     </Stack>
-  ) : null;
+  ) : (
+    <Navigate to={"/login"} />
+  );
 };

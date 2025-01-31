@@ -1,16 +1,30 @@
-import { Stack } from "@mui/material";
-import { PostsFeed } from "../../posts/PostsFeed";
+import { Divider, Stack, Typography, useTheme } from "@mui/material";
 import { useProfile } from "../../auth/hooks/use-profile";
-import { UserData } from "./UserData/UserData";
+import { GradientCircularProgress } from "../../components/GradientLoader";
+import { PostsFeed } from "../../posts/PostsFeed";
+import { UserData } from "./user-data/UserData";
+import { Navigate } from "react-router-dom";
+import { RouteTab } from "../../enums";
+
 type Props = {
   profileId: string;
 };
+
 export const Profile = ({ profileId }: Props) => {
-  const user = useProfile(profileId);
-  return (
-    <Stack>
+  const { user, isLoadingProfile } = useProfile(profileId);
+  const theme = useTheme();
+
+  return isLoadingProfile ? (
+    <GradientCircularProgress />
+  ) : user ? (
+    <Stack alignItems={"center"} gap={2} width={"50%"}>
       <UserData user={user} />
-      <PostsFeed profileId={user?._id} />
+      <Divider sx={{ width: "100%" }}>
+        <Typography sx={{ color: theme.palette.grey[500] }}>POSTS</Typography>
+      </Divider>
+      <PostsFeed profileId={user._id} />
     </Stack>
+  ) : (
+    <Navigate to={RouteTab.NOT_FOUND} />
   );
 };

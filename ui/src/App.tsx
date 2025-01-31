@@ -7,18 +7,19 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
-import { SignIn } from "./auth/components/sign-in/SignIn";
 import { Registration } from "./auth/components/register/Registration";
-import { Home } from "./home/components/Home";
-import { AuthProvider } from "./auth/providers/auth-provider";
-import { ProtectedRoute } from "./auth/components/routing/ProtectedRoute";
-import { Profile } from "./profile/components/Profile";
-import { SavePostForm } from "./new-post/components/SavePostForm";
-import { Layout } from "./components/Layout";
 import { AuthRoute } from "./auth/components/routing/AuthRoute";
+import { ProtectedRoute } from "./auth/components/routing/ProtectedRoute";
+import { SignIn } from "./auth/components/sign-in/SignIn";
+import { AuthProvider } from "./auth/providers/auth-provider";
+import { Layout } from "./components/Layout";
+import { RouteTab } from "./enums";
+import { Home } from "./home/components/Home";
+import { SavePostForm } from "./new-post/components/SavePostForm";
 import { NotFound } from "./not-found/components/NotFound";
 import { ProfilePage } from "./profile/components/ProfilePage";
 import { UserProfile } from "./profile/components/UserProfile";
+import { EditProfile } from "./profile/components/edit-profile/EditProfile";
 
 function App() {
   return (
@@ -27,7 +28,8 @@ function App() {
         width={"inherit"}
         height={"inherit"}
         alignItems={"center"}
-        justifyContent={"center"}>
+        justifyContent={"center"}
+      >
         <Router>
           <AuthProvider>
             <Routes>
@@ -38,14 +40,24 @@ function App() {
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/new-post" element={<SavePostForm />} />
+                  <Route path={RouteTab.HOME} element={<Home />} />
+                  <Route path={RouteTab.NEW_POST} element={<SavePostForm />} />
                   <Route path="/profile/:id?" element={<ProfilePage />} />
-                  <Route path="/user" element={<UserProfile />} />
+                  <Route
+                    path={RouteTab.USER_PROFILE}
+                    element={<UserProfile />}
+                  />
+                  <Route
+                    path={RouteTab.EDIT_PROFILE}
+                    element={<EditProfile />}
+                  />
                 </Route>
               </Route>
 
-              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route
+                path="/"
+                element={<Navigate to={RouteTab.HOME} replace />}
+              />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

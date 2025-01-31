@@ -1,6 +1,7 @@
 export enum RouteTab {
   HOME = "/home",
   USER_PROFILE = "/user",
-  PROFILE = "/profile/:id?",
   NEW_POST = "/new-post",
+  EDIT_PROFILE = "/edit-profile",
+  NOT_FOUND = "/not-found",
 }

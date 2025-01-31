@@ -2,8 +2,24 @@ import express from "express";
 import { validateBody } from "../middleware/body-validator";
 import { createUserSchema, updateUserSchema } from "./dto-schema";
 import usersService from "./users.service";
-
+import multer from "multer";
+import {
+  DEFAULT_PROFILE_PICTURE_FILE,
+  DEFAULT_PROFILE_PICTURE_KEYWORD,
+  USER_PICTURE_STORAGE_PATH,
+} from "./constants";
+import storageService from "../file-storage/storage.service";
+import {
+  ACCESS_TOKEN_COOKIE_KEY,
+  REFRESH_TOKEN_COOKIE_KEY,
+} from "../auth/constants";
 const router = express.Router();
+
+const userPictureStorage = multer.diskStorage({
+  destination: USER_PICTURE_STORAGE_PATH,
+});
+
+const userPictureUploader = multer({ storage: userPictureStorage });
 
 /**
  * @openapi
@@ -22,7 +38,6 @@ const router = express.Router();
  *              - username
  *              - password
  *              - email
- *              - birthDate
  *            properties:
  *              username:
  *                type: string
@@ -32,10 +47,6 @@ const router = express.Router();
  *                type: string
  *                required: true
  *                example: 4o5e6@example.com
- *              birthDate:
- *                type: string
- *                required: true
- *                example: 2000-01-01
  *              bio:
  *                type: string
  *                required: false
@@ -133,10 +144,6 @@ router.get("/:userID", async (req, res) => {
  *                type: string
  *                required: false
  *                example: 4o5e6@example.com
- *              birthDate:
- *                type: string
- *                required: false
- *                example: 2000-01-01
  *              bio:
  *                type: string
  *                required: false
@@ -158,18 +165,23 @@ router.get("/:userID", async (req, res) => {
  *       401:
  *         description: Unauthorized user
  */
-router.put("/:userID", validateBody(updateUserSchema), async (req, res) => {
-  const userID = req.params.userID;
-  const userDTO = req.body;
+router.put(
+  "/:userID",
+  validateBody(updateUserSchema),
+  userPictureUploader.single("image"),
+  async (req, res) => {
+    const userID = req.params.userID;
+    const userDTO = req.body;
 
-  const updatedAt = await usersService.updateUser(userID, userDTO);
+    const updatedAt = await usersService.updateUser(userID, userDTO, req.file);
 
-  res.send({
-    message: "User updated",
-    userID,
-    date: updatedAt,
-  });
-});
+    res.send({
+      message: "User updated",
+      userID,
+      date: updatedAt,
+    });
+  }
+);
 
 /**
  * @openapi
@@ -202,11 +214,36 @@ router.delete("/:userID", async (req, res) => {
       message: "User did not exist",
     });
   } else {
-    res.send({
-      message: "User deleted",
-      userID,
-    });
+    res
+      .clearCookie(REFRESH_TOKEN_COOKIE_KEY)
+      .clearCookie(ACCESS_TOKEN_COOKIE_KEY)
+      .send({
+        message: "User deleted",
+        userID,
+      });
   }
+});
+
+router.get("/image/:userID", async (req, res) => {
+  const { userID } = req.params;
+  const fileName = req.query.fileName;
+
+  const fileDirectory =
+    fileName === DEFAULT_PROFILE_PICTURE_KEYWORD
+      ? DEFAULT_PROFILE_PICTURE_FILE
+      : await storageService.getFileDirectory(
+          USER_PICTURE_STORAGE_PATH,
+          userID,
+          fileName as string | undefined
+        );
+
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  res.sendFile(fileDirectory, {
+    root: ".",
+  });
 });
 
 export default router;

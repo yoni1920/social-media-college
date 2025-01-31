@@ -12,8 +12,6 @@ export const validateBody =
         violations: validationResult.error,
       });
 
-      console.log(validationResult.error.errors);
-
       next(exception);
     } else {
       next();

@@ -13,7 +13,7 @@ export const useComments = (postId: string) => {
     isLoading,
     refresh,
     fetchNextPage,
-  } = usePaginatedQuery<TComment[]>(fetchByPostID);
+  } = usePaginatedQuery<TComment>(fetchByPostID);
 
   return { comments, isLoading, refresh, fetchNextPage };
 };

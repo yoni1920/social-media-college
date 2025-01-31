@@ -24,7 +24,9 @@ type Props = {
 export const Post = ({ post, onChanged }: Props) => {
   const [areCommentsShown, setAreCommentsShown] = useState(false);
   const { comments, isLoading, refresh } = useComments(post._id);
-  const { _id: userId } = useUser();
+  const {
+    user: { _id: userId },
+  } = useUser();
 
   return (
     <Card>
@@ -60,7 +62,8 @@ export const Post = ({ post, onChanged }: Props) => {
             color: "text.secondary",
             minWidth: "32px",
             fontSize: "0.6rem",
-          }}>
+          }}
+        >
           {areCommentsShown ? "Hide comments" : "Show comments"}
         </Button>
         {areCommentsShown && (

@@ -4,8 +4,7 @@ export type User = {
   updatedAt: Date;
   username: string;
   email: string;
-  bio?: string;
-  birthDate: Date;
+  bio: string;
   name?: string;
   picture: string;
 };

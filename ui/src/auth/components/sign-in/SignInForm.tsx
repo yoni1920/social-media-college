@@ -7,6 +7,7 @@ import { CredentialErrors } from "../../types/credential-errors";
 import { UserLoginDTO } from "../../types/user-login-dto";
 import { isValidEmail } from "../../utils";
 import { CredentialInput } from "../CredentialInput";
+import { FormSubmitButton } from "../../../components/FormSubmitButton";
 
 type UserCredentials = {
   userID: string;
@@ -24,7 +25,8 @@ const initalErrors: CredentialErrors<UserCredentials> = {
 };
 
 export const SignInForm = () => {
-  const { login } = useAuth();
+  const { login, isLoadingAuthFormResponse } = useAuth();
+
   const [userCredentials, setUserCredentials] =
     useState<UserCredentials>(initialCredentials);
 
@@ -133,19 +135,11 @@ export const SignInForm = () => {
             {generalError}
           </Typography>
 
-          <Button
-            type="submit"
-            size="large"
-            variant="contained"
+          <FormSubmitButton
             disabled={isSubmitDisabled}
-            sx={(theme) => ({
-              background: theme.palette.gradient.main,
-              padding: "0.6rem",
-              width: "60%",
-            })}
-          >
-            <Typography fontSize={"medium"}>Sign In</Typography>
-          </Button>
+            text="Sign In"
+            loading={isLoadingAuthFormResponse}
+          />
         </Stack>
       </Stack>
     </form>

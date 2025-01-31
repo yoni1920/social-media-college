@@ -10,6 +10,8 @@ import { selfAuthApi } from "../../api/self-auth-api";
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingUserAuth, setIsLoadingUserAuth] = useState(true);
+  const [isLoadingAuthFormResponse, setIsLoadingAuthFormResponse] =
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -20,18 +22,19 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       return;
     }
 
-    const { birthDate, updatedAt, createdAt, ...otherFields } = rawUser;
+    const { updatedAt, createdAt, ...otherFields } = rawUser;
 
     setUser({
       ...otherFields,
       updatedAt: new Date(updatedAt),
       createdAt: new Date(createdAt),
-      birthDate: new Date(birthDate),
     });
   }, []);
 
   const getUserMe = useCallback(async () => {
     try {
+      setIsLoadingUserAuth(true);
+
       const { data } = await selfAuthApi.post<{ user: User | null }>("/me");
 
       saveUser(data.user);
@@ -61,13 +64,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       userLoginData: UserLoginDTO,
       authResultHandlers?: AuthResultHandlers
     ) => {
+      setIsLoadingAuthFormResponse(true);
+
       await authApi
         .post<{ user: User }>("/login", userLoginData)
         .then(({ data: { user } }) => {
           authResultHandlers?.onSuccess?.(user);
           onAuthenticationSuccess(user);
         })
-        .catch((error) => authResultHandlers?.onError?.(error as Error));
+        .catch((error) => authResultHandlers?.onError?.(error as Error))
+        .finally(() => setIsLoadingAuthFormResponse(false));
     },
     [onAuthenticationSuccess]
   );
@@ -77,13 +83,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       registrationDTO: RegistrationDTO,
       authResultHandlers?: AuthResultHandlers
     ) => {
+      setIsLoadingAuthFormResponse(true);
+
       await authApi
         .post<{ user: User }>("/registration", registrationDTO)
         .then(({ data: { user } }) => {
           authResultHandlers?.onSuccess?.(user);
           onAuthenticationSuccess(user);
         })
-        .catch((error) => authResultHandlers?.onError?.(error as Error));
+        .catch((error) => authResultHandlers?.onError?.(error as Error))
+        .finally(() => setIsLoadingAuthFormResponse(false));
     },
     [onAuthenticationSuccess]
   );
@@ -96,7 +105,15 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, isLoadingUserAuth }}
+      value={{
+        user,
+        login,
+        register,
+        logout,
+        isLoadingUserAuth,
+        getUserMe,
+        isLoadingAuthFormResponse,
+      }}
     >
       {children}
     </AuthContext.Provider>

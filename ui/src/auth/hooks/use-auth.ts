@@ -10,6 +10,8 @@ export type AuthResultHandlers = {
 
 type AuthContextValue = {
   user: User | null;
+  isLoadingUserAuth: boolean;
+  isLoadingAuthFormResponse: boolean;
   login: (
     userCredentials: UserLoginDTO,
     authResultHandlers?: AuthResultHandlers
@@ -19,7 +21,7 @@ type AuthContextValue = {
     authHandlers?: AuthResultHandlers
   ) => Promise<void>;
   logout: () => Promise<void>;
-  isLoadingUserAuth: boolean;
+  getUserMe: () => Promise<void>;
 };
 export const AuthContext = createContext<AuthContextValue>(
   null as unknown as AuthContextValue
@@ -28,7 +30,10 @@ export const AuthContext = createContext<AuthContextValue>(
 export const useAuth = () => useContext(AuthContext);
 
 export const useUser = () => {
-  const { user } = useAuth();
-  if (!user) throw new Error("User is not authorized");
-  return user;
+  const { user, getUserMe } = useAuth();
+
+  return {
+    user: user as User,
+    refreshSelfUser: getUserMe,
+  };
 };

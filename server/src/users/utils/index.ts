@@ -1,1 +1,1 @@
-export * from './is-google-user';
+export * from "./is-external-user";
