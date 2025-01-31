@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const getUserMe = useCallback(async () => {
     try {
       setIsLoadingUserAuth(true);
+
       const { data } = await selfAuthApi.post<{ user: User | null }>("/me");
 
       saveUser(data.user);

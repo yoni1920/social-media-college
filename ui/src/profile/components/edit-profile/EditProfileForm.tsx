@@ -1,4 +1,4 @@
-import { Stack, TextField, Typography } from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import {
   ChangeEvent,
@@ -28,9 +28,14 @@ type EditProfileErrors = Record<
 type Props = {
   user: User;
   onUpdateSuccess: () => void;
+  onDeleteUser: () => void;
 };
 
-export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
+export const EditProfileForm = ({
+  user,
+  onUpdateSuccess,
+  onDeleteUser,
+}: Props) => {
   const [isLoadingUpdateProfile, setIsLoadingUpdateProfile] = useState(false);
 
   const [profileData, setProfileData] = useState<EditProfileDetails>({
@@ -247,11 +252,19 @@ export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
           </Typography>
         ) : null}
 
-        <FormSubmitButton
-          disabled={!canSubmitUpdate}
-          text="Update"
-          loading={isLoadingUpdateProfile}
-        />
+        <Stack width={"100%"} alignItems={"center"} gap={4}>
+          <FormSubmitButton
+            disabled={!canSubmitUpdate}
+            text="Update"
+            loading={isLoadingUpdateProfile}
+          />
+
+          <Button color="error" variant="contained" onClick={onDeleteUser}>
+            <Typography sx={{ fontSize: "0.6rem" }} fontWeight={"500"}>
+              Delete User
+            </Typography>
+          </Button>
+        </Stack>
       </Stack>
     </form>
   );

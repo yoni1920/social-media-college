@@ -1,7 +1,8 @@
 import { Stack } from "@mui/material";
-import { usePosts } from "./hooks/use-posts";
-import { Post } from "./Post";
 import { GradientCircularProgress } from "../components/GradientLoader";
+import { usePosts } from "./hooks/use-posts";
+import { NoPosts } from "./NoPosts";
+import { Post } from "./Post";
 
 type Props = {
   profileId?: string;
@@ -9,14 +10,18 @@ type Props = {
 export const PostsFeed = ({ profileId }: Props) => {
   const { posts, isLoading, refresh } = usePosts(profileId);
 
+  if (isLoading) {
+    return <GradientCircularProgress />;
+  }
+
   return (
-    <Stack gap={2} marginBlock={3}>
-      {!isLoading ? (
+    <Stack gap={2}>
+      {posts?.length ? (
         posts?.map((post) => (
           <Post key={post._id} post={post} onChanged={refresh} />
         ))
       ) : (
-        <GradientCircularProgress />
+        <NoPosts />
       )}
     </Stack>
   );

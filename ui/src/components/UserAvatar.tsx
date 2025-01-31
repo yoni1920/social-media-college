@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { User } from "../types";
 
 type Props = {
-  user: User | null;
+  user: User | Pick<User, "picture" | "name" | "username" | "_id"> | null;
   sx?: AvatarProps["sx"];
   previewUrl?: string | null;
 };

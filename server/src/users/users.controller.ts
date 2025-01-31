@@ -9,6 +9,10 @@ import {
   USER_PICTURE_STORAGE_PATH,
 } from "./constants";
 import storageService from "../file-storage/storage.service";
+import {
+  ACCESS_TOKEN_COOKIE_KEY,
+  REFRESH_TOKEN_COOKIE_KEY,
+} from "../auth/constants";
 const router = express.Router();
 
 const userPictureStorage = multer.diskStorage({
@@ -210,10 +214,13 @@ router.delete("/:userID", async (req, res) => {
       message: "User did not exist",
     });
   } else {
-    res.send({
-      message: "User deleted",
-      userID,
-    });
+    res
+      .clearCookie(REFRESH_TOKEN_COOKIE_KEY)
+      .clearCookie(ACCESS_TOKEN_COOKIE_KEY)
+      .send({
+        message: "User deleted",
+        userID,
+      });
   }
 });
 

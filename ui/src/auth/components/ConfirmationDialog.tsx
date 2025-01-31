@@ -4,10 +4,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
 } from "@mui/material";
 import { LoadingButton } from "../../components/LoadingButton";
-import { useState } from "react";
 
 type Props = {
   open: boolean;
