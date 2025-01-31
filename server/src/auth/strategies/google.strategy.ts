@@ -4,6 +4,8 @@ import { serverConfig } from "../../config";
 import { googleOauthConfig } from "../../config/google-oauth-config";
 import { CreateExternalUserDTO } from "../../users/dto-schema";
 import usersService from "../../users/users.service";
+import { USER_PICTURE_STORAGE_PATH } from "../../users/constants";
+import storageService from "../../file-storage/storage.service";
 
 const googleAuth = new GoogleStrategy(
   {
@@ -26,15 +28,7 @@ const googleAuth = new GoogleStrategy(
     }
 
     try {
-      const userDTO: CreateExternalUserDTO = {
-        name: profile.displayName as string,
-        email: profile.email as string,
-        username: profile.email as string,
-        externalId: profile.id as string,
-        picture: profile.picture as string,
-      };
-
-      const user = await usersService.createUser(userDTO);
+      const user = await createUserFromGoogleProfile(profile);
 
       done(null, user);
     } catch (error) {
@@ -42,5 +36,28 @@ const googleAuth = new GoogleStrategy(
     }
   }
 );
+
+const createUserFromGoogleProfile = async (profile: any) => {
+  const fileName = `${Date.now()}.png`;
+
+  const userDTO: CreateExternalUserDTO = {
+    name: profile.displayName as string,
+    email: profile.email as string,
+    username: profile.email as string,
+    externalId: profile.id as string,
+    picture: fileName,
+  };
+
+  const user = await usersService.createUser(userDTO);
+
+  await storageService.saveExternalFile(
+    profile.picture,
+    USER_PICTURE_STORAGE_PATH,
+    user._id,
+    fileName
+  );
+
+  return user;
+};
 
 passport.use(googleAuth);

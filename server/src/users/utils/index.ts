@@ -1,2 +1,1 @@
-export * from './get-default-profile-picture';
-export * from './is-external-user';
+export * from "./is-external-user";

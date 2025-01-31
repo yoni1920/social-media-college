@@ -31,6 +31,8 @@ type Props = {
 };
 
 export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
+  const [isLoadingUpdateProfile, setIsLoadingUpdateProfile] = useState(false);
+
   const [profileData, setProfileData] = useState<EditProfileDetails>({
     username: user.username,
     bio: user.bio,
@@ -78,7 +80,6 @@ export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
   );
 
   const onChosePicture = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event);
     const file = event.target.files?.[0];
 
     if (file) {
@@ -154,6 +155,7 @@ export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
       event.preventDefault();
 
       const formData = new FormData();
+      formData.append("picture", user.picture);
 
       if (profilePicture) {
         formData.append("image", profilePicture);
@@ -166,11 +168,14 @@ export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
       }
 
       setGeneralError(null);
+      setIsLoadingUpdateProfile(true);
 
       await handleUpdateProfile(user._id, formData, {
         onSuccess: onUpdateSuccess,
         onError: onUpdateError,
       });
+
+      setIsLoadingUpdateProfile(false);
     },
     [
       onUpdateSuccess,
@@ -179,6 +184,7 @@ export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
       user._id,
       onUpdateError,
       isRemovingProfilePicture,
+      user.picture,
     ]
   );
 
@@ -241,7 +247,11 @@ export const EditProfileForm = ({ user, onUpdateSuccess }: Props) => {
           </Typography>
         ) : null}
 
-        <FormSubmitButton disabled={!canSubmitUpdate} text="Update" />
+        <FormSubmitButton
+          disabled={!canSubmitUpdate}
+          text="Update"
+          loading={isLoadingUpdateProfile}
+        />
       </Stack>
     </form>
   );

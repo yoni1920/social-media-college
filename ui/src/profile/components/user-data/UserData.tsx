@@ -29,7 +29,7 @@ export const UserData = ({ user }: Props) => {
     <Card>
       <CardContent>
         <Stack direction="row" alignItems="center" gap={1}>
-          <UserAvatar name={user.name} picture={user.picture} />
+          <UserAvatar user={user} />
           <Typography>{user.username}</Typography>
         </Stack>
         <Typography>{user.name}</Typography>

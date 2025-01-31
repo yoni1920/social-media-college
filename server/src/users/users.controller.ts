@@ -3,9 +3,12 @@ import { validateBody } from "../middleware/body-validator";
 import { createUserSchema, updateUserSchema } from "./dto-schema";
 import usersService from "./users.service";
 import multer from "multer";
-import { USER_PICTURE_STORAGE_PATH } from "./constants";
+import {
+  DEFAULT_PROFILE_PICTURE_FILE,
+  DEFAULT_PROFILE_PICTURE_KEYWORD,
+  USER_PICTURE_STORAGE_PATH,
+} from "./constants";
 import storageService from "../file-storage/storage.service";
-
 const router = express.Router();
 
 const userPictureStorage = multer.diskStorage({
@@ -216,11 +219,20 @@ router.delete("/:userID", async (req, res) => {
 
 router.get("/image/:userID", async (req, res) => {
   const { userID } = req.params;
+  const fileName = req.query.fileName;
 
-  const fileDirectory = await storageService.getFileDirectory(
-    USER_PICTURE_STORAGE_PATH,
-    userID
-  );
+  const fileDirectory =
+    fileName === DEFAULT_PROFILE_PICTURE_KEYWORD
+      ? DEFAULT_PROFILE_PICTURE_FILE
+      : await storageService.getFileDirectory(
+          USER_PICTURE_STORAGE_PATH,
+          userID,
+          fileName as string | undefined
+        );
+
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 
   res.sendFile(fileDirectory, {
     root: ".",

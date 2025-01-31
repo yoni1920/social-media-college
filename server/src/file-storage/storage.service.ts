@@ -1,5 +1,7 @@
 import { glob } from "glob";
 import { rename, rm } from "fs/promises";
+import { createWriteStream } from "fs";
+import axios from "axios";
 
 const generateFileName = (file?: Express.Multer.File): string => {
   const extension = file?.originalname.split(".").pop();
@@ -32,7 +34,7 @@ const replaceResourceFile = async (
   storageDirectory: string,
   resourceId: string,
   file: Express.Multer.File,
-  fileName: string
+  fileName?: string
 ) => {
   await glob(`${storageDirectory}/${resourceId}-*`).then((files) =>
     Promise.all(files.map((fileName) => fileName !== file.path && rm(fileName)))
@@ -58,10 +60,33 @@ const getFileName = async (storageDirectory: string, resourceId: string) => {
   return rawPath.replace(`${storageDirectory}/${resourceId}-`.slice(2), "");
 };
 
+const saveExternalFile = async (
+  fileUrl: string,
+  storageDirectory: string,
+  resourceId: string,
+  fileName: string
+) => {
+  const response = await axios({
+    url: fileUrl,
+    method: "GET",
+    responseType: "stream",
+  });
+
+  const filePath = `${storageDirectory}/${resourceId}-${fileName}`;
+
+  return new Promise((resolve, reject) => {
+    response.data
+      .pipe(createWriteStream(filePath))
+      .on("error", reject)
+      .once("close", () => resolve(fileName));
+  });
+};
+
 export default {
   generateFileName,
   deleteFilesByIds,
   saveResourceFile,
   replaceResourceFile,
   getFileDirectory,
+  saveExternalFile,
 };

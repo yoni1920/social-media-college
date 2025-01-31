@@ -6,8 +6,7 @@ export const updateUserSchema = z.strictObject({
   bio: z.string().optional(),
   name: z.string().optional(),
   removePicture: z.boolean().optional(),
+  picture: z.string().optional(),
 });
 
-export type UpdateUserDTO = z.infer<typeof updateUserSchema> & {
-  picture?: User["picture"];
-};
+export type UpdateUserDTO = z.infer<typeof updateUserSchema>;

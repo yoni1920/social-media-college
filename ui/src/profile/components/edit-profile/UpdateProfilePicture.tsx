@@ -1,6 +1,7 @@
 import { Avatar, Button, Stack, Typography } from "@mui/material";
 import { ChangeEvent } from "react";
 import { User } from "../../../types";
+import { UserAvatar } from "../../../components/UserAvatar";
 
 type Props = {
   user: User | null;
@@ -17,10 +18,10 @@ export const UpdateProfilePicture = ({
 }: Props) => {
   return (
     <Stack direction={"row"} gap={4} alignItems={"center"}>
-      <Avatar
-        src={previewUrl ?? user?.picture}
-        alt={user?.name}
+      <UserAvatar
         sx={{ height: 96, width: 96 }}
+        user={user}
+        previewUrl={previewUrl}
       />
 
       <Stack gap={1.5} alignItems={"center"}>

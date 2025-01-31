@@ -3,6 +3,7 @@ import commentsService from "../comments/comments.service";
 import { BadRequestException } from "../exceptions";
 import postsService from "../posts/posts.service";
 import {
+  DEFAULT_PROFILE_PICTURE_KEYWORD,
   USER_PASSWORD_SALT_ROUNDS,
   USER_PICTURE_STORAGE_PATH,
 } from "./constants";
@@ -12,9 +13,8 @@ import {
   UpdateUserDTO,
 } from "./dto-schema";
 import usersRepository from "./users.repository";
-import { getDefaultProfilePicture, isExternalUserDTO } from "./utils";
+import { isExternalUserDTO } from "./utils";
 import storageService from "../file-storage/storage.service";
-import { serverConfig } from "../config";
 
 const getAllUsers = async () => {
   return await usersRepository.getAllUsers();
@@ -35,15 +35,12 @@ const updateUser = async (
   userDTO: UpdateUserDTO,
   file?: Express.Multer.File
 ): Promise<Date | undefined> => {
-  const { removePicture, ...otherFields } = userDTO;
-
-  const pictureFileName = removePicture
-    ? getDefaultProfilePicture()
-    : `${serverConfig.serverUrl}/users/image/${userID}`;
+  const { removePicture, picture, ...otherFields } = userDTO;
+  const updatedPicture = getUpdatedPictureName(userDTO, file);
 
   const user: UpdateUserDTO = {
     ...otherFields,
-    picture: pictureFileName,
+    picture: updatedPicture,
   };
 
   const { updatedExisting, updatedAt } = await usersRepository.updateUser(
@@ -52,12 +49,19 @@ const updateUser = async (
   );
 
   if (file) {
-    await storageService.replaceResourceFile(
-      USER_PICTURE_STORAGE_PATH,
-      userID,
-      file,
-      storageService.generateFileName(file)
-    );
+    picture === DEFAULT_PROFILE_PICTURE_KEYWORD
+      ? await storageService.saveResourceFile(
+          USER_PICTURE_STORAGE_PATH,
+          userID,
+          file,
+          updatedPicture
+        )
+      : await storageService.replaceResourceFile(
+          USER_PICTURE_STORAGE_PATH,
+          userID,
+          file,
+          picture
+        );
   }
 
   if (!updatedExisting) {
@@ -65,6 +69,19 @@ const updateUser = async (
   }
 
   return updatedAt;
+};
+
+const getUpdatedPictureName = (
+  userDTO: UpdateUserDTO,
+  file?: Express.Multer.File
+): string => {
+  if (userDTO?.removePicture) {
+    return DEFAULT_PROFILE_PICTURE_KEYWORD;
+  }
+
+  return userDTO.picture === DEFAULT_PROFILE_PICTURE_KEYWORD
+    ? storageService.generateFileName(file)
+    : (userDTO.picture as string);
 };
 
 const createUser = async (userDTO: CreateUserDTO | CreateExternalUserDTO) => {
@@ -79,7 +96,7 @@ const createUser = async (userDTO: CreateUserDTO | CreateExternalUserDTO) => {
   const user: CreateUserDTO = {
     ...otherUserData,
     password,
-    picture: getDefaultProfilePicture(),
+    picture: DEFAULT_PROFILE_PICTURE_KEYWORD,
   };
 
   return await usersRepository.createUser(user);
