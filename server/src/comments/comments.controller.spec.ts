@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import request from "supertest";
 import initApp from "../app";
 import authService from "../auth/auth.service";
-import { PostModel } from "../posts/post.model";
+import { PostModel } from "../posts/models/post.model";
 import { UserModel } from "../users/user.model";
 import {
   exampleComment,

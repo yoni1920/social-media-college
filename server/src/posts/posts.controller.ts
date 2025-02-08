@@ -4,6 +4,9 @@ import {
   updatePostSchema,
   createPostSchema,
   POSTS_DISK_STORAGE_PATH,
+  likePostSchema,
+  LikePostDTO,
+  LikeMethod,
 } from "./dto-schema";
 import postsService from "./posts.service";
 import multer from "multer";
@@ -194,6 +197,7 @@ router.put(
     });
   }
 );
+
 /**
  * @openapi
  * /posts/{postID}:
@@ -231,5 +235,41 @@ router.delete("/:postID", async (req, res) => {
     });
   }
 });
+
+/**
+ * @openapi
+ * /posts/{postID}:
+ *   delete:
+ *     description: Delete post by id
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: postID
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post deleted
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Post not found
+ */
+router.patch(
+  "/:postID/likes",
+  validateBody(likePostSchema),
+  async (req, res) => {
+    const postID = req.params.postID;
+    const likePostDTO: LikePostDTO = req.body;
+
+    likePostDTO.method === LikeMethod.LIKE
+      ? await postsService.likePost(postID, likePostDTO.user)
+      : await postsService.unlikePost(postID, likePostDTO.user);
+
+    res.send({ message: "liked method success", postID });
+  }
+);
 
 export default router;

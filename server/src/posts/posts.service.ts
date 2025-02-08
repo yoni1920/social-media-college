@@ -1,14 +1,15 @@
-import postsRepository from "./posts.repository";
-import { BadRequestException } from "../exceptions";
-import usersService from "../users/users.service";
 import commentsService from "../comments/comments.service";
-import { Post } from "./post.model";
+import { BadRequestException } from "../exceptions";
+import storageService from "../file-storage/storage.service";
+import usersService from "../users/users.service";
 import {
   CreatePostDTO,
   POSTS_DISK_STORAGE_PATH,
   UpdatePostDTO,
 } from "./dto-schema";
-import storageService from "../file-storage/storage.service";
+import likesRepository from "./likes.repository";
+import { Post } from "./models/post.model";
+import postsRepository from "./posts.repository";
 
 const getAllPosts = async (): Promise<Post[]> => {
   return await postsRepository.getAllPosts();
@@ -88,8 +89,11 @@ const createPost = async (post: CreatePostDTO, file: Express.Multer.File) => {
 };
 
 const deletePost = async (...postIDs: string[]) => {
-  await commentsService.deleteCommentsByPostIDs(...postIDs);
-  await storageService.deleteFilesByIds(POSTS_DISK_STORAGE_PATH, postIDs);
+  await Promise.all([
+    commentsService.deleteCommentsByPostIDs(...postIDs),
+    storageService.deleteFilesByIds(POSTS_DISK_STORAGE_PATH, postIDs),
+    likesRepository.deleteLikesByPostIds(postIDs),
+  ]);
 
   return await postsRepository.deletePostsByIDs(postIDs);
 };
@@ -104,6 +108,18 @@ const verifyPostExists = async (postID: string) => {
   }
 };
 
+const deletePostLikesByUser = async (userID: string) => {
+  await likesRepository.deleteLikesByUserID(userID);
+};
+
+const likePost = async (postID: string, userID: string) => {
+  await likesRepository.addLike(postID, userID);
+};
+
+const unlikePost = async (postID: string, userID: string) => {
+  await likesRepository.removeLike(postID, userID);
+};
+
 export default {
   getAllPosts,
   getPostByID,
@@ -113,4 +129,7 @@ export default {
   deletePost,
   verifyPostExists,
   getPostIDsBySenderID,
+  deletePostLikesByUser,
+  likePost,
+  unlikePost,
 };

@@ -19,6 +19,15 @@ const deleteFilesByIds = async (storageDirectory: string, ids: string[]) => {
   );
 };
 
+const deleteResourceFile = async (
+  storageDirectory: string,
+  resourceId: string
+) => {
+  await glob(`${storageDirectory}/${resourceId}-*`).then((files) =>
+    Promise.all(files.map((file) => rm(file)))
+  );
+};
+
 const saveResourceFile = async (
   storageDirectory: string,
   resourceId: string,
@@ -89,4 +98,5 @@ export default {
   replaceResourceFile,
   getFileDirectory,
   saveExternalFile,
+  deleteResourceFile,
 };

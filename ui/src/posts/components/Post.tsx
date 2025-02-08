@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useUser } from "../../auth/hooks/use-auth";
 import { SenderInfo } from "../../nav-bar/components/SenderInfo";
 import { TPost } from "../../types/post";
@@ -16,20 +16,54 @@ import { CommentAction } from "../actions/CommentAction";
 import { Comments } from "../comments/Comments";
 import { useComments } from "../comments/use-comments";
 import { OwnPostActions } from "./OwnPostActions";
+import { LikeButton } from "./LikeButton";
+import { postsApi } from "../../api/posts-api";
+import { LikeMethod } from "../enums";
+import { User } from "../../types";
 
 type Props = {
   post: TPost;
   onChanged: () => void;
 };
+
+const isPostLikedAlready = (post: TPost, ownUserID: User["_id"]) => {
+  return post.likes.some(({ user }) => user === ownUserID);
+};
+
 export const Post = ({ post, onChanged }: Props) => {
+  const { user: ownUser } = useUser();
+
+  const isLikedAlready = useMemo(
+    () => isPostLikedAlready(post, ownUser._id),
+    [ownUser._id, post]
+  );
+
+  const [isLiked, setIsLiked] = useState(isLikedAlready);
+
+  const [numLikes, setNumLikes] = useState(post.likes.length);
+
   const [areCommentsShown, setAreCommentsShown] = useState(false);
   const { comments, isLoading, refresh } = useComments(post._id);
-  const { user: ownUser } = useUser();
 
   const isOwnUser = useMemo(
     () => ownUser._id === post.sender._id,
     [ownUser._id, post.sender._id]
   );
+
+  const onLiked = useCallback(() => {
+    const method = isLiked ? LikeMethod.DISLIKE : LikeMethod.LIKE;
+
+    postsApi.patch(`${post._id}/likes`, {
+      user: ownUser._id,
+      method,
+    });
+
+    setNumLikes((numLikes) =>
+      method === LikeMethod.LIKE ? numLikes + 1 : Math.max(numLikes - 1, 0)
+    );
+
+    setIsLiked((liked) => !liked);
+  }, [isLiked, ownUser._id, post._id]);
 
   return (
     <Card sx={{ mt: 2, maxWidth: "400px" }} elevation={3}>
@@ -57,13 +91,21 @@ export const Post = ({ post, onChanged }: Props) => {
         </Stack>
 
         <Stack direction={"row"} alignItems={"center"}>
-          <IconButton sx={{ height: "2rem", width: "2rem" }}>
-            <FavoriteBorderOutlinedIcon />
-          </IconButton>
+          <LikeButton
+            liked={isLiked}
+            onLiked={onLiked}
+            initiallyLiked={isLikedAlready}
+          />
           <CommentAction postID={post._id} onSuccess={refresh} />
         </Stack>
 
-        <Stack direction={"row"} alignItems={"center"} gap={2}>
+        <Stack gap={1}>
+          {numLikes ? (
+            <Typography fontWeight={"bold"} sx={{ fontSize: 14 }}>
+              {numLikes > 1 ? `${numLikes} likes` : `${numLikes} like`}
+            </Typography>
+          ) : null}
+
           <Typography sx={{ fontSize: 14 }}>
             <strong>{post?.sender.username}</strong> {post.message}
           </Typography>
