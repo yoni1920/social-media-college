@@ -1,11 +1,15 @@
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { IconButton, TextField } from "@mui/material";
-import { useCallback, useState } from "react";
-import { ConfirmationDialog } from "../../auth/components/ConfirmationDialog";
-import { Comment } from "@mui/icons-material";
-import { useUser } from "../../auth/hooks/use-auth";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { commentsApi } from "../../api/comments-api";
+import { ConfirmationDialog } from "../../auth/components/ConfirmationDialog";
+import { useUser } from "../../auth/hooks/use-auth";
 
-type Props = { postID: string; onSuccess: () => void };
+type Props = {
+  postID: string;
+  onSuccess: () => void;
+};
+
 export const CommentAction = ({ postID, onSuccess }: Props) => {
   const [isCommenting, setIsCommenting] = useState(false);
   const [message, setMessage] = useState("");
@@ -19,16 +23,29 @@ export const CommentAction = ({ postID, onSuccess }: Props) => {
     }
   }, [message, postID, onSuccess, user._id]);
 
+  const onChangeMessage = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setMessage(event.target.value);
+    },
+    []
+  );
+
   return (
     <>
       <IconButton
-        color="primary"
+        disableRipple
         onClick={() => {
           setIsCommenting(true);
         }}
+        sx={{
+          "&:hover": {
+            color: "black",
+          },
+        }}
       >
-        <Comment />
+        <ChatBubbleOutlineIcon />
       </IconButton>
+
       <ConfirmationDialog
         open={isCommenting}
         close={() => {
@@ -37,8 +54,9 @@ export const CommentAction = ({ postID, onSuccess }: Props) => {
         title="What's on your mind?"
         content={
           <TextField
+            autoFocus
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={onChangeMessage}
             multiline
             fullWidth
           />

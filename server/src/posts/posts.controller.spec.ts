@@ -9,7 +9,7 @@ import {
   exampleUser,
   getAuthCookies,
 } from "../utils/tests";
-import { PostModel } from "./post.model";
+import { PostModel } from "./models/post.model";
 import authService from "../auth/auth.service";
 
 let app: Express;

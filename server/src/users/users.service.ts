@@ -115,6 +115,8 @@ const deleteUser = async (userID: string) => {
     commentsService.deleteCommentsBySender(userID),
     postsService.deletePost(...postsToDelete),
     usersRepository.deleteUserById(userID),
+    storageService.deleteResourceFile(USER_PICTURE_STORAGE_PATH, userID),
+    postsService.deletePostLikesByUser(userID),
   ]);
 
   return true;

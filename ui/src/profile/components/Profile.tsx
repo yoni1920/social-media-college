@@ -1,8 +1,8 @@
 import { Divider, Stack, Typography, useTheme } from "@mui/material";
 import { useProfile } from "../../auth/hooks/use-profile";
 import { GradientCircularProgress } from "../../components/GradientLoader";
-import { PostsFeed } from "../../posts/PostsFeed";
-import { UserData } from "./user-data/UserData";
+import { PostsFeed } from "../../posts/components/PostsFeed";
+import { UserData } from "./UserData";
 import { Navigate } from "react-router-dom";
 import { RouteTab } from "../../enums";
 

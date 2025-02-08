@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { LoadingButton } from "../../components/LoadingButton";
+import { FormSubmitButton } from "../../components/FormSubmitButton";
 
 type Props = {
   open: boolean;
@@ -36,7 +37,7 @@ export const ConfirmationDialog = ({
       <DialogContent>{content}</DialogContent>
       <DialogActions>
         <Button onClick={close}>{denyText}</Button>
-        <LoadingButton onClick={confirm}>{confirmText}</LoadingButton>
+        <FormSubmitButton onClick={confirm} text={confirmText} />
       </DialogActions>
     </Dialog>
   );

@@ -15,11 +15,12 @@ import { AuthProvider } from "./auth/providers/auth-provider";
 import { Layout } from "./components/Layout";
 import { RouteTab } from "./enums";
 import { Home } from "./home/components/Home";
-import { SavePostForm } from "./new-post/components/SavePostForm";
+import { NewPost } from "./new-post/components/NewPost";
 import { NotFound } from "./not-found/components/NotFound";
 import { ProfilePage } from "./profile/components/ProfilePage";
 import { UserProfile } from "./profile/components/UserProfile";
 import { EditProfile } from "./profile/components/edit-profile/EditProfile";
+import { PostComments } from "./comments/components/PostComments";
 
 function App() {
   return (
@@ -41,7 +42,7 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
                   <Route path={RouteTab.HOME} element={<Home />} />
-                  <Route path={RouteTab.NEW_POST} element={<SavePostForm />} />
+                  <Route path={RouteTab.NEW_POST} element={<NewPost />} />
                   <Route path="/profile/:id?" element={<ProfilePage />} />
                   <Route
                     path={RouteTab.USER_PROFILE}
@@ -51,6 +52,7 @@ function App() {
                     path={RouteTab.EDIT_PROFILE}
                     element={<EditProfile />}
                   />
+                  <Route path="/comments/:postID" element={<PostComments />} />
                 </Route>
               </Route>
 

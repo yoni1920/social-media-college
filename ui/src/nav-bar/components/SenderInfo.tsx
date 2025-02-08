@@ -1,4 +1,4 @@
-import { Button, IconButton, Link } from "@mui/material";
+import { IconButton, Link, Stack } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../auth/hooks/use-auth";
@@ -24,7 +24,7 @@ export const SenderInfo = ({ sender }: Props) => {
   }, [isOwnUser, sender._id, navigate]);
 
   return (
-    <>
+    <Stack direction="row" alignItems="center" gap={1}>
       <IconButton sx={{ padding: 0 }} onClick={onUsernameClick}>
         <UserAvatar user={isOwnUser ? ownUser : sender} />
       </IconButton>
@@ -37,6 +37,6 @@ export const SenderInfo = ({ sender }: Props) => {
       >
         {sender.username}
       </Link>
-    </>
+    </Stack>
   );
 };

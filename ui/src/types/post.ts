@@ -3,4 +3,6 @@ export type TPost = {
   message: string;
   fileName: string;
   sender: { _id: string; username: string; name: string; picture: string };
+  likes: { user: string }[];
+  comments: { _id: string }[];
 };

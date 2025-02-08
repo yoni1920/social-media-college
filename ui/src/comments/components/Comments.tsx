@@ -1,7 +1,7 @@
 import { Divider, Stack } from "@mui/material";
-import { Comment } from "./Comment";
 import { GradientCircularProgress } from "../../components/GradientLoader";
 import { TComment } from "../../types/comment";
+import { Comment } from "./Comment";
 
 type Props = {
   comments?: TComment[];

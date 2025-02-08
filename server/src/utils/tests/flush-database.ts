@@ -1,5 +1,5 @@
 import { CommentModel } from "../../comments/comment.model";
-import { PostModel } from "../../posts/post.model";
+import { PostModel } from "../../posts/models/post.model";
 import { UserModel } from "../../users/user.model";
 
 export const flushCollections = async () => {
