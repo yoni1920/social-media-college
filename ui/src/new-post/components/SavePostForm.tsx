@@ -1,20 +1,31 @@
-import { Button, Card, CardActions, Stack, TextField } from "@mui/material";
-import React, { useRef, useState } from "react";
+import { Button, Card, CardProps, Stack, TextField } from "@mui/material";
+import React, {
+  ChangeEvent,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { postsApi } from "../../api/posts-api";
 import { useAuth } from "../../auth/hooks/use-auth";
-import { LoadingButton } from "../../components/LoadingButton";
+import { FormSubmitButton } from "../../components/FormSubmitButton";
 import { RouteTab } from "../../enums";
 import { TPost } from "../../types/post";
 
 type Props = {
   post?: Partial<TPost>;
   onSuccess?: () => void;
+  title?: ReactNode;
+  elevation?: CardProps["elevation"];
 };
 
 export const SavePostForm = ({
   post: { _id, ...initialPost } = {},
+  title,
   onSuccess,
+  elevation,
 }: Props) => {
   const { user } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -26,6 +37,7 @@ export const SavePostForm = ({
     })
   );
   const [file, setFile] = useState<File | null>();
+  const [isLoadingUpload, setIsLoadingUpload] = useState(false);
 
   const navigate = useNavigate();
   const onFileChosen = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,8 +46,8 @@ export const SavePostForm = ({
     }
   };
 
-  const onSubmit = async () => {
-    if ((!file && !_id) || !post.message) {
+  const onSubmit = useCallback(async () => {
+    if (!file && !_id) {
       return;
     }
 
@@ -43,33 +55,67 @@ export const SavePostForm = ({
     if (file) {
       formData.append("image", file);
     }
-    formData.append("message", post.message);
+    formData.append("message", post.message ?? "");
     formData.append("sender", post.sender ?? "");
-    await postsApi[_id ? "putForm" : "postForm"](
-      `/${_id ? _id : ""}`,
-      formData
-    );
+
+    try {
+      setIsLoadingUpload(true);
+      await postsApi[_id ? "putForm" : "postForm"](
+        `/${_id ? _id : ""}`,
+        formData
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingUpload(false);
+    }
+
     if (onSuccess) {
       return onSuccess();
     }
 
     navigate(RouteTab.HOME);
-  };
+  }, [_id, file, navigate, onSuccess, post.message, post.sender]);
+
+  const onCaptionChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) =>
+      setPost((currentData) => ({
+        ...currentData,
+        message: event.target.value,
+      })),
+    []
+  );
+
+  const canUploadData = useMemo(() => {
+    return Boolean(file) || post.message !== initialPost.message;
+  }, [file, initialPost.message, post.message]);
+
   return (
-    <Card>
-      <Stack alignItems="center" justifyContent="center" gap={2}>
+    <Card sx={{ width: "500px" }} elevation={elevation ?? 0}>
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        gap={4}
+        mt={2}
+        mx={2}
+        mb={3}
+      >
+        {title}
         {file && (
           <img
             src={URL.createObjectURL(file)}
             alt="preview"
-            width="300px"
-            height="300px"
+            width="350px"
+            height="350px"
           />
         )}
-        <CardActions>
+
+        <Stack width={"100%"} alignItems={"center"} gap={2}>
           <Button
             color={file === null ? "error" : "primary"}
             onClick={() => inputRef.current?.click()}
+            variant="contained"
+            sx={{ width: "10rem" }}
           >
             <input
               ref={inputRef}
@@ -79,24 +125,23 @@ export const SavePostForm = ({
               multiple={false}
               onChange={onFileChosen}
             />
-            {file ? file.name : "Choose Image"}
+            Choose Image
           </Button>
-        </CardActions>
-        <TextField
-          value={post.message}
-          error={post.message === ""}
-          sx={{ width: "100%", paddingInline: 1 }}
-          placeholder="What's on your mind?"
-          multiline
-          onChange={(event) =>
-            setPost((currentData) => ({
-              ...currentData,
-              message: event.target.value,
-            }))
-          }
-          helperText={post.message === "" ? "Message is required" : ""}
+          <TextField
+            value={post.message}
+            sx={{ width: "60%" }}
+            placeholder="What's on your mind?"
+            multiline
+            onChange={onCaptionChange}
+          />
+        </Stack>
+
+        <FormSubmitButton
+          onClick={onSubmit}
+          text="Upload"
+          disabled={!canUploadData}
+          loading={isLoadingUpload}
         />
-        <LoadingButton onClick={onSubmit}>Upload</LoadingButton>
       </Stack>
     </Card>
   );

@@ -29,7 +29,9 @@ const updatePost = async (
   post: UpdatePostDTO,
   file?: Express.Multer.File
 ): Promise<Date | undefined> => {
-  post.fileName ??= storageService.generateFileName(file);
+  if (post.fileName || file) {
+    post.fileName ??= storageService.generateFileName(file);
+  }
 
   const { updatedExisting, updatedAt } = await postsRepository.updatePost(
     postID,

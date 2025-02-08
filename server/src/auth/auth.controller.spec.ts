@@ -171,9 +171,15 @@ test("refresh invalid user on refresh token - fail", async () => {
 });
 
 test("logout - pass", async () => {
+  const response = await request.agent(app).post("/auth/logout");
+
+  expect(response.statusCode).toBe(200);
+});
+
+test("me - pass", async () => {
   const response = await request
     .agent(app)
-    .post("/auth/logout")
+    .post("/auth/me")
     .set("Cookie", [
       `${ACCESS_TOKEN_COOKIE_KEY}=${loginTokens.accessToken.token}`,
     ]);
@@ -181,8 +187,8 @@ test("logout - pass", async () => {
   expect(response.statusCode).toBe(200);
 });
 
-test("logout/validate-access-token missing access token - fail", async () => {
-  const response = await request.agent(app).post("/auth/logout");
+test("me/validate-access-token missing access token - fail", async () => {
+  const response = await request.agent(app).post("/auth/me");
 
   expect(response.statusCode).toBe(401);
 
@@ -190,10 +196,10 @@ test("logout/validate-access-token missing access token - fail", async () => {
   expect(response.body.details).toBe("Missing access token");
 });
 
-test("logout/validate-access-token invalid access token - fail", async () => {
+test("me/validate-access-token invalid access token - fail", async () => {
   const response = await request
     .agent(app)
-    .post("/auth/logout")
+    .post("/auth/me")
     .set("Cookie", [`${ACCESS_TOKEN_COOKIE_KEY}=${"faketoken"}`]);
 
   expect(response.statusCode).toBe(401);
@@ -202,14 +208,14 @@ test("logout/validate-access-token invalid access token - fail", async () => {
   expect(response.body.details).toBe("Invalid access token");
 });
 
-test("logout/validate-access-token invalid user access token - fail", async () => {
+test("me/validate-access-token invalid user access token - fail", async () => {
   const {
     accessToken: { token: fakeUserAccessToken },
   } = authService.buildLoginTokens("fake_user");
 
   const response = await request
     .agent(app)
-    .post("/auth/logout")
+    .post("/auth/me")
     .set("Cookie", [`${ACCESS_TOKEN_COOKIE_KEY}=${fakeUserAccessToken}`]);
 
   expect(response.statusCode).toBe(401);

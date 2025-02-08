@@ -9,20 +9,21 @@ import {
 type Props = {
   disabled?: boolean;
   text: string;
-  sx?: ButtonProps["sx"];
   loading?: boolean;
-};
+} & ButtonProps;
 
 export const FormSubmitButton = ({
   disabled,
   text,
   sx,
   loading = false,
+  ...buttonProps
 }: Props) => {
   const theme = useTheme();
 
   return (
     <Button
+      {...buttonProps}
       type="submit"
       size="large"
       variant="contained"

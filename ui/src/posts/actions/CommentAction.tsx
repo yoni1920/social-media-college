@@ -1,7 +1,7 @@
 import { IconButton, TextField } from "@mui/material";
 import { useCallback, useState } from "react";
 import { ConfirmationDialog } from "../../auth/components/ConfirmationDialog";
-import { Comment } from "@mui/icons-material";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { useUser } from "../../auth/hooks/use-auth";
 import { commentsApi } from "../../api/comments-api";
 
@@ -22,12 +22,11 @@ export const CommentAction = ({ postID, onSuccess }: Props) => {
   return (
     <>
       <IconButton
-        color="primary"
         onClick={() => {
           setIsCommenting(true);
         }}
       >
-        <Comment />
+        <ChatBubbleOutlineIcon />
       </IconButton>
       <ConfirmationDialog
         open={isCommenting}

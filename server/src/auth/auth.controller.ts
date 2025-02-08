@@ -144,18 +144,14 @@ router.post("/login", validateBody(loginSchema), async (req, res) => {
  *       401:
  *         description: Unauthorized user
  */
-router.post(
-  "/logout",
-  validateAccessToken,
-  async (req: Request, res: Response) => {
-    res
-      .clearCookie(REFRESH_TOKEN_COOKIE_KEY)
-      .clearCookie(ACCESS_TOKEN_COOKIE_KEY)
-      .send({
-        message: "User logged off",
-      });
-  }
-);
+router.post("/logout", async (req: Request, res: Response) => {
+  res
+    .clearCookie(REFRESH_TOKEN_COOKIE_KEY)
+    .clearCookie(ACCESS_TOKEN_COOKIE_KEY)
+    .send({
+      message: "User logged off",
+    });
+});
 
 /**
  * @openapi
