@@ -44,4 +44,10 @@ postSchema.virtual("likes", {
   foreignField: "post",
 });
 
+postSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "postID",
+});
+
 export const PostModel = model<Post>("Post", postSchema);

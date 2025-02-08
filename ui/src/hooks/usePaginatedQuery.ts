@@ -15,6 +15,8 @@ export const usePaginatedQuery = <T>(
     try {
       const { data } = await queryFn(page);
 
+      console.log(data);
+
       setData(data);
     } catch (error) {
       setIsError(true);

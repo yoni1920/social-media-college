@@ -32,4 +32,9 @@ const commentSchema = new Schema<Comment>(
   { timestamps: true }
 );
 
+export const COMMENTS_POPULATION = {
+  path: "comments",
+  select: "_id -postID",
+};
+
 export const CommentModel = model<Comment>("Comment", commentSchema);

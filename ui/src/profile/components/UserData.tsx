@@ -2,10 +2,10 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import { Button, Card, CardContent, Stack, Typography } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../../auth/hooks/use-auth";
-import { UserAvatar } from "../../../components/UserAvatar";
-import { RouteTab } from "../../../enums";
-import { User } from "../../../types";
+import { useUser } from "../../auth/hooks/use-auth";
+import { User } from "../../types";
+import { RouteTab } from "../../enums";
+import { UserAvatar } from "../../components/UserAvatar";
 
 type Props = { user: User };
 

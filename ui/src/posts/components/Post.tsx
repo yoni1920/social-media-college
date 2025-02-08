@@ -1,25 +1,22 @@
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import {
   Box,
   Button,
   Card,
   CardContent,
-  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
+import { postsApi } from "../../api/posts-api";
 import { useUser } from "../../auth/hooks/use-auth";
 import { SenderInfo } from "../../nav-bar/components/SenderInfo";
-import { TPost } from "../../types/post";
-import { CommentAction } from "../actions/CommentAction";
-import { Comments } from "../comments/Comments";
-import { useComments } from "../comments/use-comments";
-import { OwnPostActions } from "./OwnPostActions";
-import { LikeButton } from "./LikeButton";
-import { postsApi } from "../../api/posts-api";
-import { LikeMethod } from "../enums";
 import { User } from "../../types";
+import { TPost } from "../../types/post";
+import { LikeMethod } from "../enums";
+import { LikeButton } from "./LikeButton";
+import { OwnPostActions } from "./OwnPostActions";
+import { useNavigate } from "react-router-dom";
+import { CommentAction } from "./CommentAction";
 
 type Props = {
   post: TPost;
@@ -31,6 +28,7 @@ const isPostLikedAlready = (post: TPost, ownUserID: User["_id"]) => {
 };
 
 export const Post = ({ post, onChanged }: Props) => {
+  const navigate = useNavigate();
   const { user: ownUser } = useUser();
 
   const isLikedAlready = useMemo(
@@ -39,11 +37,7 @@ export const Post = ({ post, onChanged }: Props) => {
   );
 
   const [isLiked, setIsLiked] = useState(isLikedAlready);
-
   const [numLikes, setNumLikes] = useState(post.likes.length);
-
-  const [areCommentsShown, setAreCommentsShown] = useState(false);
-  const { comments, isLoading, refresh } = useComments(post._id);
 
   const isOwnUser = useMemo(
     () => ownUser._id === post.sender._id,
@@ -64,6 +58,10 @@ export const Post = ({ post, onChanged }: Props) => {
 
     setIsLiked((liked) => !liked);
   }, [isLiked, ownUser._id, post._id]);
+
+  const goToCommentSection = useCallback(() => {
+    navigate(`/comments/${post._id}`);
+  }, [navigate, post._id]);
 
   return (
     <Card sx={{ mt: 2, maxWidth: "400px" }} elevation={3}>
@@ -96,7 +94,7 @@ export const Post = ({ post, onChanged }: Props) => {
             onLiked={onLiked}
             initiallyLiked={isLikedAlready}
           />
-          <CommentAction postID={post._id} onSuccess={refresh} />
+          <CommentAction postID={post._id} onSuccess={goToCommentSection} />
         </Stack>
 
         <Stack gap={1}>
@@ -112,19 +110,14 @@ export const Post = ({ post, onChanged }: Props) => {
         </Stack>
 
         <Button
-          onClick={() => setAreCommentsShown((curr) => !curr)}
+          onClick={goToCommentSection}
           variant="text"
-          sx={{
-            color: "text.secondary",
-            minWidth: "32px",
-            fontSize: "0.6rem",
-          }}
+          sx={{ color: "text.secondary", minWidth: "32px", fontSize: "0.6rem" }}
         >
-          {areCommentsShown ? "Hide comments" : "Show comments"}
+          {post.comments.length
+            ? `View all ${post.comments.length} comments`
+            : "View comments"}
         </Button>
-        {areCommentsShown && (
-          <Comments comments={comments} isLoading={isLoading} />
-        )}
       </CardContent>
     </Card>
   );

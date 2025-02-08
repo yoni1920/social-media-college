@@ -20,6 +20,7 @@ import { NotFound } from "./not-found/components/NotFound";
 import { ProfilePage } from "./profile/components/ProfilePage";
 import { UserProfile } from "./profile/components/UserProfile";
 import { EditProfile } from "./profile/components/edit-profile/EditProfile";
+import { PostComments } from "./comments/components/PostComments";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
                     path={RouteTab.EDIT_PROFILE}
                     element={<EditProfile />}
                   />
+                  <Route path="/comments/:postID" element={<PostComments />} />
                 </Route>
               </Route>
 
