@@ -1,7 +1,7 @@
 import { TPost } from "../../types/post";
 import { postsApi } from "../../api/posts-api";
-import { usePaginatedQuery } from "../../hooks/usePaginatedQuery";
 import { useCallback } from "react";
+import { usePaginatedQuery } from "../../hooks/usePaginatedQuery";
 
 export const usePosts = (profileId?: string) => {
   const fetchBySenderId = useCallback(

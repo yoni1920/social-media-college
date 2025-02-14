@@ -1,4 +1,4 @@
-import { COMMENTS_POPULATION } from "../comments/comment.model";
+import { commentsMetadata } from "../comments/comment.model";
 import { ResourceExistsResult, UpdateResourceResult } from "../types/resources";
 import { USER_POPULATE_FIELDS } from "../users/user.model";
 import { CreatePostDTO, UpdatePostDTO } from "./dto-schema";
@@ -9,7 +9,7 @@ const getAllPosts = async (): Promise<Post[]> => {
   return await PostModel.find({})
     .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
     .populate(LIKES_POPULATION)
-    .populate(COMMENTS_POPULATION)
+    .populate(commentsMetadata.virtualFields.NUM_COMMENTS)
     .exec();
 };
 
@@ -17,7 +17,7 @@ const getPostByID = async (postID: string): Promise<Post | null> => {
   return await PostModel.findById(postID)
     .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
     .populate(LIKES_POPULATION)
-    .populate(COMMENTS_POPULATION)
+    .populate(commentsMetadata.virtualFields.NUM_COMMENTS)
     .exec();
 };
 
@@ -41,7 +41,7 @@ const getPostsBySenderID = async (senderID: string): Promise<Post[]> => {
   return await PostModel.find({ sender: senderID })
     .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
     .populate(LIKES_POPULATION)
-    .populate(COMMENTS_POPULATION)
+    .populate(commentsMetadata.virtualFields.NUM_COMMENTS)
     .exec();
 };
 

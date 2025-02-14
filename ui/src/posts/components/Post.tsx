@@ -114,8 +114,8 @@ export const Post = ({ post, onChanged }: Props) => {
           variant="text"
           sx={{ color: "text.secondary", minWidth: "32px", fontSize: "0.6rem" }}
         >
-          {post.comments.length
-            ? `View all ${post.comments.length} comments`
+          {post.numComments
+            ? `View all ${post.numComments} comments`
             : "View comments"}
         </Button>
       </CardContent>

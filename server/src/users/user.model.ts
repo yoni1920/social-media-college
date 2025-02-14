@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { v4 as uuidV4 } from "uuid";
-import { BaseResource } from "../types/resources";
+import { BaseResource, ResourceSchemaMetadata } from "../types/resources";
 
 export interface User extends BaseResource {
   username: string;
@@ -52,11 +52,32 @@ const userSchema = new Schema<User>(
   { timestamps: true }
 );
 
+export const usersMetadata = {
+  modelName: "User",
+  virtualFields: {
+    SENDER: "sender",
+  },
+  fields: {
+    USERNAME: "username",
+    NAME: "name",
+    PICTURE: "picture",
+    PASSWORD: "password",
+    EXTERNAL_ID: "externalId",
+  },
+} as const satisfies ResourceSchemaMetadata<User>;
+
 export const USER_POPULATE_FIELDS = {
-  field: "sender",
-  subFields: ["username", "name", "picture"],
+  field: usersMetadata.virtualFields.SENDER,
+  subFields: [
+    usersMetadata.fields.USERNAME,
+    usersMetadata.fields.NAME,
+    usersMetadata.fields.PICTURE,
+  ],
 } as const;
 
-export const USER_FIELDS_WITHOUT_SENSITIVE = ["-password", "-googleId"];
+export const USER_FIELDS_WITHOUT_SENSITIVE = [
+  `-${usersMetadata.fields.PASSWORD}`,
+  `-${usersMetadata.fields.EXTERNAL_ID}`,
+];
 
-export const UserModel = model<User>("User", userSchema);
+export const UserModel = model<User>(usersMetadata.modelName, userSchema);

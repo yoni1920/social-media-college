@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
 import { User } from "users/user.model";
 import { Post } from "./post.model";
+import { ResourceSchemaMetadata } from "types/resources/resource-schema-metadata";
+import { baseResourceMetadata } from "../../types/resources";
 
 export interface Like {
   post: Post["_id"];
@@ -27,9 +29,20 @@ const likeSchema = new Schema<Like>(
 
 likeSchema.index({ post: 1, user: 1 }, { unique: true });
 
+export const likesMetadata = {
+  modelName: "Like",
+  virtualFields: {
+    LIKES: "likes",
+  },
+  fields: {
+    POST: "post",
+    USER: "user",
+  },
+} as const satisfies ResourceSchemaMetadata<Like>;
+
 export const LIKES_POPULATION = {
-  path: "likes",
-  select: "user -_id -post",
+  path: likesMetadata.virtualFields.LIKES,
+  select: `${likesMetadata.fields.USER} -${baseResourceMetadata.fields.ID} -${likesMetadata.fields.POST}`,
 };
 
-export const LikeModel = model<Like>("Like", likeSchema);
+export const LikeModel = model<Like>(likesMetadata.modelName, likeSchema);

@@ -1,8 +1,13 @@
-import mongoose, { Schema, model } from "mongoose";
-import { v4 as uuidV4 } from "uuid";
-import { BaseResource } from "../../types/resources";
+import { Schema, model } from "mongoose";
 import { User } from "users/user.model";
-import { Like } from "./like.model";
+import { v4 as uuidV4 } from "uuid";
+import { commentsMetadata } from "../../comments/comment.model";
+import {
+  BaseResource,
+  baseResourceMetadata,
+  ResourceSchemaMetadata,
+} from "../../types/resources";
+import { Like, likesMetadata } from "./like.model";
 
 export interface Post extends BaseResource {
   message: string;
@@ -38,16 +43,22 @@ const postSchema = new Schema<Post>(
   }
 );
 
-postSchema.virtual("likes", {
-  ref: "Like",
-  localField: "_id",
-  foreignField: "post",
+export const postsMetadata = {
+  modelName: "Post",
+} as const satisfies ResourceSchemaMetadata<Post>;
+
+postSchema.virtual(likesMetadata.virtualFields.LIKES, {
+  ref: likesMetadata.modelName,
+  localField: baseResourceMetadata.fields.ID,
+  foreignField: likesMetadata.fields.POST,
 });
 
-postSchema.virtual("comments", {
-  ref: "Comment",
-  localField: "_id",
-  foreignField: "postID",
+postSchema.virtual(commentsMetadata.virtualFields.NUM_COMMENTS, {
+  ref: commentsMetadata.modelName,
+  localField: baseResourceMetadata.fields.ID,
+  foreignField: commentsMetadata.fields.POST_ID,
+  justOne: true,
+  count: true,
 });
 
-export const PostModel = model<Post>("Post", postSchema);
+export const PostModel = model<Post>(postsMetadata.modelName, postSchema);
