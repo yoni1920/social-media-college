@@ -8,6 +8,7 @@ import { UserLoginDTO } from "../../types/user-login-dto";
 import { isValidEmail } from "../../utils";
 import { CredentialInput } from "../CredentialInput";
 import { FormSubmitButton } from "../../../components/FormSubmitButton";
+import { MaxCharacterLength } from "../../../enums/max-character-length";
 
 type UserCredentials = {
   userID: string;
@@ -22,6 +23,18 @@ const initialCredentials: UserCredentials = {
 const initalErrors: CredentialErrors<UserCredentials> = {
   userID: { error: false, message: "" },
   password: { error: false, message: "" },
+};
+
+const getFieldValueError = (value: string): string => {
+  if (!value) {
+    return "Field cannot be empty";
+  }
+
+  if (value.length > MaxCharacterLength.MEDIUM) {
+    return `Field can only have up to ${MaxCharacterLength.MEDIUM} characters`;
+  }
+
+  return "";
 };
 
 export const SignInForm = () => {
@@ -41,8 +54,10 @@ export const SignInForm = () => {
         const credential = event.currentTarget.value;
 
         setCredentialErrors((prevErrors) => {
-          const errorData = !credential
-            ? { error: true, message: "Field cannot be empty" }
+          const errorMessage = getFieldValueError(credential);
+
+          const errorData = errorMessage
+            ? { error: true, message: errorMessage }
             : initalErrors[credentialField];
 
           return {

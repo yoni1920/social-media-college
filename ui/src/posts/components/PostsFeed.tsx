@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { GradientCircularProgress } from "../../components/GradientLoader";
+import { GradientCircularProgress } from "../../components/GradientCircularProgress";
 import { usePosts } from "../hooks/use-posts";
 import { NoPosts } from "./NoPosts";
 import { Post } from "./Post";
