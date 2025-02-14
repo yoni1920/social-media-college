@@ -6,7 +6,7 @@ export const supportedLanguages: readonly LanguageOption[] = [
   { code: "RU", label: "Русский", value: "RUSSIAN" },
   { code: "FR", label: "Français", value: "FRENCH" },
   { code: "ES", label: "Español", value: "SPANISH" },
-  { code: "CN", label: "普通话", value: "MANDARIN_CHINESE_SIMPLIFIED" },
+  { code: "CN", label: "普通话", value: "MANDARIN CHINESE" },
   { code: "BG", label: "Български", value: "BULGARIAN" },
   { code: "CZ", label: "Czech", value: "CZECH" },
   { code: "DE", label: "Deutsch", value: "GERMAN" },
