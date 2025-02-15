@@ -1,7 +1,7 @@
 import { hash } from "bcrypt";
 import commentsService from "../comments/comments.service";
 import { BadRequestException } from "../exceptions";
-import postsService from "../posts/posts.service";
+import postsService from "../posts/services/posts.service";
 import {
   DEFAULT_PROFILE_PICTURE_KEYWORD,
   USER_PASSWORD_SALT_ROUNDS,

@@ -1,6 +1,6 @@
 import commentsRepository from "./comments.repository";
 import usersService from "../users/users.service";
-import postsService from "../posts/posts.service";
+import postsService from "../posts/services/posts.service";
 import { BadRequestException } from "../exceptions";
 import { CreateCommentDTO, UpdateCommentDTO } from "./dto-schema";
 
