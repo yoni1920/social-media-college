@@ -17,6 +17,7 @@ import { MaxCharacterLength } from "../../enums/max-character-length";
 import { TPost } from "../../types/post";
 import { EnhanceCaptionResponse } from "../types";
 import { EnhanceCaptionAction } from "./enhance-caption/EnhanceCaptionAction";
+import { TextDirection } from "../../types";
 
 type Props = {
   post?: Partial<TPost>;
@@ -44,6 +45,8 @@ export const SavePostForm = ({
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
   const [captionError, setCaptionError] = useState<string | null>(null);
   const [enhanceError, setEnhanceError] = useState<string | null>(null);
+  const [captionDirection, setCaptionDirection] =
+    useState<TextDirection>("ltr");
 
   const navigate = useNavigate();
   const onFileChosen = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,13 +108,20 @@ export const SavePostForm = ({
   );
 
   const onEnhanceCaptionSuccess = useCallback(
-    (enhanceResponse?: EnhanceCaptionResponse) => {
+    (
+      enhanceResponse: EnhanceCaptionResponse,
+      captionDirection?: TextDirection
+    ) => {
       if (!enhanceResponse) {
         return;
       }
 
       if (enhanceResponse.status === "SUCCESS") {
         setEnhanceError(null);
+
+        if (captionDirection) {
+          setCaptionDirection(captionDirection);
+        }
 
         setPost((currentData) => ({
           ...currentData,
@@ -194,6 +204,7 @@ export const SavePostForm = ({
               helperText={captionError ?? enhanceError ?? ""}
               maxRows={3}
               minRows={2}
+              dir={captionDirection}
             />
 
             <EnhanceCaptionAction

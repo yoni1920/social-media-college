@@ -7,11 +7,14 @@ import { GradientButton } from "../../../components/GradientButton";
 import { AutoAwesome } from "@mui/icons-material";
 import { EnhanceCaptionRequest, EnhanceCaptionResponse } from "../../types";
 import { handleEnhanceCaption } from "../../utils/handle-enhance-caption";
-import { User } from "../../../types";
+import { TextDirection, User } from "../../../types";
 import { GradientCircularProgress } from "../../../components/GradientCircularProgress";
 
 type Props = {
-  onEnhanceSuccess: (enhanceResponse?: EnhanceCaptionResponse) => void;
+  onEnhanceSuccess: (
+    enhanceResponse: EnhanceCaptionResponse,
+    captionDirection?: TextDirection
+  ) => void;
   onEnhanceError: (error: Error) => void;
   userID: User["_id"];
   originalCaption: string;
@@ -64,12 +67,15 @@ export const EnhanceCaptionAction = ({
       return;
     }
 
-    const enhanceRequest: EnhanceCaptionRequest = {
+    const enhanceRequest: EnhanceCaptionRequest & {
+      languageDirection?: TextDirection;
+    } = {
       userID,
       caption: originalCaption,
       enhanceOption,
       ...(translationLanguage && {
         translationLanguage: translationLanguage.value,
+        languageDirection: translationLanguage.direction,
       }),
     };
 
