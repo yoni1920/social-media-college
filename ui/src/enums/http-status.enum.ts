@@ -2,4 +2,5 @@ export enum HttpStatus {
   UNAUTHORIZED = 401,
   BAD_REQUEST = 400,
   INTERNAL_SERVER_ERROR = 500,
+  TOO_MANY_REQUESTS = 429,
 }

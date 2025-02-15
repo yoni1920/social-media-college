@@ -17,6 +17,8 @@ import {
 } from "./dto-schema/enhance-caption";
 import captionService from "./services/caption.service";
 import postsService from "./services/posts.service";
+import { defineRateLimit } from "../middleware/rate-limiter";
+import { ExpirySecs } from "../auth/enums";
 
 const router = express.Router();
 const postsImageStorage = multer.diskStorage({
@@ -336,6 +338,7 @@ router.patch(
  */
 router.post(
   "/caption",
+  defineRateLimit({ limit: 5, windowMs: ExpirySecs.ONE_MINUTE }),
   validateBody(enhanceCaptionRequestSchema),
   async (req, res) => {
     const enhanceRequest: EnhanceCaptionRequestDTO = req.body;

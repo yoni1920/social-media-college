@@ -74,7 +74,6 @@ const enhanceCaption = async ({
     translationLanguage
   );
 
-  await delay(2_000);
   const result = await model.generateContent(prompt);
 
   return JSON.parse(result.response.text());

@@ -139,7 +139,8 @@ export const SavePostForm = ({
   const onEnhanceCaptionError = useCallback((error: Error) => {
     if (
       isAxiosError(error) &&
-      error.response?.status === HttpStatus.INTERNAL_SERVER_ERROR
+      (error.response?.status === HttpStatus.INTERNAL_SERVER_ERROR ||
+        error.response?.status === HttpStatus.TOO_MANY_REQUESTS)
     ) {
       setEnhanceError("Sorry! Could not enhance caption, try again later");
     }
