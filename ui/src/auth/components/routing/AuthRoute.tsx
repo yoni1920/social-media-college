@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { GradientCircularProgress } from "../../../components/GradientLoader";
+import { GradientCircularProgress } from "../../../components/GradientCircularProgress";
 import { useAuth } from "../../hooks/use-auth";
 
 export const AuthRoute = () => {

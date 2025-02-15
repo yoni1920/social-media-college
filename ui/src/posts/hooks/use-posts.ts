@@ -1,7 +1,7 @@
 import { TPost } from "../../types/post";
 import { postsApi } from "../../api/posts-api";
 import { useCallback } from "react";
-import { PageData, usePaginatedQuery } from "../../hooks/use-paginated-query";
+import { usePaginatedQuery } from "../../hooks/use-paginated-query";
 import { usePostsStore } from "../../store/posts";
 
 const POSTS_PAGE_LIMIT = 20;

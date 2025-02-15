@@ -11,6 +11,7 @@ import {
   registrationSchema,
 } from "../../types/registration-fields";
 import { CredentialInput } from "../CredentialInput";
+import { MaxCharacterLength } from "../../../enums/max-character-length";
 
 type RegistrationFields = RegistrationDTO & {
   confirmPassword: string;
@@ -30,6 +31,18 @@ const initialErrorFields: CredentialErrors<RegistrationFields> = {
   confirmPassword: { error: false, message: "" },
   email: { error: false, message: "" },
   name: { error: false, message: "" },
+};
+
+const getFieldValueError = (value: string): string => {
+  if (!value) {
+    return "Field cannot be empty";
+  }
+
+  if (value.length > MaxCharacterLength.MEDIUM) {
+    return `Field can only have up to ${MaxCharacterLength.MEDIUM} characters`;
+  }
+
+  return "";
 };
 
 export const RegistrationForm = () => {
@@ -70,7 +83,7 @@ export const RegistrationForm = () => {
 
         setRegistrationFieldErrors((prevErrors) => ({
           ...prevErrors,
-          [field]: !fieldValue ? "Field cannot be empty" : "",
+          [field]: getFieldValueError(fieldValue),
         }));
 
         setRegistrationFields((prevFields) => ({
@@ -92,6 +105,16 @@ export const RegistrationForm = () => {
           "password",
           true,
           `Must be at least ${MINIMUM_PASSWORD_LENGTH} characters`
+        );
+
+        return;
+      }
+
+      if (newPassword.length && newPassword.length > MaxCharacterLength.LONG) {
+        updateRegistrationErrors(
+          "password",
+          true,
+          `Only allowed up to ${MaxCharacterLength.LONG} characters`
         );
 
         return;

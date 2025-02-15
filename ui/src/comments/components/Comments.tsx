@@ -1,5 +1,5 @@
 import { Divider, Stack } from "@mui/material";
-import { GradientCircularProgress } from "../../components/GradientLoader";
+import { GradientCircularProgress } from "../../components/GradientCircularProgress";
 import { TComment } from "../../types/comment";
 import { Comment } from "./Comment";
 

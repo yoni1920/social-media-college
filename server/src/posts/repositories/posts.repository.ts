@@ -1,10 +1,12 @@
-import { PaginateResult } from "mongoose";
-import { commentsMetadata } from "../comments/comment.model";
-import { ResourceExistsResult, UpdateResourceResult } from "../types/resources";
-import { USER_POPULATE_FIELDS } from "../users/user.model";
-import { CreatePostDTO, UpdatePostDTO } from "./dto-schema";
-import { LIKES_POPULATION } from "./models/like.model";
-import { PaginatedPostsResult, Post, PostModel } from "./models/post.model";
+import { commentsMetadata } from "../../comments/comment.model";
+import {
+  ResourceExistsResult,
+  UpdateResourceResult,
+} from "../../types/resources";
+import { USER_POPULATE_FIELDS } from "../../users/user.model";
+import { CreatePostDTO, UpdatePostDTO } from "../dto-schema";
+import { LIKES_POPULATION } from "../models/like.model";
+import { PaginatedPostsResult, Post, PostModel } from "../models/post.model";
 
 const getAllPosts = async (
   limit: number,

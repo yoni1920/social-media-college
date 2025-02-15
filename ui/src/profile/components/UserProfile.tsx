@@ -6,5 +6,5 @@ export const UserProfile = () => {
     user: { _id: ownUserId },
   } = useUser();
 
-  return <Profile profileId={ownUserId} />;
+  return <Profile profileId={ownUserId} ownProfile />;
 };

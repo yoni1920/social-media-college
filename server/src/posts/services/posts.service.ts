@@ -1,16 +1,15 @@
-import { PaginateResult } from "mongoose";
-import commentsService from "../comments/comments.service";
-import { BadRequestException } from "../exceptions";
-import storageService from "../file-storage/storage.service";
-import usersService from "../users/users.service";
+import commentsService from "../../comments/comments.service";
+import { BadRequestException } from "../../exceptions";
+import storageService from "../../file-storage/storage.service";
+import usersService from "../../users/users.service";
 import {
   CreatePostDTO,
   POSTS_DISK_STORAGE_PATH,
   UpdatePostDTO,
-} from "./dto-schema";
-import likesRepository from "./likes.repository";
-import { PaginatedPostsResult, Post } from "./models/post.model";
-import postsRepository from "./posts.repository";
+} from "../dto-schema";
+import likesRepository from "../repositories/likes.repository";
+import { PaginatedPostsResult, Post } from "../models/post.model";
+import postsRepository from "../repositories/posts.repository";
 
 const getAllPosts = async (
   limit: number = 50,
