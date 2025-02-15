@@ -4,16 +4,22 @@ import { TComment } from "../../types/comment";
 import { usePaginatedQuery } from "../../hooks/usePaginatedQuery";
 
 export const useComments = (postId?: string) => {
-  const fetchByPostID = useCallback(() => {
-    return commentsApi.get(`/?postID=${postId ?? ""}`);
-  }, [postId]);
+  const fetchByPostID = useCallback(
+    (page: number) => {
+      return commentsApi.get(
+        `/?limit=10&offset=${page * 10}&postID=${postId ?? ""}`
+      );
+    },
+    [postId]
+  );
 
   const {
     data: comments,
     isLoading,
     refresh,
     fetchNextPage,
+    page,
   } = usePaginatedQuery<TComment>(fetchByPostID);
 
-  return { comments, isLoading, refresh, fetchNextPage };
+  return { comments, isLoading, refresh, fetchNextPage, page };
 };

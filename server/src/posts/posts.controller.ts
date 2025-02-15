@@ -92,6 +92,18 @@ router.post(
  *         schema:
  *           type: string
  *         allowEmptyValue: true
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: number
+ *         default: 50
+ *       - name: offset
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: number
+ *         default: 0
  *     responses:
  *       200:
  *         description: Returns an array of posts
@@ -99,11 +111,14 @@ router.post(
  *         description: Bad request
  */
 router.get("/", async (req, res) => {
-  const senderID = req.query.senderID;
-
+  const { senderID, limit, offset } = req.query;
   const posts = senderID
-    ? await postsService.getPostsBySenderID(senderID as string)
-    : await postsService.getAllPosts();
+    ? await postsService.getPostsBySenderID(
+        senderID as string,
+        Number(limit),
+        Number(offset)
+      )
+    : await postsService.getAllPosts(Number(limit), Number(offset));
 
   res.send(posts);
 });

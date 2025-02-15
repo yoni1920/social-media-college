@@ -65,6 +65,18 @@ router.post("/", validateBody(createCommentSchema), async (req, res) => {
  *         schema:
  *           type: string
  *         allowEmptyValue: true
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: number
+ *         default: 50
+ *       - name: offset
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: number
+ *         default: 0
  *     responses:
  *       200:
  *         description: Returns an array of comments
@@ -74,7 +86,7 @@ router.post("/", validateBody(createCommentSchema), async (req, res) => {
  *         description: Bad request
  */
 router.get("/", async (req, res) => {
-  const postID = req.query.postID;
+  const { postID, limit, offset } = req.query;
 
   const comments = postID
     ? await commentsService.getCommentsByPostID(postID as string)

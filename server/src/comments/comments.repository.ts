@@ -1,22 +1,49 @@
 import { USER_POPULATE_FIELDS } from "../users/user.model";
 import { UpdateResourceResult } from "../types/resources";
-import { Comment, CommentModel } from "./comment.model";
+import {
+  Comment,
+  CommentModel,
+  PaginatedCommentsResult,
+} from "./comment.model";
 import { CreateCommentDTO, UpdateCommentDTO } from "./dto-schema";
 
-const getAllComments = async (): Promise<Comment[]> => {
-  return await CommentModel.find({})
-    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
-    .exec();
+const getAllComments = async (
+  limit: number,
+  offset: number
+): Promise<PaginatedCommentsResult> => {
+  return await CommentModel.paginate(
+    {},
+    {
+      offset,
+      limit,
+      populate: {
+        path: USER_POPULATE_FIELDS.field,
+        select: USER_POPULATE_FIELDS.subFields,
+      },
+    }
+  );
 };
 
 const getCommentByID = async (commentID: string): Promise<Comment | null> => {
   return await CommentModel.findById(commentID);
 };
 
-const getCommentsByPostID = async (postID: string): Promise<Comment[]> => {
-  return await CommentModel.find({ postID })
-    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
-    .exec();
+const getCommentsByPostID = async (
+  postID: string,
+  limit: number,
+  offset: number
+): Promise<PaginatedCommentsResult> => {
+  return await CommentModel.paginate(
+    { postID },
+    {
+      limit,
+      offset,
+      populate: {
+        path: USER_POPULATE_FIELDS.field,
+        select: USER_POPULATE_FIELDS.subFields,
+      },
+    }
+  );
 };
 
 const updateComment = async (
