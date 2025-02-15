@@ -12,8 +12,8 @@ import { PaginatedPostsResult, Post } from "../models/post.model";
 import postsRepository from "../repositories/posts.repository";
 
 const getAllPosts = async (
-  limit: number = 50,
-  offset: number = 0
+  limit: number,
+  offset: number
 ): Promise<PaginatedPostsResult> => {
   return await postsRepository.getAllPosts(limit, offset);
 };
@@ -60,8 +60,8 @@ const updatePost = async (
 
 const getPostsBySenderID = async (
   senderID: string,
-  limit: number = 50,
-  offset: number = 0
+  limit: number,
+  offset: number
 ): Promise<PaginatedPostsResult> => {
   const senderResult = await usersService.doesUserExist(senderID);
 

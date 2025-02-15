@@ -117,13 +117,15 @@ router.post(
  */
 router.get("/", async (req, res) => {
   const { senderID, limit, offset } = req.query;
+  const parsedLimit = Number(limit) || 50;
+  const parsedOffset = Number(offset) || 0;
   const posts = senderID
     ? await postsService.getPostsBySenderID(
         senderID as string,
-        Number(limit),
-        Number(offset)
+        parsedLimit,
+        parsedOffset
       )
-    : await postsService.getAllPosts(Number(limit), Number(offset));
+    : await postsService.getAllPosts(parsedLimit, parsedOffset);
 
   res.send(posts);
 });

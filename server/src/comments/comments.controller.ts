@@ -87,10 +87,16 @@ router.post("/", validateBody(createCommentSchema), async (req, res) => {
  */
 router.get("/", async (req, res) => {
   const { postID, limit, offset } = req.query;
+  const parsedLimit = Number(limit) || 50;
+  const parsedOffset = Number(offset) || 0;
 
   const comments = postID
-    ? await commentsService.getCommentsByPostID(postID as string)
-    : await commentsService.getAllComments();
+    ? await commentsService.getCommentsByPostID(
+        postID as string,
+        parsedLimit,
+        parsedOffset
+      )
+    : await commentsService.getAllComments(parsedLimit, parsedOffset);
 
   res.send(comments);
 });

@@ -4,7 +4,7 @@ import postsService from "../posts/services/posts.service";
 import { BadRequestException } from "../exceptions";
 import { CreateCommentDTO, UpdateCommentDTO } from "./dto-schema";
 
-const getAllComments = async (limit: number = 50, offset: number = 0) => {
+const getAllComments = async (limit: number, offset: number) => {
   return await commentsRepository.getAllComments(limit, offset);
 };
 
@@ -35,8 +35,8 @@ const updateComment = async (commentID: string, comment: UpdateCommentDTO) => {
 
 const getCommentsByPostID = async (
   postID: string,
-  limit: number = 50,
-  offset: number = 0
+  limit: number,
+  offset: number
 ) => {
   return await commentsRepository.getCommentsByPostID(postID, limit, offset);
 };
