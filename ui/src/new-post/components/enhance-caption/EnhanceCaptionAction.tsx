@@ -15,7 +15,7 @@ type Props = {
   onEnhanceError: (error: Error) => void;
   userID: User["_id"];
   originalCaption: string;
-  removeEnhanceError: () => void;
+  updateEnhanceError: (message: string | null) => void;
 };
 
 export const EnhanceCaptionAction = ({
@@ -23,7 +23,7 @@ export const EnhanceCaptionAction = ({
   onEnhanceSuccess,
   userID,
   originalCaption,
-  removeEnhanceError,
+  updateEnhanceError,
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [areEnhanceOptionsOpen, setAreEnhanceOptionsOpen] = useState(false);
@@ -49,14 +49,21 @@ export const EnhanceCaptionAction = ({
 
   const onEnchanceButtonClick = useCallback(() => {
     setAreEnhanceOptionsOpen(true);
-    removeEnhanceError();
-  }, [removeEnhanceError]);
+    updateEnhanceError(null);
+  }, [updateEnhanceError]);
 
   const onCloseEnhanceOptions = useCallback(() => {
+    updateEnhanceError(null);
     setAreEnhanceOptionsOpen(false);
-  }, []);
+  }, [updateEnhanceError]);
 
   const onSubmitEnhanceCaption = useCallback(async () => {
+    if (!originalCaption) {
+      updateEnhanceError("Cannot enhance empty message");
+
+      return;
+    }
+
     const enhanceRequest: EnhanceCaptionRequest = {
       userID,
       caption: originalCaption,
@@ -73,6 +80,7 @@ export const EnhanceCaptionAction = ({
       onEnhanceError
     );
 
+    setTranslationLanguage(null);
     setAreEnhanceOptionsOpen(false);
     setIsLoading(false);
   }, [
@@ -81,6 +89,7 @@ export const EnhanceCaptionAction = ({
     onEnhanceSuccess,
     originalCaption,
     translationLanguage,
+    updateEnhanceError,
     userID,
   ]);
 

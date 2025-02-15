@@ -135,13 +135,13 @@ export const SavePostForm = ({
     }
   }, []);
 
-  const removeEnhanceError = useCallback(() => {
-    setEnhanceError(null);
+  const updateEnhanceError = useCallback((message: string | null) => {
+    setEnhanceError(message);
   }, []);
 
   const canUploadData = useMemo(() => {
     return (
-      (Boolean(file) || post.message !== initialPost.message) && !captionError
+      Boolean(file) && post.message !== initialPost.message && !captionError
     );
   }, [captionError, file, initialPost.message, post.message]);
 
@@ -201,7 +201,7 @@ export const SavePostForm = ({
               originalCaption={post.message ?? ""}
               onEnhanceError={onEnhanceCaptionError}
               onEnhanceSuccess={onEnhanceCaptionSuccess}
-              removeEnhanceError={removeEnhanceError}
+              updateEnhanceError={updateEnhanceError}
             />
           </Stack>
         </Stack>

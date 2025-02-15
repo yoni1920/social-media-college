@@ -1,17 +1,22 @@
 import express from "express";
-import { validateBody } from "../middleware/body-validator";
-import {
-  updatePostSchema,
-  createPostSchema,
-  POSTS_DISK_STORAGE_PATH,
-  likePostSchema,
-  LikePostDTO,
-  LikeMethod,
-} from "./dto-schema";
-import postsService from "./posts.service";
 import multer from "multer";
 import { BadRequestException } from "../exceptions";
 import storageService from "../file-storage/storage.service";
+import { validateBody } from "../middleware/body-validator";
+import {
+  createPostSchema,
+  LikeMethod,
+  LikePostDTO,
+  likePostSchema,
+  POSTS_DISK_STORAGE_PATH,
+  updatePostSchema,
+} from "./dto-schema";
+import {
+  EnhanceCaptionRequestDTO,
+  enhanceCaptionRequestSchema,
+} from "./dto-schema/enhance-caption";
+import captionService from "./services/caption.service";
+import postsService from "./services/posts.service";
 
 const router = express.Router();
 const postsImageStorage = multer.diskStorage({
@@ -83,8 +88,6 @@ router.post(
  * /posts/:
  *   get:
  *     description: Get all posts
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: senderID
  *         in: query
@@ -113,8 +116,6 @@ router.get("/", async (req, res) => {
  * /posts/{postID}:
  *   get:
  *     description: Get post by id
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: postID
  *         in: path
@@ -134,6 +135,21 @@ router.get("/:postID", async (req, res) => {
   res.send(post);
 });
 
+/**
+ * @openapi
+ * /posts/image/{postID}:
+ *   get:
+ *     description: Get post image by post id
+ *     parameters:
+ *       - name: postID
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Returns image file of post
+ */
 router.get("/image/:postID", async (req, res) => {
   const { postID } = req.params;
 
@@ -238,24 +254,32 @@ router.delete("/:postID", async (req, res) => {
 
 /**
  * @openapi
- * /posts/{postID}:
- *   delete:
- *     description: Delete post by id
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: postID
- *         in: path
- *         required: true
- *         schema:
- *           type: string
+ * /posts/{postID}/likes:
+ *   patch:
+ *     description: Update like count based on method
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user
+ *               - method
+ *             properties:
+ *               method:
+ *                 type: string
+ *                 required: true
+ *                 example: UNLIKE
+ *               user:
+ *                 type: string
+ *                 required: true
+ *                 example: 1234
  *     responses:
  *       200:
- *         description: Post deleted
+ *         description: Successfully updated likes
  *       400:
  *         description: Bad request
- *       404:
- *         description: Post not found
  */
 router.patch(
   "/:postID/likes",
@@ -269,6 +293,55 @@ router.patch(
       : await postsService.unlikePost(postID, likePostDTO.user);
 
     res.send({ message: "liked method success", postID });
+  }
+);
+
+/**
+ * @openapi
+ * /posts/caption:
+ *   post:
+ *     description: Enhance post caption, with method and optional translation language
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userID
+ *               - caption
+ *               - enhanceOption
+ *             properties:
+ *               userID:
+ *                 type: string
+ *                 required: true
+ *                 example: 1234
+ *               caption:
+ *                 type: string
+ *                 required: true
+ *                 example: Hello
+ *               enhanceOption:
+ *                 type: string
+ *                 required: true
+ *                 example: PARAPHRASE
+ *               translationLanguage:
+ *                 type: string
+ *                 required: false
+ *                 example: FRENCH
+ *     responses:
+ *       200:
+ *         description: Returns enhanced caption or error with reason
+ *       400:
+ *         description: Bad request
+ */
+router.post(
+  "/caption",
+  validateBody(enhanceCaptionRequestSchema),
+  async (req, res) => {
+    const enhanceRequest: EnhanceCaptionRequestDTO = req.body;
+    const response = await captionService.enhanceCaption(enhanceRequest);
+
+    res.send(response);
   }
 );
 

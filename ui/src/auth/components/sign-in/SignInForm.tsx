@@ -1,14 +1,14 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
+import { FormSubmitButton } from "../../../components/FormSubmitButton";
 import { HttpStatus } from "../../../enums";
+import { MaxCharacterLength } from "../../../enums/max-character-length";
 import { useAuth } from "../../hooks/use-auth";
 import { CredentialErrors } from "../../types/credential-errors";
 import { UserLoginDTO } from "../../types/user-login-dto";
 import { isValidEmail } from "../../utils";
 import { CredentialInput } from "../CredentialInput";
-import { FormSubmitButton } from "../../../components/FormSubmitButton";
-import { MaxCharacterLength } from "../../../enums/max-character-length";
 
 type UserCredentials = {
   userID: string;

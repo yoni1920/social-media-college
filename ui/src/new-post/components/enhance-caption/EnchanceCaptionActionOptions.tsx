@@ -35,13 +35,13 @@ export const EnhanceCaptionActionOptions = ({
     <Fade in timeout={200}>
       <Stack direction={"row"} alignItems={"center"} gap={2}>
         <Stack direction={"row"} alignItems={"center"} gap={1}>
+          <SelectTranslationLanguage
+            onTranslationLanguageChosen={onTranslationLanguageChosen}
+          />
+
           <SelectEnhanceOption
             enhanceOption={enhanceOption}
             onEnhanceOptionChosen={onEnhanceOptionChosen}
-          />
-
-          <SelectTranslationLanguage
-            onTranslationLanguageChosen={onTranslationLanguageChosen}
           />
         </Stack>
 

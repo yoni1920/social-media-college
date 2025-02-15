@@ -1,4 +1,4 @@
-import { LikeModel } from "./models/like.model";
+import { LikeModel } from "../models/like.model";
 
 const deleteLikesByPostIds = async (postIDs: string[]): Promise<void> => {
   await LikeModel.deleteMany({ post: { $in: postIDs } });
