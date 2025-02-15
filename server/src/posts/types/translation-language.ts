@@ -5,7 +5,7 @@ export const translationLanguages = [
   "RUSSIAN",
   "FRENCH",
   "SPANISH",
-  "MANDARIN CHINESE",
+  "MANDARIN",
   "BULGARIAN",
   "CROATIAN",
   "CZECH",

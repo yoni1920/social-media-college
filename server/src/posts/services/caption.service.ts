@@ -17,7 +17,7 @@ const model = getGeminiModel({
     caption: {
       type: SchemaType.STRING,
       nullable: true,
-      description: `The provided user caption in 'CAPTION' variable after first translating caption to 'TARGET_LANGUAGE' language variable if exists, then to paraphrase, elaborate, or to concise`,
+      description: `One alternative caption option from the provided user caption in 'CAPTION' variable after first translating caption to 'TARGET_LANGUAGE' language variable if exists, then to paraphrase, elaborate, or to concise the caption.`,
     },
     reason: {
       type: SchemaType.STRING,
