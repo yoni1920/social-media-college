@@ -8,10 +8,10 @@ interface PaginationResult<T> {
 }
 export const usePaginatedQuery = <T>(
   queryFn: (page: number) => Promise<AxiosResponse<PaginationResult<T>>>,
-  initialPage = 0
+  initialPage = 1
 ) => {
   const [page, setPage] = useState(initialPage);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(initialPage);
   const [data, setData] = useState<T[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -19,7 +19,7 @@ export const usePaginatedQuery = <T>(
   const refresh = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { data } = await queryFn(page);
+      const { data } = await queryFn(page - 1);
 
       setData(data.docs);
       setTotalPages(data.totalPages);
@@ -30,21 +30,9 @@ export const usePaginatedQuery = <T>(
     }
   }, [queryFn, page]);
 
-  // TODO: implement pages
-  const fetchNextPage = useCallback(
-    async (newPage?: number) => {
-      await refresh();
-
-      if (!isError && data?.length) {
-        setPage((page) => (newPage ? newPage : page + 1));
-      }
-    },
-    [refresh]
-  );
-
   useEffect(() => {
-    fetchNextPage();
-  }, [fetchNextPage]);
+    refresh();
+  }, [page]);
 
-  return { data, isLoading, isError, fetchNextPage, refresh, page, totalPages };
+  return { data, isLoading, isError, setPage, refresh, page, totalPages };
 };

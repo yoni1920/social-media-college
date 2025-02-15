@@ -7,7 +7,8 @@ import { Comments } from "./Comments";
 export const PostComments = () => {
   const { postID } = useParams();
 
-  const { comments, isLoading, fetchNextPage, page } = useComments(postID);
+  const { comments, isLoading, setPage, page, totalPages } =
+    useComments(postID);
 
   return (
     <>
@@ -15,7 +16,9 @@ export const PostComments = () => {
       <Comments comments={comments} isLoading={isLoading} />
       <Pagination
         page={page}
-        onChange={useEventCallback((e) => fetchNextPage(e.target.value))}
+        count={totalPages}
+        hideNextButton={totalPages <= 1}
+        onChange={useEventCallback((e) => setPage(e.target.value))}
       />
     </>
   );

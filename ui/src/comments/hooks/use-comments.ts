@@ -13,13 +13,8 @@ export const useComments = (postId?: string) => {
     [postId]
   );
 
-  const {
-    data: comments,
-    isLoading,
-    refresh,
-    fetchNextPage,
-    page,
-  } = usePaginatedQuery<TComment>(fetchByPostID);
+  const { data: comments, ...extraData } =
+    usePaginatedQuery<TComment>(fetchByPostID);
 
-  return { comments, isLoading, refresh, fetchNextPage, page };
+  return Object.assign(extraData, { comments });
 };

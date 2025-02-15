@@ -9,11 +9,11 @@ type Props = {
   profileId?: string;
 };
 export const PostsFeed = ({ profileId }: Props) => {
-  const { posts, isLoading, refresh, page, fetchNextPage } =
+  const { posts, isLoading, refresh, page, totalPages, setPage } =
     usePosts(profileId);
 
   const handlePageChange = useEventCallback((e: ChangeEvent<any>) =>
-    fetchNextPage(e.target.valueAsNumber)
+    setPage(e.target.valueAsNumber)
   );
 
   if (isLoading) {
@@ -29,7 +29,12 @@ export const PostsFeed = ({ profileId }: Props) => {
       ) : (
         <NoPosts />
       )}
-      <Pagination page={page} onChange={handlePageChange} />
+      <Pagination
+        page={page}
+        onChange={handlePageChange}
+        hideNextButton={totalPages <= 1}
+        count={totalPages}
+      />
     </Stack>
   );
 };
