@@ -37,6 +37,7 @@ const saveResourceFile = async (
   const newFileName = fileName ?? generateFileName(file);
 
   await rename(file.path, `${storageDirectory}/${resourceId}-${newFileName}`);
+  return newFileName;
 };
 
 const replaceResourceFile = async (

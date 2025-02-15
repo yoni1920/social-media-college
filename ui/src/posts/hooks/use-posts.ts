@@ -1,16 +1,35 @@
 import { TPost } from "../../types/post";
 import { postsApi } from "../../api/posts-api";
 import { useCallback } from "react";
-import { usePaginatedQuery } from "../../hooks/usePaginatedQuery";
+import { usePaginatedQuery } from "../../hooks/use-paginated-query";
+import { usePostsStore } from "../../store/posts";
+
+const POSTS_PAGE_LIMIT = 20;
 
 export const usePosts = (profileId?: string) => {
   const fetchBySenderId = useCallback(
-    () => postsApi.get(`/${profileId ? `?senderID=${profileId}` : ""}`),
+    (page: number) =>
+      postsApi.get(
+        `?limit=${POSTS_PAGE_LIMIT}&offset=${page * POSTS_PAGE_LIMIT}${
+          profileId ? `&senderID=${profileId}` : ""
+        }`
+      ),
     [profileId]
   );
 
-  const { data: posts, ...extraData } =
-    usePaginatedQuery<TPost>(fetchBySenderId);
+  const {
+    page,
+    totalPages,
+    setPageData,
+    setPage,
+    data: posts,
+  } = usePostsStore();
 
-  return { posts, ...extraData };
+  const { isLoading, isError, refresh } = usePaginatedQuery<TPost>(
+    fetchBySenderId,
+    { page, totalPages },
+    setPageData
+  );
+
+  return { posts, isLoading, isError, setPage, page, totalPages, refresh };
 };

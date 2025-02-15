@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import { PaginateModel, PaginateResult, Schema, model } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 import { User } from "users/user.model";
 import { v4 as uuidV4 } from "uuid";
 import { commentsMetadata } from "../../comments/comment.model";
@@ -15,6 +16,11 @@ export interface Post extends BaseResource {
   fileName: string;
   likes: Like[];
 }
+
+export type PaginatedPostsResult = Pick<
+  PaginateResult<Post>,
+  "totalPages" | "page" | "docs"
+>;
 
 const postSchema = new Schema<Post>(
   {
@@ -61,4 +67,9 @@ postSchema.virtual(commentsMetadata.virtualFields.NUM_COMMENTS, {
   count: true,
 });
 
-export const PostModel = model<Post>(postsMetadata.modelName, postSchema);
+postSchema.plugin(paginate);
+
+export const PostModel = model<Post, PaginateModel<Post>>(
+  postsMetadata.modelName,
+  postSchema
+);

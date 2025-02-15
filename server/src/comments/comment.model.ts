@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import { PaginateModel, PaginateResult, Schema, model } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 import { v4 as uuidV4 } from "uuid";
 import { BaseResource, ResourceSchemaMetadata } from "../types/resources";
 
@@ -42,7 +43,14 @@ export const commentsMetadata = {
   },
 } as const satisfies ResourceSchemaMetadata<Comment>;
 
-export const CommentModel = model<Comment>(
+commentSchema.plugin(paginate);
+
+export type PaginatedCommentsResult = Pick<
+  PaginateResult<Comment>,
+  "docs" | "totalPages" | "page"
+>;
+
+export const CommentModel = model<Comment, PaginateModel<Comment>>(
   commentsMetadata.modelName,
   commentSchema
 );
