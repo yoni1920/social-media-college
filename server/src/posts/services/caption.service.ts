@@ -22,7 +22,7 @@ const model = getGeminiModel({
     reason: {
       type: SchemaType.STRING,
       nullable: true,
-      description: `If Status is 'SUCCESS' should be null, if 'FAILED' then should provide reason`,
+      description: `If Status is 'SUCCESS' should be null, if 'FAILED' then concise reason without using 'I' or 'the model'`,
     },
   },
   required: ["status"],
