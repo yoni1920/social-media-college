@@ -8,11 +8,14 @@ import {
   UpdatePostDTO,
 } from "../dto-schema";
 import likesRepository from "../repositories/likes.repository";
-import { Post } from "../models/post.model";
+import { PaginatedPostsResult, Post } from "../models/post.model";
 import postsRepository from "../repositories/posts.repository";
 
-const getAllPosts = async (): Promise<Post[]> => {
-  return await postsRepository.getAllPosts();
+const getAllPosts = async (
+  limit: number,
+  offset: number
+): Promise<PaginatedPostsResult> => {
+  return await postsRepository.getAllPosts(limit, offset);
 };
 
 const getPostByID = async (postID: string): Promise<Post> => {
@@ -55,14 +58,18 @@ const updatePost = async (
   return updatedAt;
 };
 
-const getPostsBySenderID = async (senderID: string): Promise<Post[]> => {
+const getPostsBySenderID = async (
+  senderID: string,
+  limit: number,
+  offset: number
+): Promise<PaginatedPostsResult> => {
   const senderResult = await usersService.doesUserExist(senderID);
 
   if (!senderResult) {
-    return [];
+    return { docs: [], totalPages: 0, page: 1 };
   }
 
-  return await postsRepository.getPostsBySenderID(senderID);
+  return await postsRepository.getPostsBySenderID(senderID, limit, offset);
 };
 
 const getPostIDsBySenderID = async (senderID: string): Promise<string[]> => {

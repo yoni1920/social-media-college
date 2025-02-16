@@ -6,14 +6,28 @@ import {
 import { USER_POPULATE_FIELDS } from "../../users/user.model";
 import { CreatePostDTO, UpdatePostDTO } from "../dto-schema";
 import { LIKES_POPULATION } from "../models/like.model";
-import { Post, PostModel } from "../models/post.model";
+import { PaginatedPostsResult, Post, PostModel } from "../models/post.model";
 
-const getAllPosts = async (): Promise<Post[]> => {
-  return await PostModel.find({})
-    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
-    .populate(LIKES_POPULATION)
-    .populate(commentsMetadata.virtualFields.NUM_COMMENTS)
-    .exec();
+const getAllPosts = async (
+  limit: number,
+  offset: number
+): Promise<PaginatedPostsResult> => {
+  return await PostModel.paginate(
+    {},
+    {
+      sort: { createdAt: -1 },
+      limit,
+      offset,
+      populate: [
+        {
+          path: USER_POPULATE_FIELDS.field,
+          select: USER_POPULATE_FIELDS.subFields,
+        },
+        LIKES_POPULATION,
+        { path: commentsMetadata.virtualFields.NUM_COMMENTS },
+      ],
+    }
+  );
 };
 
 const getPostByID = async (postID: string): Promise<Post | null> => {
@@ -40,12 +54,27 @@ const updatePost = async (
   };
 };
 
-const getPostsBySenderID = async (senderID: string): Promise<Post[]> => {
-  return await PostModel.find({ sender: senderID })
-    .populate(USER_POPULATE_FIELDS.field, USER_POPULATE_FIELDS.subFields)
-    .populate(LIKES_POPULATION)
-    .populate(commentsMetadata.virtualFields.NUM_COMMENTS)
-    .exec();
+const getPostsBySenderID = async (
+  senderID: string,
+  limit: number,
+  offset: number
+): Promise<PaginatedPostsResult> => {
+  return await PostModel.paginate(
+    { sender: senderID },
+    {
+      limit,
+      offset,
+      sort: { createdAt: -1 },
+      populate: [
+        {
+          path: USER_POPULATE_FIELDS.field,
+          select: USER_POPULATE_FIELDS.subFields,
+        },
+        LIKES_POPULATION,
+        { path: commentsMetadata.virtualFields.NUM_COMMENTS },
+      ],
+    }
+  );
 };
 
 const getPostIDsBySenderID = async (senderID: string): Promise<string[]> => {
