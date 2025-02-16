@@ -15,7 +15,7 @@ const getAllPosts = async (
   return await PostModel.paginate(
     {},
     {
-      sort: { _updatedAt: -1 },
+      sort: { createdAt: -1 },
       limit,
       offset,
       populate: [
@@ -64,7 +64,7 @@ const getPostsBySenderID = async (
     {
       limit,
       offset,
-      sort: { _updatedAt: -1 },
+      sort: { createdAt: -1 },
       populate: [
         {
           path: USER_POPULATE_FIELDS.field,
