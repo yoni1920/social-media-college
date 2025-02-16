@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { usePaginatedQuery } from "../../hooks/use-paginated-query";
 import { usePaginationQueryParams } from "../../hooks/use-pagination-query-params";
 
-const POSTS_PAGE_LIMIT = 2;
+const POSTS_PAGE_LIMIT = 20;
 
 export const usePosts = (profileId?: string) => {
   const { pageData, setPageData, setPage } = usePaginationQueryParams();
