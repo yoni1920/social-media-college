@@ -14,6 +14,7 @@ const getAllComments = async (
   return await CommentModel.paginate(
     {},
     {
+      sort: { _updatedAt: -1 },
       offset,
       limit,
       populate: {
@@ -36,6 +37,7 @@ const getCommentsByPostID = async (
   return await CommentModel.paginate(
     { postID },
     {
+      sort: { _updatedAt: -1 },
       limit,
       offset,
       populate: {

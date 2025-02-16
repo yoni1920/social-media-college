@@ -2,13 +2,10 @@ import { useCallback, useState } from "react";
 import { commentsApi } from "../../api/comments-api";
 import { TComment } from "../../types/comment";
 import { PageData, usePaginatedQuery } from "../../hooks/use-paginated-query";
+import { usePaginationQueryParams } from "../../hooks/use-pagination-query-params";
 
 export const useComments = (postId?: string) => {
-  const [pageData, setPageData] = useState<PageData<TComment>>({
-    data: [],
-    page: 1,
-    totalPages: 1,
-  });
+  const { pageData, setPageData, setPage } = usePaginationQueryParams();
   const fetchByPostID = useCallback(
     (page: number) => {
       return commentsApi.get(
@@ -18,17 +15,14 @@ export const useComments = (postId?: string) => {
     [postId]
   );
 
-  const setPage = (page: number) =>
-    setPageData((pageData) => ({ ...pageData, page }));
-
-  const { isLoading, isError } = usePaginatedQuery<TComment>(
-    fetchByPostID,
-    pageData,
-    setPageData
-  );
+  const {
+    isLoading,
+    isError,
+    data: comments,
+  } = usePaginatedQuery<TComment>(fetchByPostID, pageData, setPageData);
 
   return {
-    comments: pageData.data,
+    comments,
     page: pageData.page,
     totalPages: pageData.totalPages,
     isLoading,

@@ -7,22 +7,22 @@ interface PaginationResult<T> {
   totalPages: number;
 }
 
-export interface PageData<T> {
-  data: T[];
+export interface PageData {
   totalPages: number;
   page: number;
 }
 
 export const usePaginatedQuery = <T>(
   queryFn: (page: number) => Promise<AxiosResponse<PaginationResult<T>>>,
-  pageData: Omit<PageData<T>, "data"> = {
+  pageData: PageData = {
     totalPages: 1,
     page: 1,
   },
-  setPageData: (pageData: PageData<T>) => unknown
+  setPageData: (pageData: PageData) => unknown
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [data, setData] = useState<T[]>([]);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
@@ -30,9 +30,9 @@ export const usePaginatedQuery = <T>(
       const { data } = await queryFn(pageData.page - 1);
       setPageData({
         page: data.page,
-        data: data.docs,
         totalPages: data.totalPages,
       });
+      setData(data.docs);
     } catch (error) {
       setIsError(true);
     } finally {
@@ -44,5 +44,5 @@ export const usePaginatedQuery = <T>(
     refresh();
   }, [pageData.page]);
 
-  return { isLoading, isError, refresh };
+  return { isLoading, isError, refresh, data };
 };

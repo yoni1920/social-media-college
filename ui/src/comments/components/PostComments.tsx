@@ -31,7 +31,7 @@ export const PostComments = () => {
         page={page}
         count={totalPages}
         hideNextButton={totalPages <= 1}
-        onChange={useEventCallback((e) => setPage(e.target.value))}
+        onChange={useEventCallback((_, page) => setPage(page))}
       />
     </Stack>
   );
