@@ -33,8 +33,7 @@ export const SenderInfo = ({ sender }: Props) => {
         underline="none"
         onClick={onUsernameClick}
         component={"button"}
-        color="black"
-      >
+        color="black">
         {sender.username}
       </Link>
     </Stack>

@@ -36,7 +36,7 @@ const postsUploader = multer({ storage: postsImageStorage });
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -51,6 +51,10 @@ const postsUploader = multer({ storage: postsImageStorage });
  *                 type: string
  *                 required: true
  *                 example: Avni
+ *               image:
+ *                 type: file
+ *                 required: true
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Returns the created post id
@@ -199,7 +203,7 @@ router.get("/image/:postID", async (req, res) => {
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *            type: object
  *            required:
@@ -209,6 +213,10 @@ router.get("/image/:postID", async (req, res) => {
  *                type: string
  *                required: true
  *                example: AAA
+ *              image:
+ *                type: file
+ *                format: binary
+ *                required: false
  *     responses:
  *       200:
  *         description: Post updated

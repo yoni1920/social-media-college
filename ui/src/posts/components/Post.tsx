@@ -70,8 +70,7 @@ export const Post = ({ post, onChanged }: Props) => {
           <Stack
             direction={"row"}
             alignItems={"center"}
-            justifyContent={"space-between"}
-          >
+            justifyContent={"space-between"}>
             <SenderInfo sender={post.sender} />
             {isOwnUser && (
               <OwnPostActions post={post} onPostChange={onChanged} />
@@ -112,8 +111,11 @@ export const Post = ({ post, onChanged }: Props) => {
         <Button
           onClick={goToCommentSection}
           variant="text"
-          sx={{ color: "text.secondary", minWidth: "32px", fontSize: "0.6rem" }}
-        >
+          sx={{
+            color: "text.secondary",
+            minWidth: "32px",
+            fontSize: "0.6rem",
+          }}>
           {post.numComments
             ? `View all ${post.numComments} comments`
             : "View comments"}

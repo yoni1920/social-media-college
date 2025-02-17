@@ -25,8 +25,7 @@ export const NotFound = () => {
               background: theme.palette.gradient.main,
               paddingX: "1rem",
               paddingY: "0.6rem",
-            })}
-          >
+            })}>
             Go Home
           </Button>
         </Link>

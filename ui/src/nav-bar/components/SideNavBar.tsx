@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
-import { useAuth, useUser } from "../../auth/hooks/use-auth";
+import { useAuth } from "../../auth/hooks/use-auth";
 import { AppTitleLogo } from "../../components/AppTitleLogo";
 import { useCurrentTab } from "../hooks";
 import { NavFooter } from "./NavFooter";
@@ -26,8 +26,7 @@ export const SideNavBar = () => {
           },
         }}
         variant="permanent"
-        anchor="left"
-      >
+        anchor="left">
         <Stack justifyContent={"space-between"} height={"100%"}>
           <Stack gap={8}>
             <Toolbar sx={{ justifyContent: "center", mt: 2 }}>

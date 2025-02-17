@@ -2,7 +2,6 @@ import { Pagination, Stack, useEventCallback } from "@mui/material";
 import { usePosts } from "../hooks/use-posts";
 import { NoPosts } from "./NoPosts";
 import { Post } from "./Post";
-import { ChangeEvent } from "react";
 import { GradientCircularProgress } from "../../components/GradientCircularProgress";
 
 type Props = {
