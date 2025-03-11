@@ -171,8 +171,8 @@ export const SavePostForm = ({
           <img
             src={URL.createObjectURL(file)}
             alt="preview"
-            width="350px"
-            height="350px"
+            width="400px"
+            height="300px"
           />
         )}
 

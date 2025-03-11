@@ -1,16 +1,11 @@
-import {
-  Button,
-  Pagination,
-  Stack,
-  Typography,
-  useEventCallback,
-} from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
+import { Button, Pagination, Stack, useEventCallback } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useComments } from "../hooks/use-comments";
 import { Comments } from "./Comments";
-import { ArrowBack } from "@mui/icons-material";
+import { useCallback } from "react";
+import { NoComments } from "./NoComments";
 
-// TODO: style
 export const PostComments = () => {
   const { postID } = useParams();
 
@@ -19,20 +14,34 @@ export const PostComments = () => {
   const { comments, isLoading, setPage, page, totalPages } =
     useComments(postID);
 
+  const changePage = useEventCallback((_, page: number) => setPage(page));
+
+  const goBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
   return (
-    <Stack gap={2} alignItems="center">
-      <Typography>{`comments page`}</Typography>
-      <Button variant="contained" onClick={() => navigate(-1)}>
+    <Stack alignItems="center" height={"100%"} width={"100%"} my={2} gap={3}>
+      <Button variant="contained" onClick={goBack}>
         <ArrowBack />
         Back to Post
       </Button>
-      <Comments comments={comments} isLoading={isLoading} />
-      <Pagination
-        page={page}
-        count={totalPages}
-        hideNextButton={totalPages <= 1}
-        onChange={useEventCallback((_, page) => setPage(page))}
-      />
+
+      {comments?.length ? (
+        <>
+          <Comments comments={comments} isLoading={isLoading} />
+
+          <Pagination
+            sx={{ marginTop: "auto" }}
+            page={page}
+            count={totalPages}
+            hideNextButton={totalPages <= 1}
+            onChange={changePage}
+          />
+        </>
+      ) : (
+        <NoComments />
+      )}
     </Stack>
   );
 };

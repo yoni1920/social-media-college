@@ -5,4 +5,5 @@ export type TPost = {
   sender: { _id: string; username: string; name: string; picture: string };
   likes: { user: string }[];
   numComments: number;
+  createdAt: string;
 };
