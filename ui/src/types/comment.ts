@@ -5,4 +5,5 @@ export type TComment = {
   message: string;
   sender: TPost["sender"];
   postId: string;
+  createdAt: string;
 };
