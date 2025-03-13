@@ -12,14 +12,15 @@ export const Comments = ({ comments = [], isLoading = false }: Props) => {
     <Stack gap={2}>
       {!isLoading ? (
         comments?.map((comment, index) => (
-          <>
-            {index > 0 && <Divider orientation="horizontal" />}
-            <Comment
-              key={comment._id}
-              sender={comment.sender}
-              message={comment.message}
-            />
-          </>
+          <Stack key={comment._id} gap={2}>
+            {index > 0 && (
+              <Divider
+                orientation="horizontal"
+                sx={{ width: "500px", alignSelf: "center" }}
+              />
+            )}
+            <Comment key={comment._id} comment={comment} />
+          </Stack>
         ))
       ) : (
         <GradientCircularProgress />

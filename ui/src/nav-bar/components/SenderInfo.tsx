@@ -1,4 +1,4 @@
-import { IconButton, Link, Stack } from "@mui/material";
+import { IconButton, Link, LinkProps, Stack } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../auth/hooks/use-auth";
@@ -6,11 +6,12 @@ import { UserAvatar } from "../../components/UserAvatar";
 import { RouteTab } from "../../enums";
 import { TPost } from "../../types/post";
 
-type Props = {
+export type SenderInfoProps = {
   sender: TPost["sender"];
+  sx?: LinkProps["sx"];
 };
 
-export const SenderInfo = ({ sender }: Props) => {
+export const SenderInfo = ({ sender, sx }: SenderInfoProps) => {
   const navigate = useNavigate();
   const { user: ownUser } = useUser();
 
@@ -33,7 +34,8 @@ export const SenderInfo = ({ sender }: Props) => {
         underline="none"
         onClick={onUsernameClick}
         component={"button"}
-        color="black">
+        color="black"
+        sx={{ ...sx }}>
         {sender.username}
       </Link>
     </Stack>

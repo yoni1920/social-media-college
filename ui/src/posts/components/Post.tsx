@@ -7,16 +7,17 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { postsApi } from "../../api/posts-api";
 import { useUser } from "../../auth/hooks/use-auth";
 import { SenderInfo } from "../../nav-bar/components/SenderInfo";
 import { User } from "../../types";
 import { TPost } from "../../types/post";
+import { getRelativeTime } from "../../utils/date";
 import { LikeMethod } from "../enums";
+import { CommentAction } from "./CommentAction";
 import { LikeButton } from "./LikeButton";
 import { OwnPostActions } from "./OwnPostActions";
-import { useNavigate } from "react-router-dom";
-import { CommentAction } from "./CommentAction";
 
 type Props = {
   post: TPost;
@@ -64,14 +65,21 @@ export const Post = ({ post, onChanged }: Props) => {
   }, [navigate, post._id]);
 
   return (
-    <Card sx={{ mt: 2, maxWidth: "400px" }} elevation={3}>
+    <Card sx={{ mt: 2, maxWidth: "450px" }} elevation={3}>
       <CardContent>
         <Stack>
           <Stack
             direction={"row"}
             alignItems={"center"}
             justifyContent={"space-between"}>
-            <SenderInfo sender={post.sender} />
+            <Stack direction={"row"} alignItems={"center"} gap={0.5}>
+              <SenderInfo sender={post.sender} />
+              <Typography sx={{ color: "text.secondary" }}>◦</Typography>
+              <Typography sx={{ color: "text.secondary", fontSize: "0.8rem" }}>
+                {getRelativeTime(post.createdAt)}
+              </Typography>
+            </Stack>
+
             {isOwnUser && (
               <OwnPostActions post={post} onPostChange={onChanged} />
             )}
@@ -79,8 +87,8 @@ export const Post = ({ post, onChanged }: Props) => {
           <Box
             component="img"
             marginTop={1}
-            width="350px"
-            height="350px"
+            width="400px"
+            height="300px"
             src={`${import.meta.env.VITE_SERVER_URL}/posts/image/${
               post._id
             }?fileName=${post.fileName}`}

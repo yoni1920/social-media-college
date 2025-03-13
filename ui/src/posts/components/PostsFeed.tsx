@@ -1,8 +1,8 @@
 import { Pagination, Stack, useEventCallback } from "@mui/material";
+import { GradientCircularProgress } from "../../components/GradientCircularProgress";
 import { usePosts } from "../hooks/use-posts";
 import { NoPosts } from "./NoPosts";
 import { Post } from "./Post";
-import { GradientCircularProgress } from "../../components/GradientCircularProgress";
 
 type Props = {
   profileId?: string;
@@ -20,7 +20,7 @@ export const PostsFeed = ({ profileId }: Props) => {
   }
 
   return (
-    <Stack gap={2} alignItems={"center"}>
+    <Stack gap={2} alignItems={"center"} mb={2}>
       {posts?.length ? (
         posts?.map((post) => (
           <Post key={post._id} post={post} onChanged={refresh} />
@@ -28,12 +28,15 @@ export const PostsFeed = ({ profileId }: Props) => {
       ) : (
         <NoPosts />
       )}
-      <Pagination
-        page={page}
-        onChange={handlePageChange}
-        hideNextButton={totalPages <= 1}
-        count={totalPages}
-      />
+
+      {posts?.length ? (
+        <Pagination
+          page={page}
+          onChange={handlePageChange}
+          hideNextButton={totalPages <= 1}
+          count={totalPages}
+        />
+      ) : null}
     </Stack>
   );
 };
