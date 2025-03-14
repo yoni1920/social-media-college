@@ -35,6 +35,9 @@ export const PostsFeed = ({ profileId }: Props) => {
           onChange={handlePageChange}
           hideNextButton={totalPages <= 1}
           count={totalPages}
+          sx={{
+            marginBottom: "auto",
+          }}
         />
       ) : null}
     </Stack>
