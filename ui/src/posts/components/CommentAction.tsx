@@ -1,6 +1,6 @@
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { IconButton, TextField } from "@mui/material";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { commentsApi } from "../../api/comments-api";
 import { ConfirmationDialog } from "../../auth/components/ConfirmationDialog";
 import { useUser } from "../../auth/hooks/use-auth";
@@ -41,8 +41,7 @@ export const CommentAction = ({ postID, onSuccess }: Props) => {
           "&:hover": {
             color: "black",
           },
-        }}
-      >
+        }}>
         <ChatBubbleOutlineIcon />
       </IconButton>
 

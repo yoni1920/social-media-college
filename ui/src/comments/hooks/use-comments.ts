@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { commentsApi } from "../../api/comments-api";
 import { TComment } from "../../types/comment";
-import { PageData, usePaginatedQuery } from "../../hooks/use-paginated-query";
+import { usePaginatedQuery } from "../../hooks/use-paginated-query";
 import { usePaginationQueryParams } from "../../hooks/use-pagination-query-params";
 
 export const useComments = (postId?: string) => {

@@ -11,9 +11,11 @@ import {
 } from "../utils/tests";
 import { PostModel } from "./models/post.model";
 import authService from "../auth/auth.service";
+import { cp } from "fs/promises";
 
 let app: Express;
 let authCookies: string[];
+const pathToPostImage = "./public/images/default.webp";
 
 beforeAll(async () => {
   await initApp().then(async (appInstance) => {
@@ -28,7 +30,9 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   if (!(await PostModel.exists({ _id: examplePost._id }))) {
-    await PostModel.create(examplePost);
+    const fileName = `${Date.now()}-${examplePost._id}.webp`;
+    await cp(pathToPostImage, `./storage/posts/${fileName}`);
+    await PostModel.create({ ...examplePost, fileName });
   }
 });
 
@@ -64,7 +68,7 @@ test("Get all posts - pass", async () => {
     .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
-  expect(response.body[0]._id).toBe(examplePost._id);
+  expect(response.body.docs[0]._id).toBe(examplePost._id);
 });
 
 test("Get all posts by sender - pass", async () => {
@@ -74,7 +78,7 @@ test("Get all posts by sender - pass", async () => {
     .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
-  expect(response.body[0]._id).toBe(examplePost._id);
+  expect(response.body.docs[0]._id).toBe(examplePost._id);
 });
 
 test("Get all posts by sender - fail", async () => {
@@ -84,7 +88,7 @@ test("Get all posts by sender - fail", async () => {
     .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
-  expect(response.body.length).toBe(0);
+  expect(response.body.docs.length).toBe(0);
 });
 
 test("Delete Post by id - pass", async () => {
@@ -148,7 +152,8 @@ test("Create post - pass", async () => {
     .agent(app)
     .post("/posts")
     .set("Cookie", authCookies)
-    .send({ message: "I am Avni", sender: examplePost.sender });
+    .attach("image", "./public/images/default.webp")
+    .field({ message: "I am Avni", sender: examplePost.sender });
 
   expect(response.statusCode).toBe(200);
   expect(response.body.message).toBe("created new post");

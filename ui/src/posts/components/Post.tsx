@@ -71,8 +71,7 @@ export const Post = ({ post, onChanged }: Props) => {
           <Stack
             direction={"row"}
             alignItems={"center"}
-            justifyContent={"space-between"}
-          >
+            justifyContent={"space-between"}>
             <Stack direction={"row"} alignItems={"center"} gap={0.5}>
               <SenderInfo sender={post.sender} />
               <Typography sx={{ color: "text.secondary" }}>◦</Typography>
@@ -120,8 +119,11 @@ export const Post = ({ post, onChanged }: Props) => {
         <Button
           onClick={goToCommentSection}
           variant="text"
-          sx={{ color: "text.secondary", minWidth: "32px", fontSize: "0.6rem" }}
-        >
+          sx={{
+            color: "text.secondary",
+            minWidth: "32px",
+            fontSize: "0.6rem",
+          }}>
           {post.numComments
             ? `View all ${post.numComments} comments`
             : "View comments"}

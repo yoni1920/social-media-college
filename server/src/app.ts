@@ -25,7 +25,8 @@ const initApp = async () => {
     })
   );
 
-  app.use(express.static("public"));
+  app.use("/images", express.static("public/images"));
+  app.use(express.static("ui"));
   app.use(bodyParser.urlencoded({ extended: true, limit: "1mb" }));
   app.use(bodyParser.json());
   app.use(cookieParser());

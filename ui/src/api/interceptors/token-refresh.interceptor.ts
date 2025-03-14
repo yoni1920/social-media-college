@@ -31,7 +31,7 @@ const errorHandler =
       return resourceApi(error.config as AxiosRequestConfig);
     } catch (refreshError) {
       if (options?.toLoginOnError) {
-        window.location.href = "/login";
+        window.location.reload();
       }
 
       return Promise.reject(refreshError);

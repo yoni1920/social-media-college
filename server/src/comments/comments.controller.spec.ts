@@ -13,9 +13,12 @@ import {
   getAuthCookies,
 } from "../utils/tests";
 import { CommentModel } from "./comment.model";
+import { cp } from "fs/promises";
 
 let app: Express;
 let authCookies: string[];
+
+const pathToPostImage = "./public/images/default.webp";
 
 beforeAll(async () => {
   await initApp().then(async (appInstance) => {
@@ -25,7 +28,9 @@ beforeAll(async () => {
 
     await flushCollections();
     await UserModel.create(exampleUser);
-    await PostModel.create(examplePost);
+    const fileName = `${Date.now()}-${examplePost._id}.webp`;
+    await cp(pathToPostImage, `./storage/posts/${fileName}`);
+    await PostModel.create({ ...examplePost, fileName });
   });
 });
 
@@ -67,7 +72,7 @@ test("Get all comments - pass", async () => {
     .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
-  expect(response.body[0]._id).toBe(exampleComment._id);
+  expect(response.body.docs[0]._id).toBe(exampleComment._id);
 });
 
 test("Get comments by post id - pass", async () => {
@@ -77,7 +82,7 @@ test("Get comments by post id - pass", async () => {
     .set("Cookie", authCookies);
 
   expect(response.statusCode).toBe(200);
-  expect(response.body[0].postID).toBe(examplePost._id);
+  expect(response.body.docs[0].postID).toBe(examplePost._id);
 });
 
 test("Delete Comment by id - pass", async () => {

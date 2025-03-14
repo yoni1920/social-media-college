@@ -1,4 +1,4 @@
-import { Avatar, Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { ChangeEvent } from "react";
 import { User } from "../../../types";
 import { UserAvatar } from "../../../components/UserAvatar";
@@ -41,8 +41,7 @@ export const UpdateProfilePicture = ({
               paddingX: "1rem",
               paddingY: "0.7rem",
             }}
-            color="primary"
-          >
+            color="primary">
             <Typography sx={{ fontSize: "0.8rem" }} fontWeight={"500"}>
               Update Picture
             </Typography>
@@ -55,8 +54,7 @@ export const UpdateProfilePicture = ({
           variant="contained"
           sx={{
             width: "90%",
-          }}
-        >
+          }}>
           <Typography sx={{ fontSize: "0.6rem" }} fontWeight={"500"}>
             Remove Picture
           </Typography>

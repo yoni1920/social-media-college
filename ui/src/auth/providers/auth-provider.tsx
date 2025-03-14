@@ -99,8 +99,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const logout = useCallback(async () => {
     await authApi.post("/logout");
-
-    window.location.reload();
+    navigate("/");
   }, []);
 
   return (
@@ -113,8 +112,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         isLoadingUserAuth,
         getUserMe,
         isLoadingAuthFormResponse,
-      }}
-    >
+      }}>
       {children}
     </AuthContext.Provider>
   );

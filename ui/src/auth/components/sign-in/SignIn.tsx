@@ -13,8 +13,7 @@ export const SignIn = () => {
         <Typography
           textAlign={"center"}
           fontSize={"large"}
-          fontWeight={"light"}
-        >
+          fontWeight={"light"}>
           Sign in using social media to get quick access
         </Typography>
 
@@ -26,7 +25,7 @@ export const SignIn = () => {
 
         <Stack direction={"row"} alignItems={"center"} gap={0.5}>
           <Typography>Don't have an account yet?</Typography>
-          <Link underline="hover" href="/register">
+          <Link underline="hover" href="/#/register">
             <Typography>Sign up</Typography>
           </Link>
         </Stack>

@@ -35,8 +35,7 @@ export const SenderInfo = ({ sender, sx }: SenderInfoProps) => {
         onClick={onUsernameClick}
         component={"button"}
         color="black"
-        sx={{ ...sx }}
-      >
+        sx={{ ...sx }}>
         {sender.username}
       </Link>
     </Stack>

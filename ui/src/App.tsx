@@ -4,7 +4,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Navigate,
   Route,
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
 } from "react-router-dom";
 import { Registration } from "./auth/components/register/Registration";
@@ -29,8 +29,7 @@ function App() {
         width={"inherit"}
         height={"inherit"}
         alignItems={"center"}
-        justifyContent={"center"}
-      >
+        justifyContent={"center"}>
         <Router>
           <AuthProvider>
             <Routes>
