@@ -13,6 +13,9 @@ import cookieParser from "cookie-parser";
 import { validateAccessToken } from "./auth/middleware";
 import cors from "cors";
 import passport from "passport";
+import http from "http";
+import https from "https";
+import fs from "fs";
 
 const initApp = async () => {
   const port = serverConfig.port;
@@ -48,9 +51,22 @@ const initApp = async () => {
     mongoose.connection.on("error", (error) => console.error(error));
     await mongoose.connect(dbConfig.connectionUrl);
 
-    app.listen(port, () => {
-      console.log(`Listening on port ${port}`);
-    });
+    if (serverConfig.env !== "PRODUCTION") {
+      http.createServer(app).listen(port, () => {
+        console.log(`Listening http on port ${port}`);
+      });
+    } else {
+      const key = fs.readFileSync(__dirname + "/../certs/selfsigned.key");
+      const cert = fs.readFileSync(__dirname + "/../certs/selfsigned.crt");
+      const options = {
+        key,
+        cert,
+      };
+
+      https.createServer(options, app).listen(port, () => {
+        console.log(`Listening https on port ${port}`);
+      });
+    }
   } catch (error) {
     const exception = error as Error;
 
