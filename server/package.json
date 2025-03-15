@@ -5,7 +5,10 @@
   "scripts": {
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --setupFiles dotenv/config --detectOpenHandles --forceExit --runInBand",
     "start:dev": "nodemon -r dotenv/config src/main.ts",
-    "start": "tsc && node --env-file=.env dist/main.js"
+    "start": "node --env-file=.env dist/main.js",
+    "build": "tsc -b && ./scripts/build-ui.sh",
+    "build:ui": "./scripts/build-ui.sh",
+    "start:prod": "node --env-file=.env.production dist/main.js"
   },
   "keywords": [],
   "author": "",

@@ -9,7 +9,11 @@ const config = {
 const isLocal = !(config.dbUsername && config.dbPassword);
 
 const localConnectionUrl = `mongodb://${config.dbHost}:${config.dbPort}/${config.dbName}`;
-const remoteConnectionUrl = `mongodb://${config.dbUsername}:${config.dbPassword}@${config.dbHost}:${config.dbPort}/${config.dbName}?authSource=admin`;
+const remoteConnectionUrl = `mongodb://${encodeURIComponent(
+  config.dbUsername
+)}:${encodeURIComponent(config.dbPassword)}@${config.dbHost}:${config.dbPort}/${
+  config.dbName
+}?authSource=admin`;
 
 export const dbConfig = {
   connectionUrl: isLocal ? localConnectionUrl : remoteConnectionUrl,

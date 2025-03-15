@@ -152,7 +152,7 @@ export const SavePostForm = ({
 
   const canUploadData = useMemo(() => {
     return (
-      Boolean(file) && post.message !== initialPost.message && !captionError
+      (Boolean(file) || post.message !== initialPost.message) && !captionError
     );
   }, [captionError, file, initialPost.message, post.message]);
 
