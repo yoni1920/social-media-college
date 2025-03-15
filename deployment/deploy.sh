@@ -11,7 +11,4 @@ sshpass -p $password scp -r ../server $username@node11.cs.colman.ac.il:~/wesocia
 && sshpass -p $password ssh $username@node11.cs.colman.ac.il "cd ./wesocial/server && npm run build" \
 && sshpass -p $password ssh $username@node11.cs.colman.ac.il "cd ./wesocial && rm -r ./ui" \
 && sshpass -p $password ssh $username@node11.cs.colman.ac.il "cd ./wesocial/server && npm prune --production" \
-&& sshpass -p $password ssh $username@node11.cs.colman.ac.il "cd ./wesocial/server && npm prune --production" \
 && sshpass -p $password ssh $username@node11.cs.colman.ac.il "cd ./wesocial/server && pm2 start ecosystem.config.js"
-
-
