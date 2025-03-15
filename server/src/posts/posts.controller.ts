@@ -32,7 +32,7 @@ const postsUploader = multer({ storage: postsImageStorage });
  *   post:
  *     description: Create new post
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -94,6 +94,8 @@ router.post(
  * /posts/:
  *   get:
  *     description: Get all posts
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - name: senderID
  *         in: query
@@ -139,6 +141,8 @@ router.get("/", async (req, res) => {
  * /posts/{postID}:
  *   get:
  *     description: Get post by id
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - name: postID
  *         in: path
@@ -163,6 +167,8 @@ router.get("/:postID", async (req, res) => {
  * /posts/image/{postID}:
  *   get:
  *     description: Get post image by post id
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - name: postID
  *         in: path
@@ -193,7 +199,7 @@ router.get("/image/:postID", async (req, res) => {
  *   put:
  *     description: Update post by id
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - name: postID
  *         in: path
@@ -247,7 +253,7 @@ router.put(
  *   delete:
  *     description: Delete post by id
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - name: postID
  *         in: path
@@ -284,6 +290,8 @@ router.delete("/:postID", async (req, res) => {
  * /posts/{postID}/likes:
  *   patch:
  *     description: Update like count based on method
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -328,6 +336,8 @@ router.patch(
  * /posts/caption:
  *   post:
  *     description: Enhance post caption, with method and optional translation language
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:

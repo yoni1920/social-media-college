@@ -27,7 +27,7 @@ const userPictureUploader = multer({ storage: userPictureStorage });
  *   post:
  *     description: Create new user
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -73,7 +73,7 @@ router.post("/", validateBody(createUserSchema), async (req, res) => {
  *   get:
  *     description: Get all users
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Returns an array of users
@@ -94,7 +94,7 @@ router.get("/", async (_req, res) => {
  *   get:
  *     description: Get user by id
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - name: userID
  *         in: path
@@ -122,7 +122,7 @@ router.get("/:userID", async (req, res) => {
  *   put:
  *     description: Update user by id
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - name: userID
  *         in: path
@@ -189,7 +189,7 @@ router.put(
  *   delete:
  *     description: Delete user by id
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - name: userID
  *         in: path
