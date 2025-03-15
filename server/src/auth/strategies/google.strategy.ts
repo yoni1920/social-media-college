@@ -39,11 +39,12 @@ const googleAuth = new GoogleStrategy(
 
 const createUserFromGoogleProfile = async (profile: any) => {
   const fileName = `${Date.now()}.png`;
+  const username = profile.email.split("@")[0];
 
   const userDTO: CreateExternalUserDTO = {
     name: profile.displayName as string,
     email: profile.email as string,
-    username: profile.email as string,
+    username: username || (profile.email as string),
     externalId: profile.id as string,
     picture: fileName,
   };
