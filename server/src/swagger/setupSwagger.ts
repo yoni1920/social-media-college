@@ -1,6 +1,7 @@
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import { Express } from "express";
+import { ACCESS_TOKEN_COOKIE_KEY } from "../auth/constants";
 
 const apiSpec = swaggerJSDoc({
   definition: {
@@ -11,18 +12,13 @@ const apiSpec = swaggerJSDoc({
     },
     components: {
       securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+        cookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: ACCESS_TOKEN_COOKIE_KEY,
         },
       },
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
   },
   apis: ["**/*.controller.ts", "**/*.dto.ts"],
 });
