@@ -45,7 +45,6 @@ const initApp = async () => {
 
   app.use(noRouteFoundHandler);
   app.use(handleGeneralError);
-
   try {
     mongoose.connection.on("open", () => console.log("Connected to mongo"));
     mongoose.connection.on("error", (error) => console.error(error));
