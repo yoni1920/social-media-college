@@ -51,11 +51,11 @@ const initApp = async () => {
     mongoose.connection.on("error", (error) => console.error(error));
     await mongoose.connect(dbConfig.connectionUrl);
 
-    if (serverConfig.env !== "PRODUCTION") {
+    if (serverConfig.env !== "PRODUCTION" && serverConfig.env !== "TEST") {
       http.createServer(app).listen(port, () => {
         console.log(`Listening http on port ${port}`);
       });
-    } else {
+    } else if (serverConfig.env !== "TEST") {
       const key = fs.readFileSync(__dirname + "/../certs/selfsigned.key");
       const cert = fs.readFileSync(__dirname + "/../certs/selfsigned.crt");
       const options = {

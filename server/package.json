@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --setupFiles dotenv/config --detectOpenHandles --forceExit --runInBand",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=TEST jest --setupFiles dotenv/config --detectOpenHandles --forceExit --runInBand",
     "start:dev": "nodemon -r dotenv/config src/main.ts",
     "start": "node --env-file=.env dist/main.js",
     "build": "tsc -b && ./scripts/build-ui.sh",
