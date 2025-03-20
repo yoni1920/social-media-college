@@ -18,12 +18,14 @@ import { TPost } from "../../types/post";
 import { EnhanceCaptionResponse } from "../types";
 import { EnhanceCaptionAction } from "./enhance-caption/EnhanceCaptionAction";
 import { TextDirection } from "../../types";
+import { SavePostMode } from "../../posts/enums/save-post-mode.enum";
 
 type Props = {
   post?: Partial<TPost>;
   onSuccess?: () => void;
   title?: ReactNode;
   elevation?: CardProps["elevation"];
+  savePostMode: SavePostMode;
 };
 
 export const SavePostForm = ({
@@ -31,6 +33,7 @@ export const SavePostForm = ({
   title,
   onSuccess,
   elevation,
+  savePostMode,
 }: Props) => {
   const { user } = useUser();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -151,10 +154,16 @@ export const SavePostForm = ({
   }, []);
 
   const canUploadData = useMemo(() => {
-    return (
-      (Boolean(file) || post.message !== initialPost.message) && !captionError
-    );
-  }, [captionError, file, initialPost.message, post.message]);
+    const hasUploadedFile = Boolean(file);
+    const hasChangedCaption = post.message !== initialPost.message;
+
+    const isValidPostData =
+      savePostMode === SavePostMode.CREATE
+        ? hasUploadedFile && hasChangedCaption
+        : hasUploadedFile || hasChangedCaption;
+
+    return isValidPostData && !captionError;
+  }, [captionError, file, initialPost.message, post.message, savePostMode]);
 
   return (
     <Card sx={{ width: "500px", overflow: "auto" }} elevation={elevation ?? 0}>

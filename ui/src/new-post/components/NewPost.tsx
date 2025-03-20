@@ -1,5 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import { SavePostForm } from "./SavePostForm";
+import { SavePostMode } from "../../posts/enums/save-post-mode.enum";
 
 export const NewPost = () => {
   return (
@@ -11,6 +12,7 @@ export const NewPost = () => {
           </Typography>
         }
         elevation={4}
+        savePostMode={SavePostMode.CREATE}
       />
     </Stack>
   );

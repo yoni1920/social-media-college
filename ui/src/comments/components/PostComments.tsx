@@ -5,6 +5,7 @@ import { useComments } from "../hooks/use-comments";
 import { Comments } from "./Comments";
 import { useCallback } from "react";
 import { NoComments } from "./NoComments";
+import { GradientCircularProgress } from "../../components/GradientCircularProgress";
 
 export const PostComments = () => {
   const { postID } = useParams();
@@ -27,20 +28,24 @@ export const PostComments = () => {
         Back to Post
       </Button>
 
-      {comments?.length ? (
-        <>
-          <Comments comments={comments} isLoading={isLoading} />
+      {!isLoading ? (
+        comments?.length ? (
+          <>
+            <Comments comments={comments} />
 
-          <Pagination
-            sx={{ marginTop: "auto" }}
-            page={page}
-            count={totalPages}
-            hideNextButton={totalPages <= 1}
-            onChange={changePage}
-          />
-        </>
+            <Pagination
+              sx={{ marginTop: "auto" }}
+              page={page}
+              count={totalPages}
+              hideNextButton={totalPages <= 1}
+              onChange={changePage}
+            />
+          </>
+        ) : (
+          <NoComments />
+        )
       ) : (
-        <NoComments />
+        <GradientCircularProgress />
       )}
     </Stack>
   );

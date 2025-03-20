@@ -2,6 +2,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Dialog, DialogTitle, IconButton } from "@mui/material";
 import { SavePostForm } from "../../new-post/components/SavePostForm";
 import { TPost } from "../../types/post";
+import { SavePostMode } from "../enums/save-post-mode.enum";
 
 type Props = {
   post: TPost;
@@ -34,7 +35,11 @@ export const EditPostDialog = ({
         <CloseIcon />
       </IconButton>
 
-      <SavePostForm post={post} onSuccess={onSuccess} />
+      <SavePostForm
+        post={post}
+        onSuccess={onSuccess}
+        savePostMode={SavePostMode.EDIT}
+      />
     </Dialog>
   );
 };

@@ -1,4 +1,4 @@
-import { CircularProgress, CircularProgressProps } from "@mui/material";
+import { CircularProgress, CircularProgressProps, Stack } from "@mui/material";
 import { APP_GRADIENT_ID, AppGradient } from "./AppGradient";
 
 export const GradientCircularProgress = ({
@@ -6,7 +6,7 @@ export const GradientCircularProgress = ({
   ...progressProps
 }: CircularProgressProps) => {
   return (
-    <>
+    <Stack my={3}>
       <AppGradient />
       <CircularProgress
         size={"6rem"}
@@ -16,6 +16,6 @@ export const GradientCircularProgress = ({
         }}
         {...progressProps}
       />
-    </>
+    </Stack>
   );
 };
